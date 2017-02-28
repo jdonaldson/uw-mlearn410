@@ -1,6 +1,6 @@
 Applied Machine Learning 410
 ========================================================
-css: ../assets/style/uw.css
+css: ../../assets/style/uw.css
 author: Justin Donaldson
 date: April - Some time around then I guess
 autosize: true
@@ -20,7 +20,7 @@ install.packages("tree", repos="http://cran.rstudio.com/")
 ```
 
 The downloaded binary packages are in
-	/var/folders/zs/wpzz7px56hx33_xp67zr_mhnz7kvzw/T//RtmpEgl5Yv/downloaded_packages
+	/var/folders/zs/wpzz7px56hx33_xp67zr_mhnz7kvzw/T//RtmpdjaOWs/downloaded_packages
 ```
 
 ```r
