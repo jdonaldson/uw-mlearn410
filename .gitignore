@@ -2,6 +2,9 @@
 .RProj.user/*
 .RHistory
 .Rproj.user
+<<<<<<< HEAD
 *.rdb
 *.rdx
 *.RData
+=======
+>>>>>>> update gitignore
