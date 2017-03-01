@@ -6,4 +6,4 @@
 *.rdx
 *.RData
 packrat/lib*/
-packrat/src*/
+packrat/src/
