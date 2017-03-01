@@ -2,3 +2,6 @@
 .RProj.user/*
 .RHistory
 .Rproj.user
+*.rdb
+*.rdx
+*.RData

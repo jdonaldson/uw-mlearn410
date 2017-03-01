@@ -1,3 +1,5 @@
+
+
 Applied Machine Learning 410
 ========================================================
 css: ../../assets/style/uw.css
@@ -7,26 +9,107 @@ autosize: true
 
 Decision Trees and Random Forests
 ---------------------------------
-Divide and Concur
+(or, divide and concur)
 
 
-Setup
-=====
+
+
+
+
+
+
+A Random Forest
+===================
+(Question - Is it Fall Yet?)
+---------------
+
+<a title="Daniel Case at the English language Wikipedia [GFDL (http://www.gnu.org/copyleft/fdl.html) or CC-BY-SA-3.0 (http://creativecommons.org/licenses/by-sa/3.0/)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3ABlack_Rock_Forest_view_from_NE.jpg"><img width="1024" alt="Black Rock Forest view from NE" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Black_Rock_Forest_view_from_NE.jpg/1024px-Black_Rock_Forest_view_from_NE.jpg"/></a>
+
+Black Rock Forest view from NE - Daniel Case
+
+
+
+Overview
+========
+
+* Why are Random Forests useful?
+  * Recap of Random Forests
+* When are Trees useful?
+  * Recap of Decision Trees
+
+
+
+
+
+Why are Random Forests useful?
+==============================
+incremental: true
+
+![An Empirical Evaluation of Supervised Learning in High Dimensions](img/Cauruana-full.png)
+***
+Comparison of:
+-------------
+- Support Vector Machines
+- Artificial Neural Networks
+- Logistic Regression
+- Naive Bayes
+- K-Nearest Neighbors
+- Random Forests
+- Bagged Decision Trees
+- Boosted Stumps
+- Boosted Trees
+- Perceptrons
+
+ 
+
+Iris Recap
+=======
+left : 90%
 
 ```r
-install.packages("tree", repos="http://cran.rstudio.com/")
+# using iris data
+ggpairs(data=iris, mapping = ggplot2::aes(color = Species))
 ```
 
-```
+<img src="Trees-figure/unnamed-chunk-1-1.png" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" width="700px" />
+***
+* Petal dimensions important?
+* Versicolor and Virginica separable?
 
-The downloaded binary packages are in
-	/var/folders/zs/wpzz7px56hx33_xp67zr_mhnz7kvzw/T//RtmpdjaOWs/downloaded_packages
-```
+
+
+Iris Recap
+=======
+
 
 ```r
-require(tree)
+# model iris species based on plant measurement
+m <- tree(Species ~ ., data = iris)
+summary(m)
 ```
-install and require ``tree`` package.
+
+```
+
+Classification tree:
+tree(formula = Species ~ ., data = iris)
+Variables actually used in tree construction:
+[1] "Petal.Length" "Petal.Width"  "Sepal.Length"
+Number of terminal nodes:  6 
+Residual mean deviance:  0.1253 = 18.05 / 144 
+Misclassification error rate: 0.02667 = 4 / 150 
+```
+
+
+Example
+=======
+
+```r
+plot(m)
+text(m,cex=2)
+```
+
+<img src="Trees-figure/unnamed-chunk-3-1.png" title="plot of chunk unnamed-chunk-3" alt="plot of chunk unnamed-chunk-3" width="700px" />
+
 
 Example
 =======
@@ -34,7 +117,7 @@ Example
 ```r
 data(cpus, package="MASS")
 cpus.ltr <- tree(log10(perf) ~ syct+mmin+mmax+cach+chmin+chmax, cpus)
-snip.tree(cpus.ltr,2)
+snip.tree(cpus.ltr,2) # only show first two levels
 ```
 
 ```
@@ -86,4 +169,4 @@ summary(cars)
 Slide With Plot
 ========================================================
 
-![plot of chunk unnamed-chunk-4](Trees-figure/unnamed-chunk-4-1.png)
+<img src="Trees-figure/unnamed-chunk-6-1.png" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" width="700px" />
