@@ -44,8 +44,9 @@ Overview
 Why are Random Forests useful?
 ==============================
 incremental: true
-
-![An Empirical Evaluation of Supervised Learning in High Dimensions](img/Cauruana-full.png)
+An Empircal Evaluation of Supervised Learning in High Dimensions
+-------------
+![An Empirical Evaluation of Supervised Learning in High Dimensions](img/Caruana.png)
 ***
 Comparison of:
 -------------
@@ -60,6 +61,8 @@ Comparison of:
 - Boosted Trees
 - Perceptrons
 
+Why are Random Forests useful?
+==============================
  
 
 Iris Recap
