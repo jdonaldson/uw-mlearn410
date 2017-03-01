@@ -7,18 +7,13 @@
     position: absolute;
     right: 0;
     bottom: 0;
-    width: 100px;
-    height: 100px;
+    width: 512px;
+    height: 512px;
+    opacity : 0.75;
     z-index: 0;
-    opacity: 0.9;
     background-image: url('https://www.washington.edu/brand/files/2014/10/W-Logo_Gold_RGB.png');
     background-repeat: no-repeat;
-    background-position: 0 90%;
-    -ms-background-size: cover;
-    -o-background-size: cover;
-    -moz-background-size: cover;
-    -webkit-background-size: cover;
-    background-size: cover;
+    background-position: right bottom;
 }
 
     
