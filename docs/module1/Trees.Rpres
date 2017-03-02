@@ -14,9 +14,9 @@ Decision Trees and Random Forests
 ```{r setup, include=FALSE}
 opts_chunk$set(out.width='700px', dpi=200,cache=TRUE, fig.width=10, fig.height=8)
 options(width =1960)
+require(ggdendro)
 require(tree)
 require(ggplot2)
-require(ggdendro)
 require(GGally)
 require(randomForest)
 ```
@@ -161,16 +161,50 @@ iris.rf <- randomForest(Species ~ ., iris, importance=T)
 iris.rf
 ```
 
-
-
 Looking into Iris
-=======
-
+===
 ```{r}
-# model iris species based on plant measurement
-m = tree(Species ~ ., data = iris)
-summary(m)
+# get tree #23 from the model
+getTree(iris.rf,k=23)
 ```
+Unfortunately, it's very difficult to inspect individual trees, or form and understanding of how they reach consensus on a given case.
+
+Example : Tweak one variable while holding training set fixed
+=======
+```{r,eval=FALSE}
+dummy = iris
+idx = seq(min(dummy$Sepal.Length), max(dummy$Sepal.Length), by=.01)
+probs = sapply(idx, function(x) {
+  dummy$Sepal.Length = x; 
+  ret = as.list(apply(predict(iris.rf, dummy, type='prob'),2,mean))
+  ret$idx = x
+  ret
+})
+dat = data.frame(apply(t(probs), 2, unlist))
+require(reshape2)
+dat = melt(dat, id.vars="idx")
+ggplot(dat, aes(x=idx,y=value,color=variable)) + geom_line(alpha=.7, aes(size=2)) + guides(size=F)
+
+```
+
+Example : Tweak one variable while holding training set fixed
+=======
+```{r,echo=FALSE}
+dummy = iris
+idx = seq(min(dummy$Sepal.Length), max(dummy$Sepal.Length), by=.01)
+probs = sapply(idx, function(x) {
+  dummy$Sepal.Length = x; 
+  ret = as.list(apply(predict(iris.rf, dummy, type='prob'),2,mean))
+  ret$idx = x
+  ret
+})
+dat = data.frame(apply(t(probs), 2, unlist))
+require(reshape2)
+dat = melt(dat, id.vars="idx")
+ggplot(dat, aes(x=idx,y=value,color=variable)) + geom_line(alpha=.7, aes(size=2)) + guides(size=F)
+
+```
+
 
 Example
 =======
@@ -214,6 +248,7 @@ Slide With Code
 
 ```{r}
 summary(cars)
+
 ```
 
 Slide With Plot
@@ -222,3 +257,5 @@ Slide With Plot
 ```{r, echo=FALSE}
 plot(cars)
 ```
+
+

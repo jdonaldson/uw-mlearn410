@@ -203,9 +203,58 @@ versicolor      0         47         3        0.06
 virginica       0          3        47        0.06
 ```
 
-
-
 Looking into Iris
+===
+
+```r
+# get tree #23 from the model
+getTree(iris.rf,k=23)
+```
+
+```
+   left daughter right daughter split var split point status prediction
+1              2              3         3        2.45      1          0
+2              0              0         0        0.00     -1          1
+3              4              5         3        4.80      1          0
+4              6              7         4        1.65      1          0
+5              8              9         3        5.15      1          0
+6              0              0         0        0.00     -1          2
+7              0              0         0        0.00     -1          3
+8             10             11         4        1.75      1          0
+9              0              0         0        0.00     -1          3
+10            12             13         2        2.45      1          0
+11             0              0         0        0.00     -1          3
+12             0              0         0        0.00     -1          3
+13            14             15         4        1.55      1          0
+14             0              0         0        0.00     -1          3
+15             0              0         0        0.00     -1          2
+```
+Unfortunately, it's very difficult to inspect individual trees, or form and understanding of how they reach consensus on a given case.
+
+Example : Tweak one variable while holding training set fixed
+=======
+
+```r
+dummy = iris
+idx = seq(min(dummy$Sepal.Length), max(dummy$Sepal.Length), by=.01)
+probs = sapply(idx, function(x) {
+  dummy$Sepal.Length = x; 
+  ret = as.list(apply(predict(iris.rf, dummy, type='prob'),2,mean))
+  ret$idx = x
+  ret
+})
+dat = data.frame(apply(t(probs), 2, unlist))
+require(reshape2)
+dat = melt(dat, id.vars="idx")
+ggplot(dat, aes(x=idx,y=value,color=variable)) + geom_line(alpha=.7, aes(size=2)) + guides(size=F)
+```
+
+Example : Tweak one variable while holding training set fixed
+=======
+<img src="Trees-figure/unnamed-chunk-6-1.png" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" width="700px" />
+
+
+Example
 =======
 
 
@@ -218,9 +267,6 @@ Looking into Iris
 
 
 
-
-
 ```
-Error in library(p, character.only = TRUE) : 
-  there is no package called 'ggdendro'
+Error in plot(m) : object 'm' not found
 ```
