@@ -1,4 +1,4 @@
-Aeplied Machine Learning 410
+Applied Machine Learning 410
 ========================================================
 css: ../../assets/style/uw.css
 author: Justin Donaldson
@@ -168,6 +168,7 @@ legend(1.75,4.5,legend=unique(iris$Species),col=unique(as.numeric(iris$Species))
 ```
 
 <img src="Trees-figure/unnamed-chunk-4-1.png" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" width="700px" />
+
 
 
 

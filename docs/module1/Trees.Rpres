@@ -1,4 +1,4 @@
-Aeplied Machine Learning 410
+Applied Machine Learning 410
 ========================================================
 css: ../../assets/style/uw.css
 author: Justin Donaldson
@@ -154,6 +154,7 @@ plot(iris$Petal.Width,iris$Sepal.Width,pch=19,col=as.numeric(iris$Species))
 partition.tree(tree1,label="Species",add=TRUE)
 legend(1.75,4.5,legend=unique(iris$Species),col=unique(as.numeric(iris$Species)),pch=19)
 ```
+
 
 
 
