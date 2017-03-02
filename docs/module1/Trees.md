@@ -1,5 +1,3 @@
-
-
 Applied Machine Learning 410
 ========================================================
 css: ../../assets/style/uw.css
