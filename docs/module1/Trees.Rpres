@@ -48,11 +48,8 @@ Why Random Forests?
 type: section
 
 
-Are Random Forests useful?
-==============================
-incremental: true
-An Empircal Evaluation of Supervised Learning in High Dimensions
--------------
+Why Random Forests?
+===================
 ![An Empirical Evaluation of Supervised Learning in High Dimensions](img/Caruana.png)
 ***
 Comparison of:
@@ -68,8 +65,8 @@ Comparison of:
 - Boosted Trees
 - Perceptrons
 
-Why are Random Forests useful?
-==============================
+Why Random Forests?
+===================
 Evaluation Data Sets:
 --------------------
 - Sturn, Calam : Ornithology
@@ -84,6 +81,7 @@ Evaluation Data Sets:
 - Imdb : link prediction
 
 ***
+
 Error Metrics:
 -------------
 - AUC : Area under curve
@@ -94,7 +92,7 @@ Error Metrics:
 Why are Random Forests useful?
 ==============================
 Conclusions
---------------------
+-----------
 - Boosted decision trees performed best when < 4000 dimensions
 - Random forests performed best when > 4000
   - Easy to parellize
@@ -103,8 +101,8 @@ Conclusions
 - Non-linear methods do well when model complexity is constrained
 - Worst performing models : Naive Bayes and Perceptrons
 
-Why are Random Forests are a Solid First Choice Model
-=====================================================
+Why are Random Forests are a Solid First Choice?
+================================================
 - Handles boolean, categorical, numeric features with no scaling or factorization
 - Automatic feature selection (within reason)
 - Quick to train, parallelizable
@@ -117,15 +115,28 @@ What are Random Forest Drawbacks?
 - Good feature engineering is very important
 - Model size can become cumbersome
 
-
-Iris Recap
+Looking into Iris
 =======
-left : 90%
-```{r }
-# using iris data
+```{r}
+head(iris)
+```
+
+
+Looking into Iris
+=======
+```{r}
+ggpairs(data=iris, mapping = ggplot2::aes(color = Species))
+```
+
+Looking into Iris
+=======
+left : 70%
+```{r, echo=FALSE }
 ggpairs(data=iris, mapping = ggplot2::aes(color = Species))
 ```
 ***
+Leading Questions...
+--------------------
 * Petal dimensions important?
 * Versicolor and Virginica separable?
 

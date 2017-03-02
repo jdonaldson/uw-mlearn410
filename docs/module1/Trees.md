@@ -41,11 +41,8 @@ Why Random Forests?
 type: section
 
 
-Are Random Forests useful?
-==============================
-incremental: true
-An Empircal Evaluation of Supervised Learning in High Dimensions
--------------
+Why Random Forests?
+===================
 ![An Empirical Evaluation of Supervised Learning in High Dimensions](img/Caruana.png)
 ***
 Comparison of:
@@ -61,8 +58,8 @@ Comparison of:
 - Boosted Trees
 - Perceptrons
 
-Why are Random Forests useful?
-==============================
+Why Random Forests?
+===================
 Evaluation Data Sets:
 --------------------
 - Sturn, Calam : Ornithology
@@ -77,6 +74,7 @@ Evaluation Data Sets:
 - Imdb : link prediction
 
 ***
+
 Error Metrics:
 -------------
 - AUC : Area under curve
@@ -87,7 +85,7 @@ Error Metrics:
 Why are Random Forests useful?
 ==============================
 Conclusions
---------------------
+-----------
 - Boosted decision trees performed best when < 4000 dimensions
 - Random forests performed best when > 4000
   - Easy to parellize
@@ -96,8 +94,8 @@ Conclusions
 - Non-linear methods do well when model complexity is constrained
 - Worst performing models : Naive Bayes and Perceptrons
 
-Why are Random Forests are a Solid First Choice Model
-=====================================================
+Why are Random Forests are a Solid First Choice?
+================================================
 - Handles boolean, categorical, numeric features with no scaling or factorization
 - Automatic feature selection (within reason)
 - Quick to train, parallelizable
@@ -110,18 +108,40 @@ What are Random Forest Drawbacks?
 - Good feature engineering is very important
 - Model size can become cumbersome
 
-
-Iris Recap
+Looking into Iris
 =======
-left : 90%
 
 ```r
-# using iris data
+head(iris)
+```
+
+```
+  Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+1          5.1         3.5          1.4         0.2  setosa
+2          4.9         3.0          1.4         0.2  setosa
+3          4.7         3.2          1.3         0.2  setosa
+4          4.6         3.1          1.5         0.2  setosa
+5          5.0         3.6          1.4         0.2  setosa
+6          5.4         3.9          1.7         0.4  setosa
+```
+
+
+Looking into Iris
+=======
+
+```r
 ggpairs(data=iris, mapping = ggplot2::aes(color = Species))
 ```
 
-<img src="Trees-figure/unnamed-chunk-1-1.png" title="plot of chunk unnamed-chunk-1" alt="plot of chunk unnamed-chunk-1" width="700px" />
+<img src="Trees-figure/unnamed-chunk-2-1.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" width="700px" />
+
+Looking into Iris
+=======
+left : 70%
+<img src="Trees-figure/unnamed-chunk-3-1.png" title="plot of chunk unnamed-chunk-3" alt="plot of chunk unnamed-chunk-3" width="700px" />
 ***
+Leading Questions...
+--------------------
 * Petal dimensions important?
 * Versicolor and Virginica separable?
 
@@ -156,7 +176,7 @@ plot(m)
 text(m, cex=2)
 ```
 
-<img src="Trees-figure/unnamed-chunk-3-1.png" title="plot of chunk unnamed-chunk-3" alt="plot of chunk unnamed-chunk-3" width="700px" />
+<img src="Trees-figure/unnamed-chunk-5-1.png" title="plot of chunk unnamed-chunk-5" alt="plot of chunk unnamed-chunk-5" width="700px" />
 
 Partition Tree
 ==============
@@ -169,7 +189,7 @@ partition.tree(tree1,label="Species",add=TRUE)
 legend(1.75,4.5,legend=unique(iris$Species),col=unique(as.numeric(iris$Species)),pch=19)
 ```
 
-<img src="Trees-figure/unnamed-chunk-4-1.png" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" width="700px" />
+<img src="Trees-figure/unnamed-chunk-6-1.png" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" width="700px" />
 
 
 
@@ -234,4 +254,4 @@ summary(cars)
 Slide With Plot
 ========================================================
 
-<img src="Trees-figure/unnamed-chunk-7-1.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" width="700px" />
+<img src="Trees-figure/unnamed-chunk-9-1.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" width="700px" />
