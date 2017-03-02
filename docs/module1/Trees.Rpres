@@ -36,17 +36,19 @@ Black Rock Forest view from NE - Daniel Case
 
 Overview
 ========
+type:sub-section
 
-* Why are Random Forests useful?
+* Why Random Forests?
   * Recap of Random Forests
-* When are Trees useful?
+* Why Decision Trees?
   * Recap of Decision Trees
 
+Why Random Forests?
+===================
+type: section
 
 
-
-
-Why are Random Forests useful?
+Are Random Forests useful?
 ==============================
 incremental: true
 An Empircal Evaluation of Supervised Learning in High Dimensions
