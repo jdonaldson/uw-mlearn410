@@ -14,10 +14,9 @@ Decision Trees and Random Forests
 ```{r setup, include=FALSE}
 opts_chunk$set(out.width='700px', dpi=200,cache=TRUE, fig.width=10, fig.height=8)
 options(width =1960)
-# install.packages(c("tree","ggplot2","GGally"), repos="http://cran.rstudio.com/")
-require(tree)  
-require(ggplot2)
-require(GGally) 
+library(tree)
+library(ggplot2)
+library(GGally)
 ```
 
 
@@ -68,7 +67,53 @@ Comparison of:
 
 Why are Random Forests useful?
 ==============================
- 
+Evaluation Data Sets:
+--------------------
+- Sturn, Calam : Ornithology
+- Digits : MNIST handwritten
+- Tis : mRNA translation sites
+- Cryst : Protein Crystallography
+- KDD98 : Donation Prediction
+- R-S : Usenet real/simulation
+- Cite : Paper Authorship
+- Dse : Newswire
+- Spam : TREC spam corpora
+- Imdb : link prediction
+
+***
+Error Metrics:
+-------------
+- AUC : Area under curve
+- ACC : Accuracy
+- RMS : Root Mean Squared Error
+
+
+Why are Random Forests useful?
+==============================
+Conclusions
+--------------------
+- Boosted decision trees performed best when < 4000 dimensions
+- Random forests performed best when > 4000
+  - Easy to parellize
+  - Scales efficiently to high dimensions
+  - Performs consistently well on all three metrics
+- Non-linear methods do well when model complexity is constrained
+- Worst performing models : Naive Bayes and Perceptrons
+
+Why are Random Forests are a Solid First Choice Model
+=====================================================
+- Handles boolean, categorical, numeric features with no scaling or factorization
+- Automatic feature selection (within reason)
+- Quick to train, parallelizable
+- Naturally resistant to overfitting
+- OOB error metric instead of holdout eval
+
+What are Random Forest Drawbacks?
+=====================================================
+- Less interpretable than trees
+- Good feature engineering is very important
+- Model size can become cumbersome
+
 
 Iris Recap
 =======
