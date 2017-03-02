@@ -71,10 +71,11 @@ Version: 0.10
 Hash: c3601a10c987d439e0c63ec635234a76
 Requires: stringr
 
-Package: formatR
+Package: ggdendro
 Source: CRAN
-Version: 1.4
-Hash: b2a47a2b91737978cf50ba95825a9cd1
+Version: 0.1-20
+Hash: 8061f8924d4f93d8606cb42433b77e62
+Requires: ggplot2
 
 Package: ggplot2
 Source: CRAN
@@ -163,6 +164,11 @@ Source: CRAN
 Version: 1.1.2
 Hash: ceef88c244d792a874bdacf72b6a30da
 Requires: R6, prettyunits
+
+Package: randomForest
+Source: CRAN
+Version: 4.6-12
+Hash: b37274857316c7b9431cc7f72aaffb77
 
 Package: reshape
 Source: CRAN
