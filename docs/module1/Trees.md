@@ -1,4 +1,4 @@
-Applied Machine Learning 410
+Aeplied Machine Learning 410
 ========================================================
 css: ../../assets/style/uw.css
 author: Justin Donaldson
@@ -86,7 +86,7 @@ Why are Random Forests useful?
 ==============================
 Conclusions
 --------------------
-- Boosted decision trees performed best when < 4000 dimensions 
+- Boosted decision trees performed best when < 4000 dimensions
 - Random forests performed best when > 4000
   - Easy to parellize
   - Scales efficiently to high dimensions
@@ -99,15 +99,15 @@ Why are Random Forests are a Solid First Choice Model
 - Handles boolean, categorical, numeric features with no scaling or factorization
 - Automatic feature selection (within reason)
 - Quick to train, parallelizable
-- Naturally resistant to overfitting 
+- Naturally resistant to overfitting
 - OOB error metric instead of holdout eval
 
 What are Random Forest Drawbacks?
 =====================================================
 - Less interpretable than trees
 - Good feature engineering is very important
-- Model size can become cumbersome 
- 
+- Model size can become cumbersome
+
 
 Iris Recap
 =======
@@ -146,16 +146,31 @@ Residual mean deviance:  0.1253 = 18.05 / 144
 Misclassification error rate: 0.02667 = 4 / 150 
 ```
 
-
 Example
 =======
 
 ```r
 plot(m)
-text(m,cex=2)
+text(m, cex=2)
 ```
 
 <img src="Trees-figure/unnamed-chunk-3-1.png" title="plot of chunk unnamed-chunk-3" alt="plot of chunk unnamed-chunk-3" width="700px" />
+
+Partition Tree
+==============
+A nice option if you have exactly 2 input dimensions
+
+```r
+tree1 <- tree(Species ~ Sepal.Width + Petal.Width, data = iris)
+plot(iris$Petal.Width,iris$Sepal.Width,pch=19,col=as.numeric(iris$Species))
+partition.tree(tree1,label="Species",add=TRUE)
+legend(1.75,4.5,legend=unique(iris$Species),col=unique(as.numeric(iris$Species)),pch=19)
+```
+
+<img src="Trees-figure/unnamed-chunk-4-1.png" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" width="700px" />
+
+
+
 
 
 Example
@@ -216,4 +231,4 @@ summary(cars)
 Slide With Plot
 ========================================================
 
-<img src="Trees-figure/unnamed-chunk-6-1.png" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" width="700px" />
+<img src="Trees-figure/unnamed-chunk-7-1.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" width="700px" />

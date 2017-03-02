@@ -1,4 +1,4 @@
-Applied Machine Learning 410
+Aeplied Machine Learning 410
 ========================================================
 css: ../../assets/style/uw.css
 author: Justin Donaldson
@@ -14,9 +14,10 @@ Decision Trees and Random Forests
 ```{r setup, include=FALSE}
 opts_chunk$set(out.width='700px', dpi=200,cache=TRUE, fig.width=10, fig.height=8)
 options(width =1960)
-library(tree)
-library(ggplot2)
-library(GGally)
+require(tree)
+require(ggplot2)
+require(ggdendro)
+require(GGally)
 ```
 
 
@@ -137,13 +138,25 @@ m <- tree(Species ~ ., data = iris)
 summary(m)
 ```
 
-
 Example
 =======
 ```{r}
 plot(m)
-text(m,cex=2)
+text(m, cex=2)
 ```
+
+Partition Tree
+==============
+A nice option if you have exactly 2 input dimensions
+```{r}
+tree1 <- tree(Species ~ Sepal.Width + Petal.Width, data = iris)
+plot(iris$Petal.Width,iris$Sepal.Width,pch=19,col=as.numeric(iris$Species))
+partition.tree(tree1,label="Species",add=TRUE)
+legend(1.75,4.5,legend=unique(iris$Species),col=unique(as.numeric(iris$Species)),pch=19)
+```
+
+
+
 
 
 Example
