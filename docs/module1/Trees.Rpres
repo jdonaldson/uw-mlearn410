@@ -18,9 +18,8 @@ require(tree)
 require(ggplot2)
 require(ggdendro)
 require(GGally)
+require(randomForest)
 ```
-
-
 
 
 A Random Forest
@@ -32,16 +31,14 @@ A Random Forest
 
 Black Rock Forest view from NE - Daniel Case
 
-
-
 Overview
 ========
 type:sub-section
 
 * Why Random Forests?
-  * Recap of Random Forests
 * Why Decision Trees?
-  * Recap of Decision Trees
+* Recap of Decision Trees
+* Recap of Random Forests
 
 Why Random Forests?
 ===================
@@ -54,6 +51,7 @@ Why Random Forests?
 ***
 Comparison of:
 -------------
+
 - Support Vector Machines
 - Artificial Neural Networks
 - Logistic Regression
@@ -103,33 +101,48 @@ Conclusions
 
 Why are Random Forests are a Solid First Choice?
 ================================================
-- Handles boolean, categorical, numeric features with no scaling or factorization
+- Handle boolean, categorical, numeric features with no scaling or factorization
+- No fussy hyperparameters (forest size  is commonly sqrt(#features))
 - Automatic feature selection (within reason)
 - Quick to train, parallelizable
-- Naturally resistant to overfitting
-- OOB error metric instead of holdout eval
+- Resistant (somewhat) to overfitting
+- OOB error metric can substitute for CV
+
+
 
 What are Random Forest Drawbacks?
 =====================================================
 - Less interpretable than trees
-- Good feature engineering is very important
 - Model size can become cumbersome
 
+
+Looking into Iris
+==============
+
+<a title="By Frank Mayfield [CC BY-SA 2.0 (http://creativecommons.org/licenses/by-sa/2.0)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3AIris_virginica.jpg"><img width="256" alt="Iris virginica" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Iris_virginica.jpg/256px-Iris_virginica.jpg"/></a>
+
+Iris Virginica 
+
+*by Frank Mayfield*
+
+***
+<a title="By No machine-readable author provided. Dlanglois assumed (based on copyright claims). [GFDL (http://www.gnu.org/copyleft/fdl.html), CC-BY-SA-3.0 (http://creativecommons.org/licenses/by-sa/3.0/) or CC BY-SA 2.5 (http://creativecommons.org/licenses/by-sa/2.5)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3AIris_versicolor_3.jpg"><img width="256" alt="Iris versicolor 3" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Iris_versicolor_3.jpg/256px-Iris_versicolor_3.jpg"/></a>
+
+Iris Versicolor 
+
+*by Danielle Langlois*
+
 Looking into Iris
 =======
+
 ```{r}
-head(iris)
+head(iris, n=30)
 ```
 
 
 Looking into Iris
 =======
-```{r}
-ggpairs(data=iris, mapping = ggplot2::aes(color = Species))
-```
-
-Looking into Iris
-=======
+incremental : True
 left : 70%
 ```{r, echo=FALSE }
 ggpairs(data=iris, mapping = ggplot2::aes(color = Species))
@@ -140,14 +153,22 @@ Leading Questions...
 * Petal dimensions important?
 * Versicolor and Virginica separable?
 
+Looking into Iris
+===
+```{r}
+data(iris)
+iris.rf <- randomForest(Species ~ ., iris, importance=T)
+iris.rf
+```
 
 
-Iris Recap
+
+Looking into Iris
 =======
 
 ```{r}
 # model iris species based on plant measurement
-m <- tree(Species ~ ., data = iris)
+m = tree(Species ~ ., data = iris)
 summary(m)
 ```
 
@@ -167,10 +188,6 @@ plot(iris$Petal.Width,iris$Sepal.Width,pch=19,col=as.numeric(iris$Species))
 partition.tree(tree1,label="Species",add=TRUE)
 legend(1.75,4.5,legend=unique(iris$Species),col=unique(as.numeric(iris$Species)),pch=19)
 ```
-
-
-
-
 
 
 Example

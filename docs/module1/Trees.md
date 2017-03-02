@@ -14,8 +14,6 @@ Decision Trees and Random Forests
 
 
 
-
-
 A Random Forest
 ===================
 (Question - Is it Fall Yet?)
@@ -25,16 +23,14 @@ A Random Forest
 
 Black Rock Forest view from NE - Daniel Case
 
-
-
 Overview
 ========
 type:sub-section
 
 * Why Random Forests?
-  * Recap of Random Forests
 * Why Decision Trees?
-  * Recap of Decision Trees
+* Recap of Decision Trees
+* Recap of Random Forests
 
 Why Random Forests?
 ===================
@@ -47,6 +43,7 @@ Why Random Forests?
 ***
 Comparison of:
 -------------
+
 - Support Vector Machines
 - Artificial Neural Networks
 - Logistic Regression
@@ -96,162 +93,134 @@ Conclusions
 
 Why are Random Forests are a Solid First Choice?
 ================================================
-- Handles boolean, categorical, numeric features with no scaling or factorization
+- Handle boolean, categorical, numeric features with no scaling or factorization
+- No fussy hyperparameters (forest size  is commonly sqrt(#features))
 - Automatic feature selection (within reason)
 - Quick to train, parallelizable
-- Naturally resistant to overfitting
-- OOB error metric instead of holdout eval
+- Resistant (somewhat) to overfitting
+- OOB error metric can substitute for CV
+
+
 
 What are Random Forest Drawbacks?
 =====================================================
 - Less interpretable than trees
-- Good feature engineering is very important
 - Model size can become cumbersome
 
+
+Looking into Iris
+==============
+
+<a title="By Frank Mayfield [CC BY-SA 2.0 (http://creativecommons.org/licenses/by-sa/2.0)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3AIris_virginica.jpg"><img width="256" alt="Iris virginica" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Iris_virginica.jpg/256px-Iris_virginica.jpg"/></a>
+
+Iris Virginica 
+
+*by Frank Mayfield*
+
+***
+<a title="By No machine-readable author provided. Dlanglois assumed (based on copyright claims). [GFDL (http://www.gnu.org/copyleft/fdl.html), CC-BY-SA-3.0 (http://creativecommons.org/licenses/by-sa/3.0/) or CC BY-SA 2.5 (http://creativecommons.org/licenses/by-sa/2.5)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3AIris_versicolor_3.jpg"><img width="256" alt="Iris versicolor 3" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Iris_versicolor_3.jpg/256px-Iris_versicolor_3.jpg"/></a>
+
+Iris Versicolor 
+
+*by Danielle Langlois*
+
 Looking into Iris
 =======
+
 
 ```r
-head(iris)
+head(iris, n=30)
 ```
 
 ```
-  Sepal.Length Sepal.Width Petal.Length Petal.Width Species
-1          5.1         3.5          1.4         0.2  setosa
-2          4.9         3.0          1.4         0.2  setosa
-3          4.7         3.2          1.3         0.2  setosa
-4          4.6         3.1          1.5         0.2  setosa
-5          5.0         3.6          1.4         0.2  setosa
-6          5.4         3.9          1.7         0.4  setosa
+   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+1           5.1         3.5          1.4         0.2  setosa
+2           4.9         3.0          1.4         0.2  setosa
+3           4.7         3.2          1.3         0.2  setosa
+4           4.6         3.1          1.5         0.2  setosa
+5           5.0         3.6          1.4         0.2  setosa
+6           5.4         3.9          1.7         0.4  setosa
+7           4.6         3.4          1.4         0.3  setosa
+8           5.0         3.4          1.5         0.2  setosa
+9           4.4         2.9          1.4         0.2  setosa
+10          4.9         3.1          1.5         0.1  setosa
+11          5.4         3.7          1.5         0.2  setosa
+12          4.8         3.4          1.6         0.2  setosa
+13          4.8         3.0          1.4         0.1  setosa
+14          4.3         3.0          1.1         0.1  setosa
+15          5.8         4.0          1.2         0.2  setosa
+16          5.7         4.4          1.5         0.4  setosa
+17          5.4         3.9          1.3         0.4  setosa
+18          5.1         3.5          1.4         0.3  setosa
+19          5.7         3.8          1.7         0.3  setosa
+20          5.1         3.8          1.5         0.3  setosa
+21          5.4         3.4          1.7         0.2  setosa
+22          5.1         3.7          1.5         0.4  setosa
+23          4.6         3.6          1.0         0.2  setosa
+24          5.1         3.3          1.7         0.5  setosa
+25          4.8         3.4          1.9         0.2  setosa
+26          5.0         3.0          1.6         0.2  setosa
+27          5.0         3.4          1.6         0.4  setosa
+28          5.2         3.5          1.5         0.2  setosa
+29          5.2         3.4          1.4         0.2  setosa
+30          4.7         3.2          1.6         0.2  setosa
 ```
 
 
 Looking into Iris
 =======
-
-```r
-ggpairs(data=iris, mapping = ggplot2::aes(color = Species))
-```
-
-<img src="Trees-figure/unnamed-chunk-2-1.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" width="700px" />
-
-Looking into Iris
-=======
+incremental : True
 left : 70%
-<img src="Trees-figure/unnamed-chunk-3-1.png" title="plot of chunk unnamed-chunk-3" alt="plot of chunk unnamed-chunk-3" width="700px" />
+<img src="Trees-figure/unnamed-chunk-2-1.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" width="700px" />
 ***
 Leading Questions...
 --------------------
 * Petal dimensions important?
 * Versicolor and Virginica separable?
 
+Looking into Iris
+===
+
+```r
+data(iris)
+iris.rf <- randomForest(Species ~ ., iris, importance=T)
+iris.rf
+```
+
+```
+
+Call:
+ randomForest(formula = Species ~ ., data = iris, importance = T) 
+               Type of random forest: classification
+                     Number of trees: 500
+No. of variables tried at each split: 2
+
+        OOB estimate of  error rate: 4%
+Confusion matrix:
+           setosa versicolor virginica class.error
+setosa         50          0         0        0.00
+versicolor      0         47         3        0.06
+virginica       0          3        47        0.06
+```
 
 
-Iris Recap
+
+Looking into Iris
 =======
 
 
-```r
-# model iris species based on plant measurement
-m <- tree(Species ~ ., data = iris)
-summary(m)
-```
-
-```
-
-Classification tree:
-tree(formula = Species ~ ., data = iris)
-Variables actually used in tree construction:
-[1] "Petal.Length" "Petal.Width"  "Sepal.Length"
-Number of terminal nodes:  6 
-Residual mean deviance:  0.1253 = 18.05 / 144 
-Misclassification error rate: 0.02667 = 4 / 150 
-```
-
-Example
-=======
-
-```r
-plot(m)
-text(m, cex=2)
-```
-
-<img src="Trees-figure/unnamed-chunk-5-1.png" title="plot of chunk unnamed-chunk-5" alt="plot of chunk unnamed-chunk-5" width="700px" />
-
-Partition Tree
-==============
-A nice option if you have exactly 2 input dimensions
-
-```r
-tree1 <- tree(Species ~ Sepal.Width + Petal.Width, data = iris)
-plot(iris$Petal.Width,iris$Sepal.Width,pch=19,col=as.numeric(iris$Species))
-partition.tree(tree1,label="Species",add=TRUE)
-legend(1.75,4.5,legend=unique(iris$Species),col=unique(as.numeric(iris$Species)),pch=19)
-```
-
-<img src="Trees-figure/unnamed-chunk-6-1.png" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" width="700px" />
 
 
 
 
 
 
-Example
-=======
 
-```r
-data(cpus, package="MASS")
-cpus.ltr <- tree(log10(perf) ~ syct+mmin+mmax+cach+chmin+chmax, cpus)
-snip.tree(cpus.ltr,2) # only show first two levels
-```
+
+
+
 
 ```
-node), split, n, deviance, yval
-      * denotes terminal node
-
- 1) root 209 43.12000 1.753  
-   2) cach < 27 143 11.79000 1.525 *
-   3) cach > 27 66  7.64300 2.249  
-     6) mmax < 28000 41  2.34100 2.062  
-      12) cach < 96.5 34  1.59200 2.008  
-        24) mmax < 11240 14  0.42460 1.827 *
-        25) mmax > 11240 20  0.38340 2.135 *
-      13) cach > 96.5 7  0.17170 2.324 *
-     7) mmax > 28000 25  1.52300 2.555  
-      14) cach < 56 7  0.06929 2.268 *
-      15) cach > 56 18  0.65350 2.667 *
+Error in library(p, character.only = TRUE) : 
+  there is no package called 'ggdendro'
 ```
-
-
-
-First Slide
-========================================================
-
-For more details on authoring R presentations please visit <https://support.rstudio.com/hc/en-us/articles/200486468>.
-
-- Bullet 1
-- Bullet 2
-- Bullet 3
-
-Slide With Code
-========================================================
-
-
-```r
-summary(cars)
-```
-
-```
-     speed           dist       
- Min.   : 4.0   Min.   :  2.00  
- 1st Qu.:12.0   1st Qu.: 26.00  
- Median :15.0   Median : 36.00  
- Mean   :15.4   Mean   : 42.98  
- 3rd Qu.:19.0   3rd Qu.: 56.00  
- Max.   :25.0   Max.   :120.00  
-```
-
-Slide With Plot
-========================================================
-
-<img src="Trees-figure/unnamed-chunk-9-1.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" width="700px" />
