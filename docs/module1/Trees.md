@@ -93,6 +93,7 @@ Conclusions
 
 Why are Random Forests are a Solid First Choice?
 ================================================
+- Ensemble Based
 - Handle boolean, categorical, numeric features with no scaling or factorization
 - No fussy hyperparameters (forest size  is commonly sqrt(#features))
 - Automatic feature selection (within reason)
@@ -100,12 +101,25 @@ Why are Random Forests are a Solid First Choice?
 - Resistant (somewhat) to overfitting
 - OOB error metric can substitute for CV
 
-
-
 What are Random Forest Drawbacks?
 =====================================================
 - Less interpretable than trees
 - Model size can become cumbersome
+
+Why are Ensembles Better?
+============================================
+right : 80%
+
+![Francis Galton](img/Francis_Galton_1850s.jpg)
+![Ploughing with Oxen](img/Ploughing_with_Oxen.jpg)
+***
+Sir Francis Galton
+------------------
+- Promoted Statistics and invented correlation
+- In 1906 visited a livestock fair and stumbled on contest
+- An ox was on display, villagers were invited to guess its weight
+- ~800 made guesses, but nobody got the right answer (1,198 pounds)
+- The average of the guesses came very close! (1,197 pounds)
 
 
 Looking into Iris
@@ -255,7 +269,7 @@ Example : Tweak one variable while holding training set fixed
 =======
 <img src="Trees-figure/unnamed-chunk-6-1.png" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" width="700px" />
 
-Decision Tree
+Decision Tree - rpart
 =======
 
 ```
@@ -332,3 +346,6 @@ Partition Tree
 ==============
 A nice option if you have exactly 2 input dimensions
 <img src="Trees-figure/unnamed-chunk-9-1.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" width="700px" />
+
+
+
