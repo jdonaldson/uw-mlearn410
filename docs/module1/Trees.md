@@ -2,13 +2,14 @@ Applied Machine Learning 410
 ========================================================
 css: ../../assets/style/uw.css
 author: Justin Donaldson
-date: April - Some time around then I guess
+date: March-03-2017
 autosize: true
 
 Decision Trees and Random Forests
 ---------------------------------
 (AKA: divide and concur)
-
+ 
+ 
 
 
 
@@ -209,12 +210,12 @@ Call:
                      Number of trees: 500
 No. of variables tried at each split: 2
 
-        OOB estimate of  error rate: 4%
+        OOB estimate of  error rate: 5.33%
 Confusion matrix:
            setosa versicolor virginica class.error
 setosa         50          0         0        0.00
 versicolor      0         47         3        0.06
-virginica       0          3        47        0.06
+virginica       0          5        45        0.10
 ```
 
 Looking into Iris
@@ -227,21 +228,17 @@ getTree(iris.rf,k=23)
 
 ```
    left daughter right daughter split var split point status prediction
-1              2              3         3        2.45      1          0
+1              2              3         3        2.60      1          0
 2              0              0         0        0.00     -1          1
-3              4              5         3        4.80      1          0
-4              6              7         4        1.65      1          0
-5              8              9         3        5.15      1          0
+3              4              5         4        1.75      1          0
+4              6              7         3        5.35      1          0
+5              8              9         3        4.85      1          0
 6              0              0         0        0.00     -1          2
 7              0              0         0        0.00     -1          3
-8             10             11         4        1.75      1          0
+8             10             11         2        3.00      1          0
 9              0              0         0        0.00     -1          3
-10            12             13         2        2.45      1          0
-11             0              0         0        0.00     -1          3
-12             0              0         0        0.00     -1          3
-13            14             15         4        1.55      1          0
-14             0              0         0        0.00     -1          3
-15             0              0         0        0.00     -1          2
+10             0              0         0        0.00     -1          3
+11             0              0         0        0.00     -1          2
 ```
 Unfortunately, it's very difficult to inspect individual trees, or form an understanding of how they reach consensus on a given case.
 
@@ -249,103 +246,49 @@ Example : Tweak one variable while holding training set fixed
 =======
 
 ```r
-require(reshape2)
-dummy = iris
-var = "Petal.Length"
-idx = seq(min(dummy['var']), max(dummy['var']), by=.01)
-probs = sapply(idx, function(x) {
-  dummy[var] = x; 
-  apply(predict(iris.rf, dummy, type='prob'),2,mean)
-})
-dat = as.data.frame(t(apply(probs,2,unlist)))
-dat[var] = idx;
-dat = melt(dat, id.vars=var)
-colnames(dat)[colnames(dat) == 'value'] <- 'probability'
-ggplot(dat, aes_string(x=var, y='probability', color='variable')) + 
-  geom_line(alpha=.8, aes(size=2)) + guides(size=F)
+irisTweak = function(var){ 
+  dummy = iris
+  idx = seq(min(dummy[var]), max(dummy[var]), by=.01)
+  probs = sapply(idx, function(x) {
+    dummy[var] = x; 
+    apply(predict(iris.rf, dummy, type='prob'),2,mean)
+  })
+  dat = as.data.frame(t(apply(probs,2,unlist)))
+  dat[var] = idx;
+  dat = melt(dat, id.vars=var)
+  colnames(dat)[colnames(dat) == 'value'] <- 'probability'
+  ggplot(dat, aes_string(x=var, y='probability', color='variable')) + 
+    geom_line(alpha=.8, aes(size=2)) + guides(size=F)
+} 
+# E.g.
+# irisTweak("Petal.Length") 
 ```
 
-Example : Tweak one variable while holding training set fixed
+Example : Tweak Petal.Length while holding training set fixed
 =======
 <img src="Trees-figure/unnamed-chunk-6-1.png" title="plot of chunk unnamed-chunk-6" alt="plot of chunk unnamed-chunk-6" width="700px" />
+
+Example : Tweak Petal.Width while holding training set fixed
+=======
+<img src="Trees-figure/unnamed-chunk-7-1.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" width="700px" />
+
+Example : Tweak Sepal.Length while holding training set fixed
+=======
+<img src="Trees-figure/unnamed-chunk-8-1.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" width="700px" />
+
+Example : Tweak Sepal.Width while holding training set fixed
+=======
+<img src="Trees-figure/unnamed-chunk-9-1.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" width="700px" />
 
 Decision Tree - rpart
 =======
 
+
+
+
+
+
+
 ```
-Call:
-rpart(formula = Species ~ ., data = iris)
-  n= 150 
-
-    CP nsplit rel error xerror       xstd
-1 0.50      0      1.00   1.23 0.04705316
-2 0.44      1      0.50   0.70 0.06110101
-3 0.01      2      0.06   0.08 0.02751969
-
-Variable importance
- Petal.Width Petal.Length Sepal.Length  Sepal.Width 
-          34           31           21           14 
-
-Node number 1: 150 observations,    complexity param=0.5
-  predicted class=setosa      expected loss=0.6666667  P(node) =1
-    class counts:    50    50    50
-   probabilities: 0.333 0.333 0.333 
-  left son=2 (50 obs) right son=3 (100 obs)
-  Primary splits:
-      Petal.Length < 2.45 to the left,  improve=50.00000, (0 missing)
-      Petal.Width  < 0.8  to the left,  improve=50.00000, (0 missing)
-      Sepal.Length < 5.45 to the left,  improve=34.16405, (0 missing)
-      Sepal.Width  < 3.35 to the right, improve=19.03851, (0 missing)
-  Surrogate splits:
-      Petal.Width  < 0.8  to the left,  agree=1.000, adj=1.00, (0 split)
-      Sepal.Length < 5.45 to the left,  agree=0.920, adj=0.76, (0 split)
-      Sepal.Width  < 3.35 to the right, agree=0.833, adj=0.50, (0 split)
-
-Node number 2: 50 observations
-  predicted class=setosa      expected loss=0  P(node) =0.3333333
-    class counts:    50     0     0
-   probabilities: 1.000 0.000 0.000 
-
-Node number 3: 100 observations,    complexity param=0.44
-  predicted class=versicolor  expected loss=0.5  P(node) =0.6666667
-    class counts:     0    50    50
-   probabilities: 0.000 0.500 0.500 
-  left son=6 (54 obs) right son=7 (46 obs)
-  Primary splits:
-      Petal.Width  < 1.75 to the left,  improve=38.969400, (0 missing)
-      Petal.Length < 4.75 to the left,  improve=37.353540, (0 missing)
-      Sepal.Length < 6.15 to the left,  improve=10.686870, (0 missing)
-      Sepal.Width  < 2.45 to the left,  improve= 3.555556, (0 missing)
-  Surrogate splits:
-      Petal.Length < 4.75 to the left,  agree=0.91, adj=0.804, (0 split)
-      Sepal.Length < 6.15 to the left,  agree=0.73, adj=0.413, (0 split)
-      Sepal.Width  < 2.95 to the left,  agree=0.67, adj=0.283, (0 split)
-
-Node number 6: 54 observations
-  predicted class=versicolor  expected loss=0.09259259  P(node) =0.36
-    class counts:     0    49     5
-   probabilities: 0.000 0.907 0.093 
-
-Node number 7: 46 observations
-  predicted class=virginica   expected loss=0.02173913  P(node) =0.3066667
-    class counts:     0     1    45
-   probabilities: 0.000 0.022 0.978 
+Error in eval(expr, envir, enclos) : could not find function "rpart"
 ```
-
-Decision Tree
-=======
-
-```r
-plot(m)
-text(m)
-```
-
-<img src="Trees-figure/unnamed-chunk-8-1.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" width="700px" />
-
-Partition Tree
-==============
-A nice option if you have exactly 2 input dimensions
-<img src="Trees-figure/unnamed-chunk-9-1.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" width="700px" />
-
-
-
