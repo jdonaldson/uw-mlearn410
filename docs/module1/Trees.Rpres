@@ -167,95 +167,69 @@ Looking into Iris
 # get tree #23 from the model
 getTree(iris.rf,k=23)
 ```
-Unfortunately, it's very difficult to inspect individual trees, or form and understanding of how they reach consensus on a given case.
+Unfortunately, it's very difficult to inspect individual trees, or form an understanding of how they reach consensus on a given case.
 
 Example : Tweak one variable while holding training set fixed
 =======
 ```{r,eval=FALSE}
-dummy = iris
-idx = seq(min(dummy$Sepal.Length), max(dummy$Sepal.Length), by=.01)
-probs = sapply(idx, function(x) {
-  dummy$Sepal.Length = x; 
-  ret = as.list(apply(predict(iris.rf, dummy, type='prob'),2,mean))
-  ret$idx = x
-  ret
-})
-dat = data.frame(apply(t(probs), 2, unlist))
 require(reshape2)
-dat = melt(dat, id.vars="idx")
-ggplot(dat, aes(x=idx,y=value,color=variable)) + geom_line(alpha=.7, aes(size=2)) + guides(size=F)
+dummy = iris
+var = "Petal.Length"
+idx = seq(min(dummy['var']), max(dummy['var']), by=.01)
+probs = sapply(idx, function(x) {
+  dummy[var] = x; 
+  apply(predict(iris.rf, dummy, type='prob'),2,mean)
+})
+dat = as.data.frame(t(apply(probs,2,unlist)))
+dat[var] = idx;
+dat = melt(dat, id.vars=var)
+colnames(dat)[colnames(dat) == 'value'] <- 'probability'
+ggplot(dat, aes_string(x=var, y='probability', color='variable')) + 
+  geom_line(alpha=.8, aes(size=2)) + guides(size=F)
 
 ```
 
 Example : Tweak one variable while holding training set fixed
 =======
 ```{r,echo=FALSE}
-dummy = iris
-idx = seq(min(dummy$Sepal.Length), max(dummy$Sepal.Length), by=.01)
-probs = sapply(idx, function(x) {
-  dummy$Sepal.Length = x; 
-  ret = as.list(apply(predict(iris.rf, dummy, type='prob'),2,mean))
-  ret$idx = x
-  ret
-})
-dat = data.frame(apply(t(probs), 2, unlist))
 require(reshape2)
-dat = melt(dat, id.vars="idx")
-ggplot(dat, aes(x=idx,y=value,color=variable)) + geom_line(alpha=.7, aes(size=2)) + guides(size=F)
+dummy = iris
+var = "Petal.Length"
+idx = seq(min(dummy[var]), max(dummy[var]), by=.01)
+probs = sapply(idx, function(x) {
+  dummy[var] = x; 
+  apply(predict(iris.rf, dummy, type='prob'),2,mean)
+})
+dat = as.data.frame(t(apply(probs,2,unlist)))
+dat[var] = idx;
+dat = melt(dat, id.vars=var)
+colnames(dat)[colnames(dat) == 'value'] <- 'class_probability'
+ggplot(dat, aes_string(x=var, y='class_probability', color='variable')) +  
+   geom_line(alpha=.8, aes(size=2)) + guides(size=F)
 
 ```
 
+Decision Tree
+=======
+```{r, echo=FALSE}
+m = rpart(Species ~ ., data = iris)
+summary(m)
+```
 
-Example
+Decision Tree
 =======
 ```{r}
 plot(m)
-text(m, cex=2)
+text(m)
+
 ```
 
 Partition Tree
 ==============
 A nice option if you have exactly 2 input dimensions
-```{r}
-tree1 <- tree(Species ~ Sepal.Width + Petal.Width, data = iris)
-plot(iris$Petal.Width,iris$Sepal.Width,pch=19,col=as.numeric(iris$Species))
+```{r, echo=FALSE}
+tree1 <- tree(Species ~ Petal.Length + Petal.Width, data = iris)
+plot(iris$Petal.Length,iris$Petal.Width,pch=19,col=as.numeric(iris$Species))
 partition.tree(tree1,label="Species",add=TRUE)
 legend(1.75,4.5,legend=unique(iris$Species),col=unique(as.numeric(iris$Species)),pch=19)
 ```
-
-
-Example
-=======
-```{r}
-data(cpus, package="MASS")
-cpus.ltr <- tree(log10(perf) ~ syct+mmin+mmax+cach+chmin+chmax, cpus)
-snip.tree(cpus.ltr,2) # only show first two levels
-```
-
-
-
-First Slide
-========================================================
-
-For more details on authoring R presentations please visit <https://support.rstudio.com/hc/en-us/articles/200486468>.
-
-- Bullet 1
-- Bullet 2
-- Bullet 3
-
-Slide With Code
-========================================================
-
-```{r}
-summary(cars)
-
-```
-
-Slide With Plot
-========================================================
-
-```{r, echo=FALSE}
-plot(cars)
-```
-
-
