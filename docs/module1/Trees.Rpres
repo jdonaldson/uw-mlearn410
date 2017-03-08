@@ -15,13 +15,18 @@ Decision Trees and Random Forests
 ```{r setup, include=FALSE}
 opts_chunk$set(out.width='700px', dpi=200,cache=TRUE, fig.width=10, fig.height=8)
 options(width =1960)
-require(ggdendro)
-require(tree)
-require(ggplot2)
-require(GGally)
-require(randomForest)
-require(reshape2)
+local({r <- getOption("repos")
+       r["CRAN"] <- "http://cran.r-project.org" 
+       options(repos=r)
+})
+library(ggdendro)
+library(tree)
+library(ggplot2)
+library(GGally)
+library(randomForest)
+library(ggmosaic)
 ```
+
 
 
 A Random Forest
@@ -254,5 +259,102 @@ partition.tree(tree1,label="Species",add=TRUE)
 legend(1.75,4.5,legend=unique(iris$Species),col=unique(as.numeric(iris$Species)),pch=19)
 ```
 
+Deep Dive into Adult.csv
+=======================
+```{r}
+adult = read.csv("../../data/adult.csv", header=T)
+head(adult)
 
 
+```
+
+Deep Dive into Adult.csv
+=======================
+```{r}
+
+topn = function(d, top=25, otherlabel=NA) {
+    ret = d
+    ret[ret == ""] <-NA
+    topnames = names(head(sort(table(ret),d=T),top))
+    ret[!ret %in% topnames] <-NA
+    if (!is.na(otherlabel)){
+        ret[is.na(ret)] = otherlabel
+    }
+    factor(ret)
+}
+
+mosaic_feature = function(feature){
+  x = adult[[feature]]
+ if (is.numeric(x)){
+   hx = hist(x,plot=F)
+   x = hx$breaks[findInterval(x, hx$breaks)]
+ } else {
+   x = topn(x)
+ }
+ 
+ d = data.frame(class=adult$class, fnlwgt=adult$fnlwgt)
+ d[feature] = x
+ ggplot(d, aes(weight=fnlwgt, fill=factor(class))) +  
+   geom_mosaic(aes_string(x=paste0("product(class,", feature, ")"))) +
+   labs(title=paste(feature, "vs. class")) + 
+   theme(axis.text.x = element_text(size=20,angle = 45, hjust = 1))
+}
+mosaic_feature("sex")
+
+```
+
+Deep Dive into Adult.csv
+=======================
+```{r, echo=FALSE}
+mosaic_feature("sex")
+```
+
+Deep Dive into Adult.csv
+=======================
+```{r, echo=FALSE}
+mosaic_feature("age")
+
+```
+
+Deep Dive into Adult.csv
+=======================
+```{r, echo=FALSE}
+mosaic_feature("race")
+
+```
+
+Deep Dive into Adult.csv
+=======================
+```{r, echo=FALSE}
+mosaic_feature("marital.status")
+
+```
+
+Deep Dive into Adult.csv
+=======================
+```{r, echo=FALSE}
+mosaic_feature("education")
+
+```
+
+Deep Dive into Adult.csv
+=======================
+```{r, echo=FALSE}
+mosaic_feature("native.country")
+
+```
+
+
+Deep Dive into Adult.csv
+=======================
+```{r, echo=FALSE}
+mosaic_feature("workclass")
+
+```
+
+Deep Dive into Adult.csv
+=======================
+```{r, echo=FALSE}
+mosaic_feature("occupation")
+
+```
