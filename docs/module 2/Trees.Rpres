@@ -1,0 +1,277 @@
+Applied Machine Learning 410
+========================================================
+css: ../../assets/style/uw.css
+author: Justin Donaldson
+date: `r format(Sys.Date(), format="%B-%d-%Y")`
+autosize: true
+
+Decision Trees and Random Forests
+---------------------------------
+(AKA: divide and concur)
+ 
+ 
+
+
+Setup
+=====
+```{r setup}
+opts_chunk$set(out.width='700px', dpi=200,cache=TRUE, fig.width=10, fig.height=8 )
+options(width =1960)
+local({r <- getOption("repos")
+       r["CRAN"] <- "http://cran.r-project.org" 
+       options(repos=r)
+})
+library(ggdendro)
+library(tree)
+library(ggplot2)
+library(GGally)
+library(randomForest)
+library(ggmosaic)
+library(reshape2)
+library(rpart)
+```
+
+
+
+A Random Forest
+===================
+(Question - Is it Fall Yet?)
+---------------
+
+<a title="Daniel Case at the English language Wikipedia [GFDL (http://www.gnu.org/copyleft/fdl.html) or CC-BY-SA-3.0 (http://creativecommons.org/licenses/by-sa/3.0/)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3ABlack_Rock_Forest_view_from_NE.jpg"><img width="1024" alt="Black Rock Forest view from NE" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Black_Rock_Forest_view_from_NE.jpg/1024px-Black_Rock_Forest_view_from_NE.jpg"/></a>
+
+Black Rock Forest view from NE - Daniel Case
+
+Overview
+========
+type:sub-section
+
+* Why Random Forests?
+* Why Decision Trees?
+* Recap of Decision Trees
+* Recap of Random Forests
+
+Why Random Forests?
+===================
+type: section
+
+
+Why Random Forests?
+===================
+![An Empirical Evaluation of Supervised Learning in High Dimensions](img/Caruana.png)
+***
+Comparison of:
+-------------
+
+- Support Vector Machines
+- Artificial Neural Networks
+- Logistic Regression
+- Naive Bayes
+- K-Nearest Neighbors
+- Random Forests
+- Bagged Decision Trees
+- Boosted Stumps
+- Boosted Trees
+- Perceptrons
+
+Why Random Forests?
+===================
+Evaluation Data Sets:
+--------------------
+- Sturn, Calam : Ornithology
+- Digits : MNIST handwritten
+- Tis : mRNA translation sites
+- Cryst : Protein Crystallography
+- KDD98 : Donation Prediction
+- R-S : Usenet real/simulation
+- Cite : Paper Authorship
+- Dse : Newswire
+- Spam : TREC spam corpora
+- Imdb : link prediction
+
+***
+
+Error Metrics:
+-------------
+- AUC : Area under curve
+- ACC : Accuracy
+- RMS : Root Mean Squared Error
+
+
+Why are Random Forests useful?
+==============================
+Conclusions
+-----------
+- Boosted decision trees performed best when < 4000 dimensions
+- Random forests performed best when > 4000
+  - Easy to parellize
+  - Scales efficiently to high dimensions
+  - Performs consistently well on all three metrics
+- Non-linear methods do well when model complexity is constrained
+- Worst performing models : Naive Bayes and Perceptrons
+
+Why are Random Forests are a Solid First Choice?
+================================================
+- Ensemble Based
+- Handle boolean, categorical, numeric features with no scaling or factorization
+- No fussy hyperparameters (forest size  is commonly sqrt(#features))
+- Automatic feature selection (within reason)
+- Quick to train, parallelizable
+- Resistant (somewhat) to overfitting
+- OOB error metric can substitute for CV
+
+What are Random Forest Drawbacks?
+=====================================================
+- Less interpretable than trees
+- Model size can become cumbersome
+
+Why are Ensembles Better?
+============================================
+right : 80%
+
+![Francis Galton](img/Francis_Galton_1850s.jpg)
+![Ploughing with Oxen](img/Ploughing_with_Oxen.jpg)
+***
+Sir Francis Galton
+------------------
+- Promoted Statistics and invented correlation
+- In 1906 visited a livestock fair and stumbled on contest
+- An ox was on display, villagers were invited to guess its weight
+- ~800 made guesses, but nobody got the right answer (1,198 pounds)
+- The average of the guesses came very close! (1,197 pounds)
+
+
+Looking into Iris
+==============
+
+<a title="By Frank Mayfield [CC BY-SA 2.0 (http://creativecommons.org/licenses/by-sa/2.0)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3AIris_virginica.jpg"><img width="256" alt="Iris virginica" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Iris_virginica.jpg/256px-Iris_virginica.jpg"/></a>
+
+Iris Virginica 
+
+*by Frank Mayfield*
+
+***
+<a title="By No machine-readable author provided. Dlanglois assumed (based on copyright claims). [GFDL (http://www.gnu.org/copyleft/fdl.html), CC-BY-SA-3.0 (http://creativecommons.org/licenses/by-sa/3.0/) or CC BY-SA 2.5 (http://creativecommons.org/licenses/by-sa/2.5)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3AIris_versicolor_3.jpg"><img width="256" alt="Iris versicolor 3" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Iris_versicolor_3.jpg/256px-Iris_versicolor_3.jpg"/></a>
+
+Iris Versicolor 
+
+*by Danielle Langlois*
+
+Looking into Iris
+=======
+
+```{r}
+head(iris, n=30)
+```
+
+
+Looking into Iris
+=======
+incremental : True
+left : 70%
+```{r, echo=FALSE }
+ggpairs(data=iris, mapping = ggplot2::aes(color = Species))
+```
+***
+Leading Questions...
+--------------------
+* Petal dimensions important?
+* Versicolor and Virginica separable?
+
+Looking into Iris
+===
+```{r}
+data(iris)
+iris.rf <- randomForest(Species ~ ., iris, importance=T)
+iris.rf
+```
+
+Looking into Iris
+===
+```{r}
+# get tree #23 from the model
+getTree(iris.rf,k=23)
+```
+Unfortunately, it's very difficult to inspect individual trees, or form an understanding of how they reach consensus on a given case.
+
+Example : Tweak one variable while holding training set fixed
+=======
+```{r}
+irisTweak = function(var){ 
+  dummy = iris
+  idx = seq(min(dummy[var]), max(dummy[var]), by=.01)
+  probs = sapply(idx, function(x) {
+    dummy[var] = x; 
+    apply(predict(iris.rf, dummy, type='prob'),2,mean)
+  })
+  dat = as.data.frame(t(apply(probs,2,unlist)))
+  dat[var] = idx;
+  dat = melt(dat, id.vars=var)
+  colnames(dat)[colnames(dat) == 'value'] <- 'probability'
+  ggplot(dat, aes_string(x=var, y='probability', color='variable')) + 
+    geom_line(alpha=.8, aes(size=2)) + guides(size=F)
+} 
+# E.g.
+#irisTweak("Petal.Length") 
+```
+
+Example : Tweak Petal.Length while holding training set fixed
+=======
+```{r,echo=FALSE}
+irisTweak("Petal.Length")
+
+```
+
+Example : Tweak Petal.Width while holding training set fixed
+=======
+```{r,echo=FALSE}
+irisTweak("Petal.Width")
+```
+
+Example : Tweak Sepal.Length while holding training set fixed
+=======
+```{r,echo=FALSE}
+irisTweak("Sepal.Length")
+```
+
+Example : Tweak Sepal.Width while holding training set fixed
+=======
+```{r,echo=FALSE}
+irisTweak("Sepal.Width")
+```
+
+Decision Tree - rpart
+=======
+```{r, echo=FALSE}
+m = rpart(Species ~ ., data = iris)
+summary(m)
+```
+
+Decision Tree
+=======
+```{r}
+plot(m)
+text(m)
+```
+
+Partition Tree
+==============
+A nice option if you have exactly 2 input dimensions
+```{r, echo=FALSE}
+tree1 <- tree(Species ~ Petal.Length + Petal.Width, data = iris)
+plot(iris$Petal.Length,iris$Petal.Width,pch=19,col=as.numeric(iris$Species))
+partition.tree(tree1,label="Species",add=TRUE)
+legend(1.75,4.5,legend=unique(iris$Species),col=unique(as.numeric(iris$Species)),pch=19)
+```
+
+Deep Dive into Adult.csv
+=======================
+```{r}
+adult = read.csv("../../data/adult.csv", header=T, stringsAsFactors=T)
+head(adult[names(adult)[1:5]])
+head(adult[names(adult)[6:10]])
+#continued...
+```
+
+```{r child="sub/AdultDeepDive.RPres"}
+

@@ -1,0 +1,158 @@
+Deep Dive into Adult.csv
+=======================
+```{r}
+#...continued
+head(adult[names(adult)[11:15]])
+```
+
+
+Deep Dive into Adult.csv
+=======================
+the "topn" function : filter out all but the top "n" occuring labels (the rest get NA)
+```{r}
+topn = function(d, top=25, otherlabel=NA) {
+    ret = d
+    ret[ret == ""] <-NA
+    topnames = names(head(sort(table(ret),d=T),top))
+    ret[!ret %in% topnames] <-NA
+    if (!is.na(otherlabel)){
+        ret[is.na(ret)] = otherlabel
+    }
+    factor(ret)
+}
+label_data = c('foo','bar','foo','bar', 'baz', 'boo', 'bing')
+topn(label_data, top=2)
+```
+
+
+Deep Dive into Adult.csv
+=======================
+```{r}
+
+filter_feature=function(x, top=25){
+ if (is.numeric(x)){ 
+   # If numeric, calculate histogram breaks
+   hx = hist(x,plot=F)
+   x = hx$breaks[findInterval(x, hx$breaks)]
+ } else { 
+   # Otherwise, capture only top n (25) labels
+   x = topn(x,top)
+ }
+ x 
+}
+num_data = rnorm(5)
+num_data
+filter_feature(num_data)
+filter_feature(label_data,top=2)
+
+```
+
+Deep Dive into Adult.csv
+=======================
+```{r}
+mosaic_feature = function(feature){
+ x = filter_feature(adult[[feature]])
+ d = data.frame(class=adult$class, fnlwgt=adult$fnlwgt)
+ d[feature] = x
+ ggplot(d, aes(weight=fnlwgt, fill=factor(class))) +  
+   geom_mosaic(aes_string(x=paste0("product(class,", feature, ")"))) +
+   labs(title=paste(feature, "vs. class")) + 
+   theme(axis.text.x = element_text(size=20,angle = 45, hjust = 1))
+}
+mosaic_feature("age")
+```
+
+Deep Dive into Adult.csv
+=======================
+```{r, echo=FALSE}
+mosaic_feature("sex")
+```
+
+Deep Dive into Adult.csv
+=======================
+```{r, echo=FALSE}
+mosaic_feature("age")
+
+```
+
+Deep Dive into Adult.csv
+=======================
+```{r, echo=FALSE}
+mosaic_feature("race")
+
+```
+
+Deep Dive into Adult.csv
+=======================
+```{r, echo=FALSE}
+mosaic_feature("marital.status")
+
+```
+
+Deep Dive into Adult.csv
+=======================
+```{r, echo=FALSE}
+mosaic_feature("education")
+
+```
+
+Deep Dive into Adult.csv
+=======================
+```{r, echo=FALSE}
+mosaic_feature("native.country")
+
+```
+
+
+Deep Dive into Adult.csv
+=======================
+```{r, echo=FALSE}
+mosaic_feature("workclass")
+
+```
+
+Deep Dive into Adult.csv
+=======================
+```{r, echo=FALSE}
+mosaic_feature("occupation")
+
+```
+
+
+
+Deep Dive into Adult.csv
+========================
+```{r}
+rf = randomForest(class ~ . , adult, importance=T)
+rf
+```
+
+Deep Dive into Adult.csv
+========================
+```{r}
+varImpPlot(rf)
+```
+
+Deep Dive into Adult.csv
+========================
+```{r}
+varImpPlot(rf)
+```
+
+
+Deep Dive into Adult.csv
+========================
+```{r}
+adult2 = adult
+adult2$capital.gain = NULL
+adult2$capital.loss = NULL
+adult2$fnlwgt = NULL
+rf = randomForest(class ~ . , adult2, importance=T)
+```
+
+
+Deep Dive into Adult.csv
+========================
+```{r}
+varImpPlot(rf)
+```
