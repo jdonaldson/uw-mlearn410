@@ -50,5 +50,6 @@
 .sub-section .reveal ul {
   color: #63717B;
 }
-}
+.small-equation .MathJax_Display{
+  font-size : 50%;
 }

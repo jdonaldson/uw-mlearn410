@@ -1,3 +1,14 @@
+
+
+Deep Dive into Adult.csv
+=======================
+```{r}
+adult = read.csv("../../data/adult.csv", header=T, stringsAsFactors=T)
+head(adult[names(adult)[1:5]])
+head(adult[names(adult)[6:10]])
+#continued...
+```
+
 Deep Dive into Adult.csv
 =======================
 ```{r}

@@ -29,6 +29,8 @@ library(randomForest)
 library(ggmosaic)
 library(reshape2)
 library(rpart)
+library(caret)
+library(e1071)
 ```
 
 
@@ -140,6 +142,13 @@ Sir Francis Galton
 - ~800 made guesses, but nobody got the right answer (1,198 pounds)
 - The average of the guesses came very close! (1,197 pounds)
 
+An Intro to Decision Trees
+========
+Quick interactive intro
+----
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Machine learning explained in interactive visualizations (part 1) <a href="http://t.co/g75lLydMH9">http://t.co/g75lLydMH9</a> <a href="https://twitter.com/hashtag/d3js?src=hash">#d3js</a> <a href="https://twitter.com/hashtag/machinelearning?src=hash">#machinelearning</a></p>&mdash; r2d3.us (@r2d3us) <a href="https://twitter.com/r2d3us/status/625681063893864449">July 27, 2015</a></blockquote>
+<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
 
 Looking into Iris
 ==============
@@ -178,6 +187,142 @@ Leading Questions...
 * Petal dimensions important?
 * Versicolor and Virginica separable?
 
+Decision Tree - rpart
+=======
+```{r, echo=FALSE}
+  m = train(Species ~ ., data=iris, method="rpart") 
+  summary(m)
+```
+
+Decision Tree
+=======
+```{r}
+plot(m$finalModel)
+text(m$finalModel)
+```
+
+Decision Tree
+=======
+```{r}
+plot(varImp(m)) 
+```
+***
+Luckily, we can get a measure of the *importance* of each field according to the model.
+- importance can be defined a number of different ways :
+  - Reduction in MSE (used in rpart)
+  - Accuracy
+  - Gini metric
+- importance does *not* imply positive or negative correlation
+
+Loss/Split Metrics
+=====
+type : sub-section
+
+
+
+Gini impurity 
+====
+$$
+G = \sum^{n_c}_{i=1}p_i(1-p_i)
+$$
+- How often a randomly chosen element would be labeled *incorrectly* if it were labeled *randomly* according to current label distribution
+- $n_c$: number of classes
+- $p_i$: ratio of the class
+
+Information gain  
+====
+type : small-equation
+$$
+IG(Ex,a)=H(Ex) -\sum_{v\in values(a)} \left(\frac{|\{x\in Ex|value(x,a)=v\}|}{|Ex|} \cdot H(\{x\in Ex|value(x,a)=v\})\right)
+$$
+or
+$$
+IG(T,a) = H(T) - H(T|a)
+$$
+- $H$ : entropy
+- $E_x$ : set of all attributes
+- $values(a)$ : set of all possible values for attribute
+- In summary : if we hold one attibute to $a$, how does this change the *information entropy*?
+  - Also, what the heck is *information entropy*?
+  
+Information Entropy
+====
+$$
+H(X) = \sum_{i=1}^n {\mathrm{P}(x_i)\,\mathrm{I}(x_i)} = -\sum_{i=1}^n {\mathrm{P}(x_i) \log_b \mathrm{P}(x_i)}
+$$
+- $X$ : discrete random variable with ${x_1, ..., x_n}$
+- $P$ : probability mass function  :  $f_X(x) = \Pr(X = x) = \Pr(\{s \in S: X(s) = x\}$
+  - all values are non-negative and sum to 1
+- $I(X)$ : Information content of $X$
+- $b$ : logarithm base (usually 2 - gain expressed in bits)
+
+Information Entropy
+====
+```{r}
+eta = function(h){
+  t = 1-h
+  - ((h * log2(h)) + (t * log2(t)))
+}
+```
+- information is at maximum when entropy (eta) at maximum
+- log scaling (by log 2) gives *unit* on a fair coin flip (i.e. think in bits)
+
+***
+```{r}
+# odds of flipping heads
+heads = (0:10)/10
+heads
+plot(heads,eta(heads), type='l')
+```
+
+Information Entropy
+====
+Splitting algorithm seeks *minimal entropy* splits
+- each branch should have biased (homogeneous) likelihoods for certain classes
+- maximizing on information gain at each split point ensures tree depth is minimal
+
+Information gain  
+====
+- *Overemphasizes fields with large numbers of labels* - Why?
+  - Fix this by taking "top n" labels (which can reduce accuracy)
+  - Fix this by taking *information gain ratio*, which requires normalizing by *intrinsic value*
+
+
+Intrinsic value
+====
+type : small-equation
+$$
+IV(Ex,a)= -\sum_{v\in values(a)} \frac{|\{x\in Ex|value(x,a)=v\}|}{|Ex|} \cdot \log_2\left(\frac{|\{x\in Ex|value(x,a)=v\}|}{|Ex|}\right)
+$$
+- the denomintor in Information gain ratio 
+- establish a value 
+
+
+Variance reduction
+====
+type : small-equation
+What if we want to handle *regression* trees?
+----
+$$
+I_{V}(N) = \frac{1}{|S|^2}\sum_{i\in S} \sum_{j\in S} \frac{1}{2}(x_i - x_j)^2 - \left(\frac{1}{|S_t|^2}\sum_{i\in S_t} \sum_{j\in S_t} \frac{1}{2}(x_i - x_j)^2 + \frac{1}{|S_f|^2}\sum_{i\in S_f} \sum_{j\in S_f} \frac{1}{2}(x_i - x_j)^2\right)
+$$
+- $S,S_t,S_f$ : set of presplit sample indices
+- Minimize the mean squared error of the two branches with a given split
+
+Misc Tree Methods
+======
+type : sub-section
+
+Partition Tree
+==============
+A nice option if you have exactly 2 input dimensions
+```{r, echo=FALSE}
+tree1 <- tree(Species ~ Petal.Length + Petal.Width, data = iris)
+plot(iris$Petal.Length,iris$Petal.Width,pch=19,col=as.numeric(iris$Species))
+partition.tree(tree1,label="Species",add=TRUE)
+legend(1.75,4.5,legend=unique(iris$Species),col=unique(as.numeric(iris$Species)),pch=19)
+```
+
 Looking into Iris
 ===
 ```{r}
@@ -193,6 +338,15 @@ Looking into Iris
 getTree(iris.rf,k=23)
 ```
 Unfortunately, it's very difficult to inspect individual trees, or form an understanding of how they reach consensus on a given case.
+
+Looking into Iris
+===
+```{r}
+varImpPlot(iris.rf)
+```
+***
+
+
 
 Example : Tweak one variable while holding training set fixed
 =======
@@ -240,38 +394,6 @@ Example : Tweak Sepal.Width while holding training set fixed
 irisTweak("Sepal.Width")
 ```
 
-Decision Tree - rpart
-=======
-```{r, echo=FALSE}
-m = rpart(Species ~ ., data = iris)
-summary(m)
-```
 
-Decision Tree
-=======
-```{r}
-plot(m)
-text(m)
-```
-
-Partition Tree
-==============
-A nice option if you have exactly 2 input dimensions
-```{r, echo=FALSE}
-tree1 <- tree(Species ~ Petal.Length + Petal.Width, data = iris)
-plot(iris$Petal.Length,iris$Petal.Width,pch=19,col=as.numeric(iris$Species))
-partition.tree(tree1,label="Species",add=TRUE)
-legend(1.75,4.5,legend=unique(iris$Species),col=unique(as.numeric(iris$Species)),pch=19)
-```
-
-Deep Dive into Adult.csv
-=======================
-```{r}
-adult = read.csv("../../data/adult.csv", header=T, stringsAsFactors=T)
-head(adult[names(adult)[1:5]])
-head(adult[names(adult)[6:10]])
-#continued...
-```
-
-```{r child="sub/AdultDeepDive.RPres"}
+- ```{r child="sub/AdultDeepDive.RPres"}
 
