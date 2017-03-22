@@ -491,12 +491,366 @@ Now that we've recapped the basics of trees, time to go back into forests.
 
 
 
--```{r child="sub/AdultDeepDive.Rpres"}
+Iris Deep Dive
+============
+type : sub-section
+Let's use Iris as a way of showing various Forest-based modeling/analysis techniques
+
+```r
+library(randomForest)
+```
+
+
+Looking into Iris
+===
+
+```r
+data(iris)
+iris.rf <- randomForest(Species ~ ., iris, importance=T)
+iris.rf
+```
 
 ```
--```{r child="sub/IrisDeepDive.RPres"}
+
+Call:
+ randomForest(formula = Species ~ ., data = iris, importance = T) 
+               Type of random forest: classification
+                     Number of trees: 500
+No. of variables tried at each split: 2
+
+        OOB estimate of  error rate: 4.67%
+Confusion matrix:
+           setosa versicolor virginica class.error
+setosa         50          0         0        0.00
+versicolor      0         47         3        0.06
+virginica       0          4        46        0.08
+```
+
+Looking into Iris
+===
+
+```r
+# get tree #23 from the model
+getTree(iris.rf,k=23)
+```
 
 ```
+   left daughter right daughter split var split point status prediction
+1              2              3         4        0.80      1          0
+2              0              0         0        0.00     -1          1
+3              4              5         4        1.65      1          0
+4              6              7         1        7.00      1          0
+5              8              9         4        1.75      1          0
+6             10             11         4        1.35      1          0
+7              0              0         0        0.00     -1          3
+8             12             13         1        5.80      1          0
+9              0              0         0        0.00     -1          3
+10             0              0         0        0.00     -1          2
+11            14             15         1        6.35      1          0
+12             0              0         0        0.00     -1          3
+13             0              0         0        0.00     -1          2
+14            16             17         1        6.20      1          0
+15             0              0         0        0.00     -1          2
+16            18             19         1        5.95      1          0
+17             0              0         0        0.00     -1          3
+18             0              0         0        0.00     -1          2
+19            20             21         3        4.85      1          0
+20             0              0         0        0.00     -1          2
+21             0              0         0        0.00     -1          3
+```
+Unfortunately, it's very difficult to inspect individual trees, or form an understanding of how they reach consensus on a given case.
+
+Looking into Iris
+===
+
+```r
+varImpPlot(iris.rf)
+```
+
+<img src="Trees-figure/unnamed-chunk-16-1.png" title="plot of chunk unnamed-chunk-16" alt="plot of chunk unnamed-chunk-16" width="700px" />
+***
+
+
+
+Example : Tweak one variable while holding training set fixed
+=======
+
+```r
+irisTweak = function(var){ 
+  dummy = iris
+  idx = seq(min(dummy[var]), max(dummy[var]), by=.01)
+  probs = sapply(idx, function(x) {
+    dummy[var] = x; 
+    apply(predict(iris.rf, dummy, type='prob'),2,mean)
+  })
+  dat = as.data.frame(t(apply(probs,2,unlist)))
+  dat[var] = idx;
+  dat = melt(dat, id.vars=var)
+  colnames(dat)[colnames(dat) == 'value'] <- 'probability'
+  ggplot(dat, aes_string(x=var, y='probability', color='variable')) + 
+    geom_line(alpha=.8, aes(size=2)) + guides(size=F)
+} 
+# E.g.
+#irisTweak("Petal.Length") 
+```
+
+Example : Tweak Petal.Length while holding training set fixed
+=======
+<img src="Trees-figure/unnamed-chunk-18-1.png" title="plot of chunk unnamed-chunk-18" alt="plot of chunk unnamed-chunk-18" width="700px" />
+
+Example : Tweak Petal.Width while holding training set fixed
+=======
+<img src="Trees-figure/unnamed-chunk-19-1.png" title="plot of chunk unnamed-chunk-19" alt="plot of chunk unnamed-chunk-19" width="700px" />
+
+Example : Tweak Sepal.Length while holding training set fixed
+=======
+<img src="Trees-figure/unnamed-chunk-20-1.png" title="plot of chunk unnamed-chunk-20" alt="plot of chunk unnamed-chunk-20" width="700px" />
+
+Example : Tweak Sepal.Width while holding training set fixed
+=======
+<img src="Trees-figure/unnamed-chunk-21-1.png" title="plot of chunk unnamed-chunk-21" alt="plot of chunk unnamed-chunk-21" width="700px" />
+
+
+Deep Dive into Adult.csv
+=======================
+
+
+
+Deep Dive into Adult.csv
+=======================
+
+```r
+adult = read.csv("../../../data/adult.csv", header=T, stringsAsFactors=T,nrow=100)
+head(adult[names(adult)[1:5]])
+```
+
+```
+  age        workclass fnlwgt education education.num
+1  39        State-gov  77516 Bachelors            13
+2  50 Self-emp-not-inc  83311 Bachelors            13
+3  38          Private 215646   HS-grad             9
+4  53          Private 234721      11th             7
+5  28          Private 338409 Bachelors            13
+6  37          Private 284582   Masters            14
+```
+
+```r
+head(adult[names(adult)[6:10]])
+```
+
+```
+      marital.status        occupation  relationship  race    sex
+1      Never-married      Adm-clerical Not-in-family White   Male
+2 Married-civ-spouse   Exec-managerial       Husband White   Male
+3           Divorced Handlers-cleaners Not-in-family White   Male
+4 Married-civ-spouse Handlers-cleaners       Husband Black   Male
+5 Married-civ-spouse    Prof-specialty          Wife Black Female
+6 Married-civ-spouse   Exec-managerial          Wife White Female
+```
+
+```r
+#continued...
+```
+
+Deep Dive into Adult.csv
+=======================
+
+```r
+#...continued
+head(adult[names(adult)[11:15]])
+```
+
+```
+  capital.gain capital.loss hours.per.week native.country class
+1         2174            0             40  United-States <=50K
+2            0            0             13  United-States <=50K
+3            0            0             40  United-States <=50K
+4            0            0             40  United-States <=50K
+5            0            0             40           Cuba <=50K
+6            0            0             40  United-States <=50K
+```
+
+
+Deep Dive into Adult.csv
+=======================
+the "topn" function : filter out all but the top "n" occuring labels (the rest get NA)
+
+```r
+topn = function(d, top=25, otherlabel=NA) {
+    ret = d
+    ret[ret == ""] <-NA
+    topnames = names(head(sort(table(ret),d=T),top))
+    ret[!ret %in% topnames] <-NA
+    if (!is.na(otherlabel)){
+        ret[is.na(ret)] = otherlabel
+    }
+    factor(ret)
+}
+label_data = c('foo','bar','foo','bar', 'baz', 'boo', 'bing')
+topn(label_data, top=2)
+```
+
+```
+[1] foo  bar  foo  bar  <NA> <NA> <NA>
+Levels: bar foo
+```
+
+
+Deep Dive into Adult.csv
+=======================
+
+```r
+filter_feature=function(x, top=25){
+ if (is.numeric(x)){ 
+   # If numeric, calculate histogram breaks
+   hx = hist(x,plot=F)
+   x = hx$breaks[findInterval(x, hx$breaks)]
+ } else { 
+   # Otherwise, capture only top n (25) labels
+   x = topn(x,top)
+ }
+ x 
+}
+num_data = rnorm(5)
+num_data
+```
+
+```
+[1] -0.64939989 -1.20880321 -0.06368575 -0.18722478 -1.23102939
+```
+
+```r
+filter_feature(num_data)
+```
+
+```
+[1] -1.0 -1.5 -0.5 -0.5 -1.5
+```
+
+```r
+filter_feature(label_data,top=2)
+```
+
+```
+[1] foo  bar  foo  bar  <NA> <NA> <NA>
+Levels: bar foo
+```
+
+Deep Dive into Adult.csv
+=======================
+
+```r
+mosaic_feature = function(feature){
+ x = filter_feature(adult[[feature]])
+ d = data.frame(class=adult$class, fnlwgt=adult$fnlwgt)
+ d[feature] = x
+ ggplot(d, aes(weight=fnlwgt, fill=factor(class))) +  
+   geom_mosaic(aes_string(x=paste0("product(class,", feature, ")"))) +
+   labs(title=paste(feature, "vs. class")) + 
+   theme(axis.text.x = element_text(size=20,angle = 45, hjust = 1))
+}
+mosaic_feature("age")
+```
+
+<img src="Trees-figure/unnamed-chunk-27-1.png" title="plot of chunk unnamed-chunk-27" alt="plot of chunk unnamed-chunk-27" width="700px" />
+
+Deep Dive into Adult.csv
+=======================
+<img src="Trees-figure/unnamed-chunk-28-1.png" title="plot of chunk unnamed-chunk-28" alt="plot of chunk unnamed-chunk-28" width="700px" />
+
+Deep Dive into Adult.csv
+=======================
+<img src="Trees-figure/unnamed-chunk-29-1.png" title="plot of chunk unnamed-chunk-29" alt="plot of chunk unnamed-chunk-29" width="700px" />
+
+Deep Dive into Adult.csv
+=======================
+<img src="Trees-figure/unnamed-chunk-30-1.png" title="plot of chunk unnamed-chunk-30" alt="plot of chunk unnamed-chunk-30" width="700px" />
+
+Deep Dive into Adult.csv
+=======================
+<img src="Trees-figure/unnamed-chunk-31-1.png" title="plot of chunk unnamed-chunk-31" alt="plot of chunk unnamed-chunk-31" width="700px" />
+
+Deep Dive into Adult.csv
+=======================
+<img src="Trees-figure/unnamed-chunk-32-1.png" title="plot of chunk unnamed-chunk-32" alt="plot of chunk unnamed-chunk-32" width="700px" />
+
+Deep Dive into Adult.csv
+=======================
+<img src="Trees-figure/unnamed-chunk-33-1.png" title="plot of chunk unnamed-chunk-33" alt="plot of chunk unnamed-chunk-33" width="700px" />
+
+
+Deep Dive into Adult.csv
+=======================
+<img src="Trees-figure/unnamed-chunk-34-1.png" title="plot of chunk unnamed-chunk-34" alt="plot of chunk unnamed-chunk-34" width="700px" />
+
+Deep Dive into Adult.csv
+=======================
+<img src="Trees-figure/unnamed-chunk-35-1.png" title="plot of chunk unnamed-chunk-35" alt="plot of chunk unnamed-chunk-35" width="700px" />
+
+
+
+Deep Dive into Adult.csv
+========================
+
+```r
+rf = randomForest(class ~ . , adult, importance=T)
+rf
+```
+
+```
+
+Call:
+ randomForest(formula = class ~ ., data = adult, importance = T) 
+               Type of random forest: classification
+                     Number of trees: 500
+No. of variables tried at each split: 3
+
+        OOB estimate of  error rate: 19%
+Confusion matrix:
+      <=50K >50K class.error
+<=50K    71    4  0.05333333
+>50K     15   10  0.60000000
+```
+
+Deep Dive into Adult.csv
+========================
+
+```r
+varImpPlot(rf)
+```
+
+<img src="Trees-figure/unnamed-chunk-37-1.png" title="plot of chunk unnamed-chunk-37" alt="plot of chunk unnamed-chunk-37" width="700px" />
+
+Deep Dive into Adult.csv
+========================
+
+```r
+varImpPlot(rf)
+```
+
+<img src="Trees-figure/unnamed-chunk-38-1.png" title="plot of chunk unnamed-chunk-38" alt="plot of chunk unnamed-chunk-38" width="700px" />
+
+
+Deep Dive into Adult.csv
+========================
+
+```r
+adult2 = adult
+adult2$capital.gain = NULL
+adult2$capital.loss = NULL
+adult2$fnlwgt = NULL
+rf = randomForest(class ~ . , adult2, importance=T)
+```
+
+
+Deep Dive into Adult.csv
+========================
+
+```r
+varImpPlot(rf)
+```
+
+<img src="Trees-figure/unnamed-chunk-40-1.png" title="plot of chunk unnamed-chunk-40" alt="plot of chunk unnamed-chunk-40" width="700px" />
 
 
 Random Forest and Gradient Boosted Tree Comparison
@@ -580,9 +934,9 @@ bst <- xgboost(data = train$data,  objective = "binary:logistic", label = train$
 ```
 
 ```
-[16:28:34] amalgamation/../src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 6 extra nodes, 0 pruned nodes, max_depth=2
+[17:38:52] amalgamation/../src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 6 extra nodes, 0 pruned nodes, max_depth=2
 [1]	train-error:0.046522 
-[16:28:34] amalgamation/../src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 4 extra nodes, 0 pruned nodes, max_depth=2
+[17:38:52] amalgamation/../src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 4 extra nodes, 0 pruned nodes, max_depth=2
 [2]	train-error:0.022263 
 ```
 

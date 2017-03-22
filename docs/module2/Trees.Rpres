@@ -332,11 +332,11 @@ Now that we've recapped the basics of trees, time to go back into forests.
 
 
 
-
--```{r child="sub/AdultDeepDive.Rpres"}
+```{r child="sub/IrisDeepDive.RPres"}
 
 ```
--```{r child="sub/IrisDeepDive.RPres"}
+
+```{r child="sub/AdultDeepDive.Rpres"}
 
 ```
 
