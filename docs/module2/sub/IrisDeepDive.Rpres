@@ -1,0 +1,80 @@
+Iris Deep Dive
+============
+type : sub-section
+Let's use Iris as a way of showing various Forest-based modeling/analysis techniques
+```{r}
+library(randomForest)
+
+```
+
+
+Looking into Iris
+===
+```{r}
+data(iris)
+iris.rf <- randomForest(Species ~ ., iris, importance=T)
+iris.rf
+```
+
+Looking into Iris
+===
+```{r}
+# get tree #23 from the model
+getTree(iris.rf,k=23)
+```
+Unfortunately, it's very difficult to inspect individual trees, or form an understanding of how they reach consensus on a given case.
+
+Looking into Iris
+===
+```{r}
+varImpPlot(iris.rf)
+```
+***
+
+
+
+Example : Tweak one variable while holding training set fixed
+=======
+```{r}
+irisTweak = function(var){ 
+  dummy = iris
+  idx = seq(min(dummy[var]), max(dummy[var]), by=.01)
+  probs = sapply(idx, function(x) {
+    dummy[var] = x; 
+    apply(predict(iris.rf, dummy, type='prob'),2,mean)
+  })
+  dat = as.data.frame(t(apply(probs,2,unlist)))
+  dat[var] = idx;
+  dat = melt(dat, id.vars=var)
+  colnames(dat)[colnames(dat) == 'value'] <- 'probability'
+  ggplot(dat, aes_string(x=var, y='probability', color='variable')) + 
+    geom_line(alpha=.8, aes(size=2)) + guides(size=F)
+} 
+# E.g.
+#irisTweak("Petal.Length") 
+```
+
+Example : Tweak Petal.Length while holding training set fixed
+=======
+```{r,echo=FALSE}
+irisTweak("Petal.Length")
+
+```
+
+Example : Tweak Petal.Width while holding training set fixed
+=======
+```{r,echo=FALSE}
+irisTweak("Petal.Width")
+```
+
+Example : Tweak Sepal.Length while holding training set fixed
+=======
+```{r,echo=FALSE}
+irisTweak("Sepal.Length")
+```
+
+Example : Tweak Sepal.Width while holding training set fixed
+=======
+```{r,echo=FALSE}
+irisTweak("Sepal.Width")
+```

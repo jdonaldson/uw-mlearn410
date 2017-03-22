@@ -2,7 +2,7 @@ Applied Machine Learning 410
 ========================================================
 css: ../../assets/style/uw.css
 author: Justin Donaldson
-date: March-09-2017
+date: March-21-2017
 autosize: true
 
 Decision Trees and Random Forests
@@ -17,12 +17,12 @@ Setup
 
 ```r
 opts_chunk$set(out.width='700px', dpi=200,cache=TRUE, fig.width=10, fig.height=8 )
+
 options(width =1960)
 local({r <- getOption("repos")
        r["CRAN"] <- "http://cran.r-project.org" 
        options(repos=r)
 })
-library(ggdendro)
 library(tree)
 library(ggplot2)
 library(GGally)
@@ -101,7 +101,7 @@ Error Metrics:
 - RMS : Root Mean Squared Error
 
 
-Why are Random Forests useful?
+Why are Forests useful?
 ==============================
 Conclusions
 -----------
@@ -117,11 +117,12 @@ Why are Random Forests are a Solid First Choice?
 ================================================
 - Ensemble Based
 - Handle boolean, categorical, numeric features with no scaling or factorization
-- No fussy hyperparameters (forest size  is commonly sqrt(#features))
+- Few fussy hyperparameters (forest size  is commonly sqrt(#features))
 - Automatic feature selection (within reason)
 - Quick to train, parallelizable
 - Resistant (somewhat) to overfitting
-- OOB error metric can substitute for CV
+- OOB Random Forest error metric can substitute for CV
+  - Stochastic gradient boosted trees have OOB
 
 What are Random Forest Drawbacks?
 =====================================================
@@ -142,6 +143,7 @@ Sir Francis Galton
 - An ox was on display, villagers were invited to guess its weight
 - ~800 made guesses, but nobody got the right answer (1,198 pounds)
 - The average of the guesses came very close! (1,197 pounds)
+
 
 An Intro to Decision Trees
 ========
@@ -472,7 +474,7 @@ $$
 - $S,S_t,S_f$ : set of presplit sample indices
 - Minimize the mean squared error of the two branches with a given split
 
-Misc Tree Methods
+Further Tree Methods
 ======
 type : sub-section
 
@@ -481,113 +483,112 @@ Partition Tree
 A nice option if you have exactly 2 input dimensions
 <img src="Trees-figure/unnamed-chunk-8-1.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" width="700px" />
 
-Looking into Iris
-===
+Deep Dive into Forests
+==============
+type : sub-section
+Now that we've recapped the basics of trees, time to go back into forests.
+
+
+
+
+-```{r child="sub/AdultDeepDive.Rpres"}
+
+```
+-```{r child="sub/IrisDeepDive.RPres"}
+
+```
+
+
+Random Forest and Gradient Boosted Tree Comparison
+=====
+![slide1](img/forest/0001.png)
+
+Random Forest and Gradient Boosted Tree Comparison
+=====
+![slide1](img/forest/0002.png)
+
+Random Forest and Gradient Boosted Tree Comparison
+=====
+![slide1](img/forest/0003.png)
+
+Random Forest and Gradient Boosted Tree Comparison
+=====
+![slide1](img/forest/0004.png)
+
+Random Forest and Gradient Boosted Tree Comparison
+=====
+![slide1](img/forest/0005.png)
+
+Random Forest and Gradient Boosted Tree Comparison
+=====
+![slide1](img/forest/0006.png)
+
+
+
+Deep Dive into Agaricus with Gradient Boosted Trees
+=========
+Alternate title, would you eat this?
+--------
+<a title="By George Chernilevsky (Own work) [Public domain], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3AAgaricus_augustus_2011_G1.jpg"><img width="512" alt="Agaricus augustus 2011 G1" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Agaricus_augustus_2011_G1.jpg/512px-Agaricus_augustus_2011_G1.jpg"/></a>
+
+
+Agaricus Data
+========
 
 ```r
-data(iris)
-iris.rf <- randomForest(Species ~ ., iris, importance=T)
-iris.rf
+  require(xgboost)
+  data(agaricus.train)
+  data(agaricus.test)
+  train <- agaricus.train
+  test <- agaricus.test
+  dim(agaricus.train$data)
 ```
 
 ```
-
-Call:
- randomForest(formula = Species ~ ., data = iris, importance = T) 
-               Type of random forest: classification
-                     Number of trees: 500
-No. of variables tried at each split: 2
-
-        OOB estimate of  error rate: 4.67%
-Confusion matrix:
-           setosa versicolor virginica class.error
-setosa         50          0         0        0.00
-versicolor      0         47         3        0.06
-virginica       0          4        46        0.08
+[1] 6513  126
 ```
-
-Looking into Iris
-===
 
 ```r
-# get tree #23 from the model
-getTree(iris.rf,k=23)
+  head(cbind(as.matrix(agaricus.train$data)[,1:6], etc="...", label=agaricus.train$label))
 ```
 
 ```
-   left daughter right daughter split var split point status prediction
-1              2              3         1        5.55      1          0
-2              4              5         4        0.80      1          0
-3              6              7         3        4.75      1          0
-4              0              0         0        0.00     -1          1
-5              0              0         0        0.00     -1          2
-6              8              9         3        2.60      1          0
-7             10             11         2        2.95      1          0
-8              0              0         0        0.00     -1          1
-9              0              0         0        0.00     -1          2
-10             0              0         0        0.00     -1          3
-11            12             13         2        3.25      1          0
-12            14             15         4        1.75      1          0
-13             0              0         0        0.00     -1          3
-14             0              0         0        0.00     -1          2
-15            16             17         3        4.85      1          0
-16            18             19         2        3.10      1          0
-17             0              0         0        0.00     -1          3
-18             0              0         0        0.00     -1          3
-19             0              0         0        0.00     -1          2
+     cap-shape=bell cap-shape=conical cap-shape=convex cap-shape=flat cap-shape=knobbed cap-shape=sunken etc   label
+[1,] "0"            "0"               "1"              "0"            "0"               "0"              "..." "1"  
+[2,] "0"            "0"               "1"              "0"            "0"               "0"              "..." "0"  
+[3,] "1"            "0"               "0"              "0"            "0"               "0"              "..." "0"  
+[4,] "0"            "0"               "1"              "0"            "0"               "0"              "..." "1"  
+[5,] "0"            "0"               "1"              "0"            "0"               "0"              "..." "0"  
+[6,] "0"            "0"               "1"              "0"            "0"               "0"              "..." "0"  
 ```
-Unfortunately, it's very difficult to inspect individual trees, or form an understanding of how they reach consensus on a given case.
 
-Looking into Iris
-===
+
+
+Gradient Boosted Trees
+=========
+GBT models were some of the best performing classifications models in the original study.
+But, they carry some more parameters than forests :
+----------
+- objective = "binary:logistic" : Training a binary classifier
+- max_depth = 2 : The trees are shallow (atypically low)
+- nrounds = 2 : Two passes on the data (low)
+- eta = 1 : Control the learning rate (high)
+- verbose = 2 : Add more debug information on the tress (high)
 
 ```r
-varImpPlot(iris.rf)
+bst <- xgboost(data = train$data,  objective = "binary:logistic", label = train$label, max_depth = 2, nrounds = 2, eta = 1, verbose=2)
 ```
 
-<img src="Trees-figure/unnamed-chunk-11-1.png" title="plot of chunk unnamed-chunk-11" alt="plot of chunk unnamed-chunk-11" width="700px" />
-***
-
-
-
-Example : Tweak one variable while holding training set fixed
-=======
-
-```r
-irisTweak = function(var){ 
-  dummy = iris
-  idx = seq(min(dummy[var]), max(dummy[var]), by=.01)
-  probs = sapply(idx, function(x) {
-    dummy[var] = x; 
-    apply(predict(iris.rf, dummy, type='prob'),2,mean)
-  })
-  dat = as.data.frame(t(apply(probs,2,unlist)))
-  dat[var] = idx;
-  dat = melt(dat, id.vars=var)
-  colnames(dat)[colnames(dat) == 'value'] <- 'probability'
-  ggplot(dat, aes_string(x=var, y='probability', color='variable')) + 
-    geom_line(alpha=.8, aes(size=2)) + guides(size=F)
-} 
-# E.g.
-#irisTweak("Petal.Length") 
+```
+[16:28:34] amalgamation/../src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 6 extra nodes, 0 pruned nodes, max_depth=2
+[1]	train-error:0.046522 
+[16:28:34] amalgamation/../src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 4 extra nodes, 0 pruned nodes, max_depth=2
+[2]	train-error:0.022263 
 ```
 
-Example : Tweak Petal.Length while holding training set fixed
-=======
-<img src="Trees-figure/unnamed-chunk-13-1.png" title="plot of chunk unnamed-chunk-13" alt="plot of chunk unnamed-chunk-13" width="700px" />
-
-Example : Tweak Petal.Width while holding training set fixed
-=======
-<img src="Trees-figure/unnamed-chunk-14-1.png" title="plot of chunk unnamed-chunk-14" alt="plot of chunk unnamed-chunk-14" width="700px" />
-
-Example : Tweak Sepal.Length while holding training set fixed
-=======
-<img src="Trees-figure/unnamed-chunk-15-1.png" title="plot of chunk unnamed-chunk-15" alt="plot of chunk unnamed-chunk-15" width="700px" />
-
-Example : Tweak Sepal.Width while holding training set fixed
-=======
-<img src="Trees-figure/unnamed-chunk-16-1.png" title="plot of chunk unnamed-chunk-16" alt="plot of chunk unnamed-chunk-16" width="700px" />
 
 
-- ```{r child="sub/AdultDeepDive.RPres"}
+
+
+
 
