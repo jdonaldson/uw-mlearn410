@@ -569,7 +569,7 @@ Looking into Iris
 varImpPlot(iris.rf)
 ```
 
-<img src="Trees-figure/unnamed-chunk-14-1.png" title="plot of chunk unnamed-chunk-14" alt="plot of chunk unnamed-chunk-14" width="700px" />
+<img src="Trees-figure/unnamed-chunk-15-1.png" title="plot of chunk unnamed-chunk-15" alt="plot of chunk unnamed-chunk-15" width="700px" />
 ***
 
 
@@ -598,19 +598,19 @@ irisTweak = function(var){
 
 Example : Tweak Petal.Length while holding training set fixed
 =======
-<img src="Trees-figure/unnamed-chunk-16-1.png" title="plot of chunk unnamed-chunk-16" alt="plot of chunk unnamed-chunk-16" width="700px" />
+<img src="Trees-figure/unnamed-chunk-17-1.png" title="plot of chunk unnamed-chunk-17" alt="plot of chunk unnamed-chunk-17" width="700px" />
 
 Example : Tweak Petal.Width while holding training set fixed
 =======
-<img src="Trees-figure/unnamed-chunk-17-1.png" title="plot of chunk unnamed-chunk-17" alt="plot of chunk unnamed-chunk-17" width="700px" />
+<img src="Trees-figure/unnamed-chunk-18-1.png" title="plot of chunk unnamed-chunk-18" alt="plot of chunk unnamed-chunk-18" width="700px" />
 
 Example : Tweak Sepal.Length while holding training set fixed
 =======
-<img src="Trees-figure/unnamed-chunk-18-1.png" title="plot of chunk unnamed-chunk-18" alt="plot of chunk unnamed-chunk-18" width="700px" />
+<img src="Trees-figure/unnamed-chunk-19-1.png" title="plot of chunk unnamed-chunk-19" alt="plot of chunk unnamed-chunk-19" width="700px" />
 
 Example : Tweak Sepal.Width while holding training set fixed
 =======
-<img src="Trees-figure/unnamed-chunk-19-1.png" title="plot of chunk unnamed-chunk-19" alt="plot of chunk unnamed-chunk-19" width="700px" />
+<img src="Trees-figure/unnamed-chunk-20-1.png" title="plot of chunk unnamed-chunk-20" alt="plot of chunk unnamed-chunk-20" width="700px" />
 
 
 RF vs. GBT
@@ -713,9 +713,9 @@ bst <- xgboost(data = train$data,  objective = "binary:logistic", label = train$
 ```
 
 ```
-[15:02:42] amalgamation/../src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 6 extra nodes, 0 pruned nodes, max_depth=2
+[15:20:09] amalgamation/../src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 6 extra nodes, 0 pruned nodes, max_depth=2
 [1]	train-error:0.046522 
-[15:02:42] amalgamation/../src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 4 extra nodes, 0 pruned nodes, max_depth=2
+[15:20:09] amalgamation/../src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 4 extra nodes, 0 pruned nodes, max_depth=2
 [2]	train-error:0.022263 
 ```
 
@@ -728,7 +728,7 @@ Visualize
 xgb.plot.tree(feature_names = colnames(agaricus.train$data), model=bst)
 ```
 
-<img src="Trees-figure/unnamed-chunk-22-1.png" title="plot of chunk unnamed-chunk-22" alt="plot of chunk unnamed-chunk-22" width="700px" />
+<img src="Trees-figure/unnamed-chunk-23-1.png" title="plot of chunk unnamed-chunk-23" alt="plot of chunk unnamed-chunk-23" width="700px" />
 
 
 Gradient Boosted Trees
@@ -770,9 +770,247 @@ A fast cross-platform (python/R/C++) option for gradient boosted trees.
 
 
 
-#```{r child="sub/AdultDeepDive.Rpres"}
-#
-#```
+
+Deep Dive into Adult.csv
+=======================
+
+
+
+Deep Dive into Adult.csv
+=======================
+
+```r
+adult = read.csv("../../../data/adult.csv", header=T, stringsAsFactors=T,nrow=100)
+head(adult[names(adult)[1:5]])
+```
+
+```
+  age        workclass fnlwgt education education.num
+1  39        State-gov  77516 Bachelors            13
+2  50 Self-emp-not-inc  83311 Bachelors            13
+3  38          Private 215646   HS-grad             9
+4  53          Private 234721      11th             7
+5  28          Private 338409 Bachelors            13
+6  37          Private 284582   Masters            14
+```
+
+```r
+head(adult[names(adult)[6:10]])
+```
+
+```
+      marital.status        occupation  relationship  race    sex
+1      Never-married      Adm-clerical Not-in-family White   Male
+2 Married-civ-spouse   Exec-managerial       Husband White   Male
+3           Divorced Handlers-cleaners Not-in-family White   Male
+4 Married-civ-spouse Handlers-cleaners       Husband Black   Male
+5 Married-civ-spouse    Prof-specialty          Wife Black Female
+6 Married-civ-spouse   Exec-managerial          Wife White Female
+```
+
+```r
+#continued...
+```
+
+Deep Dive into Adult.csv
+=======================
+
+```r
+#...continued
+head(adult[names(adult)[11:15]])
+```
+
+```
+  capital.gain capital.loss hours.per.week native.country class
+1         2174            0             40  United-States <=50K
+2            0            0             13  United-States <=50K
+3            0            0             40  United-States <=50K
+4            0            0             40  United-States <=50K
+5            0            0             40           Cuba <=50K
+6            0            0             40  United-States <=50K
+```
+
+
+Deep Dive into Adult.csv
+=======================
+the "topn" function : filter out all but the top "n" occuring labels (the rest get NA)
+
+```r
+topn = function(d, top=25, otherlabel=NA) {
+    ret = d
+    ret[ret == ""] <-NA
+    topnames = names(head(sort(table(ret),d=T),top))
+    ret[!ret %in% topnames] <-NA
+    if (!is.na(otherlabel)){
+        ret[is.na(ret)] = otherlabel
+    }
+    factor(ret)
+}
+label_data = c('foo','bar','foo','bar', 'baz', 'boo', 'bing')
+topn(label_data, top=2)
+```
+
+```
+[1] foo  bar  foo  bar  <NA> <NA> <NA>
+Levels: bar foo
+```
+
+
+Deep Dive into Adult.csv
+=======================
+
+```r
+filter_feature=function(x, top=25){
+ if (is.numeric(x)){ 
+   # If numeric, calculate histogram breaks
+   hx = hist(x,plot=F)
+   x = hx$breaks[findInterval(x, hx$breaks)]
+ } else { 
+   # Otherwise, capture only top n (25) labels
+   x = topn(x,top)
+ }
+ x 
+}
+num_data = rnorm(5)
+num_data
+```
+
+```
+[1]  0.349275225  0.401848805  0.006756153 -0.750641950 -0.825637656
+```
+
+```r
+filter_feature(num_data)
+```
+
+```
+[1]  0  0  0 -1 -1
+```
+
+```r
+filter_feature(label_data,top=2)
+```
+
+```
+[1] foo  bar  foo  bar  <NA> <NA> <NA>
+Levels: bar foo
+```
+
+Deep Dive into Adult.csv
+=======================
+
+```r
+mosaic_feature = function(feature){
+ x = filter_feature(adult[[feature]])
+ d = data.frame(class=adult$class, fnlwgt=adult$fnlwgt)
+ d[feature] = x
+ ggplot(d, aes(weight=fnlwgt, fill=factor(class))) +  
+   geom_mosaic(aes_string(x=paste0("product(class,", feature, ")"))) +
+   labs(title=paste(feature, "vs. class")) + 
+   theme(axis.text.x = element_text(size=20,angle = 45, hjust = 1))
+}
+mosaic_feature("age")
+```
+
+<img src="Trees-figure/unnamed-chunk-31-1.png" title="plot of chunk unnamed-chunk-31" alt="plot of chunk unnamed-chunk-31" width="700px" />
+
+Deep Dive into Adult.csv
+=======================
+<img src="Trees-figure/unnamed-chunk-32-1.png" title="plot of chunk unnamed-chunk-32" alt="plot of chunk unnamed-chunk-32" width="700px" />
+
+Deep Dive into Adult.csv
+=======================
+<img src="Trees-figure/unnamed-chunk-33-1.png" title="plot of chunk unnamed-chunk-33" alt="plot of chunk unnamed-chunk-33" width="700px" />
+
+Deep Dive into Adult.csv
+=======================
+<img src="Trees-figure/unnamed-chunk-34-1.png" title="plot of chunk unnamed-chunk-34" alt="plot of chunk unnamed-chunk-34" width="700px" />
+
+Deep Dive into Adult.csv
+=======================
+<img src="Trees-figure/unnamed-chunk-35-1.png" title="plot of chunk unnamed-chunk-35" alt="plot of chunk unnamed-chunk-35" width="700px" />
+
+Deep Dive into Adult.csv
+=======================
+<img src="Trees-figure/unnamed-chunk-36-1.png" title="plot of chunk unnamed-chunk-36" alt="plot of chunk unnamed-chunk-36" width="700px" />
+
+Deep Dive into Adult.csv
+=======================
+<img src="Trees-figure/unnamed-chunk-37-1.png" title="plot of chunk unnamed-chunk-37" alt="plot of chunk unnamed-chunk-37" width="700px" />
+
+
+Deep Dive into Adult.csv
+=======================
+<img src="Trees-figure/unnamed-chunk-38-1.png" title="plot of chunk unnamed-chunk-38" alt="plot of chunk unnamed-chunk-38" width="700px" />
+
+Deep Dive into Adult.csv
+=======================
+<img src="Trees-figure/unnamed-chunk-39-1.png" title="plot of chunk unnamed-chunk-39" alt="plot of chunk unnamed-chunk-39" width="700px" />
+
+
+
+Deep Dive into Adult.csv
+========================
+
+```r
+rf = randomForest(class ~ . , adult, importance=T)
+rf
+```
+
+```
+
+Call:
+ randomForest(formula = class ~ ., data = adult, importance = T) 
+               Type of random forest: classification
+                     Number of trees: 500
+No. of variables tried at each split: 3
+
+        OOB estimate of  error rate: 19%
+Confusion matrix:
+      <=50K >50K class.error
+<=50K    71    4  0.05333333
+>50K     15   10  0.60000000
+```
+
+Deep Dive into Adult.csv
+========================
+
+```r
+varImpPlot(rf)
+```
+
+<img src="Trees-figure/unnamed-chunk-41-1.png" title="plot of chunk unnamed-chunk-41" alt="plot of chunk unnamed-chunk-41" width="700px" />
+
+
+Deep Dive into Adult.csv
+========================
+We need to clear leakage/noise variables
+----
+
+```r
+adult2 = adult
+adult2$capital.gain = NULL
+adult2$capital.loss = NULL
+adult2$fnlwgt = NULL
+rf = randomForest(class ~ . , adult2, importance=T)
+```
+
+
+Deep Dive into Adult.csv
+========================
+
+```r
+varImpPlot(rf)
+```
+
+<img src="Trees-figure/unnamed-chunk-43-1.png" title="plot of chunk unnamed-chunk-43" alt="plot of chunk unnamed-chunk-43" width="700px" />
+
+Adult.csv conclusions
+========================
+type : sub-section
+- Random forest models salary using the fields we believed were important
+- However, what are the ethics considerations here?
+- What are different types of bias that you can encounter? 
 
 Conclusion
 ======

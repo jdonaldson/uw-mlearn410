@@ -380,9 +380,9 @@ The results of all trees are *summed*
 
 
 
-#```{r child="sub/AdultDeepDive.Rpres"}
-#
-#```
+```{r child="sub/AdultDeepDive.Rpres"}
+
+```
 
 Conclusion
 ======
