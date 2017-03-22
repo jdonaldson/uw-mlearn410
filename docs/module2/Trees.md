@@ -481,7 +481,18 @@ type : sub-section
 Partition Tree
 ==============
 A nice option if you have exactly 2 input dimensions
-<img src="Trees-figure/unnamed-chunk-8-1.png" title="plot of chunk unnamed-chunk-8" alt="plot of chunk unnamed-chunk-8" width="700px" />
+
+```r
+tree1 <- tree(Species ~ Petal.Length + Petal.Width, data = iris)
+plot(iris$Petal.Length,iris$Petal.Width,pch=19,col=as.numeric(iris$Species))
+partition.tree(tree1,label="Species",add=TRUE)
+legend(1.75,4.5,legend=unique(iris$Species),col=unique(as.numeric(iris$Species)),pch=19)
+```
+
+Partition Tree
+==============
+A nice option if you have exactly 2 input dimensions
+<img src="Trees-figure/unnamed-chunk-9-1.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" width="700px" />
 
 Deep Dive into Forests
 ==============
@@ -569,7 +580,7 @@ Looking into Iris
 varImpPlot(iris.rf)
 ```
 
-<img src="Trees-figure/unnamed-chunk-15-1.png" title="plot of chunk unnamed-chunk-15" alt="plot of chunk unnamed-chunk-15" width="700px" />
+<img src="Trees-figure/unnamed-chunk-16-1.png" title="plot of chunk unnamed-chunk-16" alt="plot of chunk unnamed-chunk-16" width="700px" />
 ***
 
 
@@ -598,19 +609,19 @@ irisTweak = function(var){
 
 Example : Tweak Petal.Length while holding training set fixed
 =======
-<img src="Trees-figure/unnamed-chunk-17-1.png" title="plot of chunk unnamed-chunk-17" alt="plot of chunk unnamed-chunk-17" width="700px" />
+<img src="Trees-figure/unnamed-chunk-18-1.png" title="plot of chunk unnamed-chunk-18" alt="plot of chunk unnamed-chunk-18" width="700px" />
 
 Example : Tweak Petal.Width while holding training set fixed
 =======
-<img src="Trees-figure/unnamed-chunk-18-1.png" title="plot of chunk unnamed-chunk-18" alt="plot of chunk unnamed-chunk-18" width="700px" />
+<img src="Trees-figure/unnamed-chunk-19-1.png" title="plot of chunk unnamed-chunk-19" alt="plot of chunk unnamed-chunk-19" width="700px" />
 
 Example : Tweak Sepal.Length while holding training set fixed
 =======
-<img src="Trees-figure/unnamed-chunk-19-1.png" title="plot of chunk unnamed-chunk-19" alt="plot of chunk unnamed-chunk-19" width="700px" />
+<img src="Trees-figure/unnamed-chunk-20-1.png" title="plot of chunk unnamed-chunk-20" alt="plot of chunk unnamed-chunk-20" width="700px" />
 
 Example : Tweak Sepal.Width while holding training set fixed
 =======
-<img src="Trees-figure/unnamed-chunk-20-1.png" title="plot of chunk unnamed-chunk-20" alt="plot of chunk unnamed-chunk-20" width="700px" />
+<img src="Trees-figure/unnamed-chunk-21-1.png" title="plot of chunk unnamed-chunk-21" alt="plot of chunk unnamed-chunk-21" width="700px" />
 
 
 RF vs. GBT
@@ -713,9 +724,9 @@ bst <- xgboost(data = train$data,  objective = "binary:logistic", label = train$
 ```
 
 ```
-[15:20:09] amalgamation/../src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 6 extra nodes, 0 pruned nodes, max_depth=2
+[15:22:50] amalgamation/../src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 6 extra nodes, 0 pruned nodes, max_depth=2
 [1]	train-error:0.046522 
-[15:20:09] amalgamation/../src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 4 extra nodes, 0 pruned nodes, max_depth=2
+[15:22:50] amalgamation/../src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 4 extra nodes, 0 pruned nodes, max_depth=2
 [2]	train-error:0.022263 
 ```
 
@@ -728,7 +739,7 @@ Visualize
 xgb.plot.tree(feature_names = colnames(agaricus.train$data), model=bst)
 ```
 
-<img src="Trees-figure/unnamed-chunk-23-1.png" title="plot of chunk unnamed-chunk-23" alt="plot of chunk unnamed-chunk-23" width="700px" />
+<img src="Trees-figure/unnamed-chunk-24-1.png" title="plot of chunk unnamed-chunk-24" alt="plot of chunk unnamed-chunk-24" width="700px" />
 
 
 Gradient Boosted Trees
@@ -912,10 +923,6 @@ mosaic_feature = function(feature){
 mosaic_feature("age")
 ```
 
-<img src="Trees-figure/unnamed-chunk-31-1.png" title="plot of chunk unnamed-chunk-31" alt="plot of chunk unnamed-chunk-31" width="700px" />
-
-Deep Dive into Adult.csv
-=======================
 <img src="Trees-figure/unnamed-chunk-32-1.png" title="plot of chunk unnamed-chunk-32" alt="plot of chunk unnamed-chunk-32" width="700px" />
 
 Deep Dive into Adult.csv
@@ -938,14 +945,18 @@ Deep Dive into Adult.csv
 =======================
 <img src="Trees-figure/unnamed-chunk-37-1.png" title="plot of chunk unnamed-chunk-37" alt="plot of chunk unnamed-chunk-37" width="700px" />
 
-
 Deep Dive into Adult.csv
 =======================
 <img src="Trees-figure/unnamed-chunk-38-1.png" title="plot of chunk unnamed-chunk-38" alt="plot of chunk unnamed-chunk-38" width="700px" />
 
+
 Deep Dive into Adult.csv
 =======================
 <img src="Trees-figure/unnamed-chunk-39-1.png" title="plot of chunk unnamed-chunk-39" alt="plot of chunk unnamed-chunk-39" width="700px" />
+
+Deep Dive into Adult.csv
+=======================
+<img src="Trees-figure/unnamed-chunk-40-1.png" title="plot of chunk unnamed-chunk-40" alt="plot of chunk unnamed-chunk-40" width="700px" />
 
 
 
@@ -979,7 +990,7 @@ Deep Dive into Adult.csv
 varImpPlot(rf)
 ```
 
-<img src="Trees-figure/unnamed-chunk-41-1.png" title="plot of chunk unnamed-chunk-41" alt="plot of chunk unnamed-chunk-41" width="700px" />
+<img src="Trees-figure/unnamed-chunk-42-1.png" title="plot of chunk unnamed-chunk-42" alt="plot of chunk unnamed-chunk-42" width="700px" />
 
 
 Deep Dive into Adult.csv
@@ -1003,7 +1014,7 @@ Deep Dive into Adult.csv
 varImpPlot(rf)
 ```
 
-<img src="Trees-figure/unnamed-chunk-43-1.png" title="plot of chunk unnamed-chunk-43" alt="plot of chunk unnamed-chunk-43" width="700px" />
+<img src="Trees-figure/unnamed-chunk-44-1.png" title="plot of chunk unnamed-chunk-44" alt="plot of chunk unnamed-chunk-44" width="700px" />
 
 Adult.csv conclusions
 ========================

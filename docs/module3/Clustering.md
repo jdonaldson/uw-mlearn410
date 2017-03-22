@@ -1,0 +1,36 @@
+Applied Machine Learning 410
+========================================================
+css: ../../assets/style/uw.css
+author: Justin Donaldson
+date: March-22-2017
+autosize: true
+
+Clustering
+---------------------------------
+(AKA: Birds of a feather)
+
+
+Clustering History
+========================================================
+Clustering first originated in *anthropology*
+![kroeber](img/kroeber.jpg)
+- Divide people into culturally similar groups
+- "...matrilinear descent and avoidance of
+relatives-in-law were or tended to be inherently connected."
+
+***
+![quant_expression](img/quant_expression.png)
+
+
+Connectivity-based clustering
+========================================================
+type : sub-section
+
+Centroid-based clustering
+========================================================
+type : sub-section
+
+Distribution-based clustering
+========================================================
+type : sub-section
+

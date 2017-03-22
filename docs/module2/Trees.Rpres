@@ -318,6 +318,16 @@ type : sub-section
 Partition Tree
 ==============
 A nice option if you have exactly 2 input dimensions
+```{r, eval=FALSE}
+tree1 <- tree(Species ~ Petal.Length + Petal.Width, data = iris)
+plot(iris$Petal.Length,iris$Petal.Width,pch=19,col=as.numeric(iris$Species))
+partition.tree(tree1,label="Species",add=TRUE)
+legend(1.75,4.5,legend=unique(iris$Species),col=unique(as.numeric(iris$Species)),pch=19)
+```
+
+Partition Tree
+==============
+A nice option if you have exactly 2 input dimensions
 ```{r, echo=FALSE}
 tree1 <- tree(Species ~ Petal.Length + Petal.Width, data = iris)
 plot(iris$Petal.Length,iris$Petal.Width,pch=19,col=as.numeric(iris$Species))
