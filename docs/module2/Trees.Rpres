@@ -336,75 +336,72 @@ Now that we've recapped the basics of trees, time to go back into forests.
 
 ```
 
-```{r child="sub/AdultDeepDive.Rpres"}
 
-```
-
-
-Random Forest and Gradient Boosted Tree Comparison
+RF vs. GBT
 =====
+Random forests are trained/evaluated independently
+----
 ![slide1](img/forest/0001.png)
 
-Random Forest and Gradient Boosted Tree Comparison
+RF vs. GBT
 =====
+The resulting class probabilities (or regressions) are *averaged*.
+----
 ![slide1](img/forest/0002.png)
 
-Random Forest and Gradient Boosted Tree Comparison
+RF vs. GBT
 =====
+GBTs, on the other hand, are trained sequentially.
+----
 ![slide1](img/forest/0003.png)
 
-Random Forest and Gradient Boosted Tree Comparison
+RF vs. GBT
 =====
+Errors (residual) from the first tree are used to train the second.
+----
 ![slide1](img/forest/0004.png)
 
-Random Forest and Gradient Boosted Tree Comparison
+RF vs. GBT
 =====
+And so on...
+----
 ![slide1](img/forest/0005.png)
 
-Random Forest and Gradient Boosted Tree Comparison
+RF vs. GBT
 =====
+The results of all trees are *summed* 
+----
 ![slide1](img/forest/0006.png)
 
 
+```{r child="sub/Agaricus.Rpres"}
 
-Deep Dive into Agaricus with Gradient Boosted Trees
-=========
-Alternate title, would you eat this?
---------
-<a title="By George Chernilevsky (Own work) [Public domain], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3AAgaricus_augustus_2011_G1.jpg"><img width="512" alt="Agaricus augustus 2011 G1" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Agaricus_augustus_2011_G1.jpg/512px-Agaricus_augustus_2011_G1.jpg"/></a>
-
-
-Agaricus Data
-========
-```{r}
-  require(xgboost)
-  data(agaricus.train)
-  data(agaricus.test)
-  train <- agaricus.train
-  test <- agaricus.test
-  dim(agaricus.train$data)
-  head(cbind(as.matrix(agaricus.train$data)[,1:6], etc="...", label=agaricus.train$label))
 ```
 
 
 
-Gradient Boosted Trees
-=========
-GBT models were some of the best performing classifications models in the original study.
-But, they carry some more parameters than forests :
-----------
-- objective = "binary:logistic" : Training a binary classifier
-- max_depth = 2 : The trees are shallow (atypically low)
-- nrounds = 2 : Two passes on the data (low)
-- eta = 1 : Control the learning rate (high)
-- verbose = 2 : Add more debug information on the tress (high)
-```{r}
-bst <- xgboost(data = train$data,  objective = "binary:logistic", label = train$label, max_depth = 2, nrounds = 2, eta = 1, verbose=2)
-```
+#```{r child="sub/AdultDeepDive.Rpres"}
+#
+#```
 
+Conclusion
+======
+type : sub-section
+- Trees are unreasonably effective!
+- Trees:
+  - fast/flexible
+  - among most intuitive models
+- Random forests :
+  - only 1 common hyperparameter
+  - dominant when >4K features
+  - embarassingly parallel training, predictions
+  - OOB error rates allow use of entire dataset for training
+- Gradient Boosted Trees :
+  - dominant when <4K features
+  - few hyperparameters compared to more sophisticated linear models.
+  - fast training with specialized libraries.
+  - OOB error rates with stochastic gradient boosting
 
-
-
-
+  
 
 

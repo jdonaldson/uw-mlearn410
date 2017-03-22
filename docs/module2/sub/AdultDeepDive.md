@@ -103,7 +103,7 @@ num_data
 ```
 
 ```
-[1] -0.01507078  0.62074846  0.50047895 -0.09441472 -2.04675572
+[1]  0.2850108 -1.0958669 -1.5794822 -1.4469814 -0.1206162
 ```
 
 ```r
@@ -111,7 +111,7 @@ filter_feature(num_data)
 ```
 
 ```
-[1] -0.5  0.5  0.5 -0.5 -2.5
+[1]  0.0 -1.5 -2.0 -1.5 -0.5
 ```
 
 ```r
@@ -192,11 +192,11 @@ Call:
                      Number of trees: 500
 No. of variables tried at each split: 3
 
-        OOB estimate of  error rate: 18%
+        OOB estimate of  error rate: 19%
 Confusion matrix:
       <=50K >50K class.error
-<=50K    72    3        0.04
->50K     15   10        0.60
+<=50K    71    4  0.05333333
+>50K     15   10  0.60000000
 ```
 
 Deep Dive into Adult.csv
@@ -208,18 +208,11 @@ varImpPlot(rf)
 
 ![plot of chunk unnamed-chunk-16](AdultDeepDive-figure/unnamed-chunk-16-1.png)
 
-Deep Dive into Adult.csv
-========================
-
-```r
-varImpPlot(rf)
-```
-
-![plot of chunk unnamed-chunk-17](AdultDeepDive-figure/unnamed-chunk-17-1.png)
-
 
 Deep Dive into Adult.csv
 ========================
+We need to clear leakage/noise variables
+----
 
 ```r
 adult2 = adult
@@ -237,4 +230,11 @@ Deep Dive into Adult.csv
 varImpPlot(rf)
 ```
 
-![plot of chunk unnamed-chunk-19](AdultDeepDive-figure/unnamed-chunk-19-1.png)
+![plot of chunk unnamed-chunk-18](AdultDeepDive-figure/unnamed-chunk-18-1.png)
+
+Adult.csv conclusions
+========================
+type : sub-section
+- Random forest models salary using the fields we believed were important
+- However, what are the ethics considerations here?
+- What are different types of bias that you can encounter? 

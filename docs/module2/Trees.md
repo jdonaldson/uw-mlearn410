@@ -2,7 +2,7 @@ Applied Machine Learning 410
 ========================================================
 css: ../../assets/style/uw.css
 author: Justin Donaldson
-date: March-21-2017
+date: March-22-2017
 autosize: true
 
 Decision Trees and Random Forests
@@ -536,27 +536,29 @@ getTree(iris.rf,k=23)
 
 ```
    left daughter right daughter split var split point status prediction
-1              2              3         4        0.80      1          0
+1              2              3         4        0.75      1          0
 2              0              0         0        0.00     -1          1
-3              4              5         4        1.65      1          0
-4              6              7         1        7.00      1          0
-5              8              9         4        1.75      1          0
-6             10             11         4        1.35      1          0
-7              0              0         0        0.00     -1          3
-8             12             13         1        5.80      1          0
-9              0              0         0        0.00     -1          3
-10             0              0         0        0.00     -1          2
-11            14             15         1        6.35      1          0
-12             0              0         0        0.00     -1          3
-13             0              0         0        0.00     -1          2
-14            16             17         1        6.20      1          0
-15             0              0         0        0.00     -1          2
-16            18             19         1        5.95      1          0
+3              4              5         1        7.05      1          0
+4              6              7         4        1.65      1          0
+5              0              0         0        0.00     -1          3
+6              8              9         4        1.45      1          0
+7             10             11         3        4.85      1          0
+8              0              0         0        0.00     -1          2
+9             12             13         3        5.00      1          0
+10            14             15         1        5.95      1          0
+11            16             17         3        5.05      1          0
+12             0              0         0        0.00     -1          2
+13            18             19         1        6.15      1          0
+14            20             21         4        1.75      1          0
+15             0              0         0        0.00     -1          3
+16            22             23         4        1.75      1          0
 17             0              0         0        0.00     -1          3
 18             0              0         0        0.00     -1          2
-19            20             21         3        4.85      1          0
-20             0              0         0        0.00     -1          2
-21             0              0         0        0.00     -1          3
+19             0              0         0        0.00     -1          3
+20             0              0         0        0.00     -1          3
+21             0              0         0        0.00     -1          2
+22             0              0         0        0.00     -1          2
+23             0              0         0        0.00     -1          3
 ```
 Unfortunately, it's very difficult to inspect individual trees, or form an understanding of how they reach consensus on a given case.
 
@@ -567,7 +569,7 @@ Looking into Iris
 varImpPlot(iris.rf)
 ```
 
-<img src="Trees-figure/unnamed-chunk-16-1.png" title="plot of chunk unnamed-chunk-16" alt="plot of chunk unnamed-chunk-16" width="700px" />
+<img src="Trees-figure/unnamed-chunk-14-1.png" title="plot of chunk unnamed-chunk-14" alt="plot of chunk unnamed-chunk-14" width="700px" />
 ***
 
 
@@ -596,301 +598,73 @@ irisTweak = function(var){
 
 Example : Tweak Petal.Length while holding training set fixed
 =======
-<img src="Trees-figure/unnamed-chunk-18-1.png" title="plot of chunk unnamed-chunk-18" alt="plot of chunk unnamed-chunk-18" width="700px" />
+<img src="Trees-figure/unnamed-chunk-16-1.png" title="plot of chunk unnamed-chunk-16" alt="plot of chunk unnamed-chunk-16" width="700px" />
 
 Example : Tweak Petal.Width while holding training set fixed
 =======
-<img src="Trees-figure/unnamed-chunk-19-1.png" title="plot of chunk unnamed-chunk-19" alt="plot of chunk unnamed-chunk-19" width="700px" />
+<img src="Trees-figure/unnamed-chunk-17-1.png" title="plot of chunk unnamed-chunk-17" alt="plot of chunk unnamed-chunk-17" width="700px" />
 
 Example : Tweak Sepal.Length while holding training set fixed
 =======
-<img src="Trees-figure/unnamed-chunk-20-1.png" title="plot of chunk unnamed-chunk-20" alt="plot of chunk unnamed-chunk-20" width="700px" />
+<img src="Trees-figure/unnamed-chunk-18-1.png" title="plot of chunk unnamed-chunk-18" alt="plot of chunk unnamed-chunk-18" width="700px" />
 
 Example : Tweak Sepal.Width while holding training set fixed
 =======
-<img src="Trees-figure/unnamed-chunk-21-1.png" title="plot of chunk unnamed-chunk-21" alt="plot of chunk unnamed-chunk-21" width="700px" />
+<img src="Trees-figure/unnamed-chunk-19-1.png" title="plot of chunk unnamed-chunk-19" alt="plot of chunk unnamed-chunk-19" width="700px" />
 
 
-Deep Dive into Adult.csv
-=======================
-
-
-
-Deep Dive into Adult.csv
-=======================
-
-```r
-adult = read.csv("../../../data/adult.csv", header=T, stringsAsFactors=T,nrow=100)
-head(adult[names(adult)[1:5]])
-```
-
-```
-  age        workclass fnlwgt education education.num
-1  39        State-gov  77516 Bachelors            13
-2  50 Self-emp-not-inc  83311 Bachelors            13
-3  38          Private 215646   HS-grad             9
-4  53          Private 234721      11th             7
-5  28          Private 338409 Bachelors            13
-6  37          Private 284582   Masters            14
-```
-
-```r
-head(adult[names(adult)[6:10]])
-```
-
-```
-      marital.status        occupation  relationship  race    sex
-1      Never-married      Adm-clerical Not-in-family White   Male
-2 Married-civ-spouse   Exec-managerial       Husband White   Male
-3           Divorced Handlers-cleaners Not-in-family White   Male
-4 Married-civ-spouse Handlers-cleaners       Husband Black   Male
-5 Married-civ-spouse    Prof-specialty          Wife Black Female
-6 Married-civ-spouse   Exec-managerial          Wife White Female
-```
-
-```r
-#continued...
-```
-
-Deep Dive into Adult.csv
-=======================
-
-```r
-#...continued
-head(adult[names(adult)[11:15]])
-```
-
-```
-  capital.gain capital.loss hours.per.week native.country class
-1         2174            0             40  United-States <=50K
-2            0            0             13  United-States <=50K
-3            0            0             40  United-States <=50K
-4            0            0             40  United-States <=50K
-5            0            0             40           Cuba <=50K
-6            0            0             40  United-States <=50K
-```
-
-
-Deep Dive into Adult.csv
-=======================
-the "topn" function : filter out all but the top "n" occuring labels (the rest get NA)
-
-```r
-topn = function(d, top=25, otherlabel=NA) {
-    ret = d
-    ret[ret == ""] <-NA
-    topnames = names(head(sort(table(ret),d=T),top))
-    ret[!ret %in% topnames] <-NA
-    if (!is.na(otherlabel)){
-        ret[is.na(ret)] = otherlabel
-    }
-    factor(ret)
-}
-label_data = c('foo','bar','foo','bar', 'baz', 'boo', 'bing')
-topn(label_data, top=2)
-```
-
-```
-[1] foo  bar  foo  bar  <NA> <NA> <NA>
-Levels: bar foo
-```
-
-
-Deep Dive into Adult.csv
-=======================
-
-```r
-filter_feature=function(x, top=25){
- if (is.numeric(x)){ 
-   # If numeric, calculate histogram breaks
-   hx = hist(x,plot=F)
-   x = hx$breaks[findInterval(x, hx$breaks)]
- } else { 
-   # Otherwise, capture only top n (25) labels
-   x = topn(x,top)
- }
- x 
-}
-num_data = rnorm(5)
-num_data
-```
-
-```
-[1] -0.64939989 -1.20880321 -0.06368575 -0.18722478 -1.23102939
-```
-
-```r
-filter_feature(num_data)
-```
-
-```
-[1] -1.0 -1.5 -0.5 -0.5 -1.5
-```
-
-```r
-filter_feature(label_data,top=2)
-```
-
-```
-[1] foo  bar  foo  bar  <NA> <NA> <NA>
-Levels: bar foo
-```
-
-Deep Dive into Adult.csv
-=======================
-
-```r
-mosaic_feature = function(feature){
- x = filter_feature(adult[[feature]])
- d = data.frame(class=adult$class, fnlwgt=adult$fnlwgt)
- d[feature] = x
- ggplot(d, aes(weight=fnlwgt, fill=factor(class))) +  
-   geom_mosaic(aes_string(x=paste0("product(class,", feature, ")"))) +
-   labs(title=paste(feature, "vs. class")) + 
-   theme(axis.text.x = element_text(size=20,angle = 45, hjust = 1))
-}
-mosaic_feature("age")
-```
-
-<img src="Trees-figure/unnamed-chunk-27-1.png" title="plot of chunk unnamed-chunk-27" alt="plot of chunk unnamed-chunk-27" width="700px" />
-
-Deep Dive into Adult.csv
-=======================
-<img src="Trees-figure/unnamed-chunk-28-1.png" title="plot of chunk unnamed-chunk-28" alt="plot of chunk unnamed-chunk-28" width="700px" />
-
-Deep Dive into Adult.csv
-=======================
-<img src="Trees-figure/unnamed-chunk-29-1.png" title="plot of chunk unnamed-chunk-29" alt="plot of chunk unnamed-chunk-29" width="700px" />
-
-Deep Dive into Adult.csv
-=======================
-<img src="Trees-figure/unnamed-chunk-30-1.png" title="plot of chunk unnamed-chunk-30" alt="plot of chunk unnamed-chunk-30" width="700px" />
-
-Deep Dive into Adult.csv
-=======================
-<img src="Trees-figure/unnamed-chunk-31-1.png" title="plot of chunk unnamed-chunk-31" alt="plot of chunk unnamed-chunk-31" width="700px" />
-
-Deep Dive into Adult.csv
-=======================
-<img src="Trees-figure/unnamed-chunk-32-1.png" title="plot of chunk unnamed-chunk-32" alt="plot of chunk unnamed-chunk-32" width="700px" />
-
-Deep Dive into Adult.csv
-=======================
-<img src="Trees-figure/unnamed-chunk-33-1.png" title="plot of chunk unnamed-chunk-33" alt="plot of chunk unnamed-chunk-33" width="700px" />
-
-
-Deep Dive into Adult.csv
-=======================
-<img src="Trees-figure/unnamed-chunk-34-1.png" title="plot of chunk unnamed-chunk-34" alt="plot of chunk unnamed-chunk-34" width="700px" />
-
-Deep Dive into Adult.csv
-=======================
-<img src="Trees-figure/unnamed-chunk-35-1.png" title="plot of chunk unnamed-chunk-35" alt="plot of chunk unnamed-chunk-35" width="700px" />
-
-
-
-Deep Dive into Adult.csv
-========================
-
-```r
-rf = randomForest(class ~ . , adult, importance=T)
-rf
-```
-
-```
-
-Call:
- randomForest(formula = class ~ ., data = adult, importance = T) 
-               Type of random forest: classification
-                     Number of trees: 500
-No. of variables tried at each split: 3
-
-        OOB estimate of  error rate: 19%
-Confusion matrix:
-      <=50K >50K class.error
-<=50K    71    4  0.05333333
->50K     15   10  0.60000000
-```
-
-Deep Dive into Adult.csv
-========================
-
-```r
-varImpPlot(rf)
-```
-
-<img src="Trees-figure/unnamed-chunk-37-1.png" title="plot of chunk unnamed-chunk-37" alt="plot of chunk unnamed-chunk-37" width="700px" />
-
-Deep Dive into Adult.csv
-========================
-
-```r
-varImpPlot(rf)
-```
-
-<img src="Trees-figure/unnamed-chunk-38-1.png" title="plot of chunk unnamed-chunk-38" alt="plot of chunk unnamed-chunk-38" width="700px" />
-
-
-Deep Dive into Adult.csv
-========================
-
-```r
-adult2 = adult
-adult2$capital.gain = NULL
-adult2$capital.loss = NULL
-adult2$fnlwgt = NULL
-rf = randomForest(class ~ . , adult2, importance=T)
-```
-
-
-Deep Dive into Adult.csv
-========================
-
-```r
-varImpPlot(rf)
-```
-
-<img src="Trees-figure/unnamed-chunk-40-1.png" title="plot of chunk unnamed-chunk-40" alt="plot of chunk unnamed-chunk-40" width="700px" />
-
-
-Random Forest and Gradient Boosted Tree Comparison
+RF vs. GBT
 =====
+Random forests are trained/evaluated independently
+----
 ![slide1](img/forest/0001.png)
 
-Random Forest and Gradient Boosted Tree Comparison
+RF vs. GBT
 =====
+The resulting class probabilities (or regressions) are *averaged*.
+----
 ![slide1](img/forest/0002.png)
 
-Random Forest and Gradient Boosted Tree Comparison
+RF vs. GBT
 =====
+GBTs, on the other hand, are trained sequentially.
+----
 ![slide1](img/forest/0003.png)
 
-Random Forest and Gradient Boosted Tree Comparison
+RF vs. GBT
 =====
+Errors (residual) from the first tree are used to train the second.
+----
 ![slide1](img/forest/0004.png)
 
-Random Forest and Gradient Boosted Tree Comparison
+RF vs. GBT
 =====
+And so on...
+----
 ![slide1](img/forest/0005.png)
 
-Random Forest and Gradient Boosted Tree Comparison
+RF vs. GBT
 =====
+The results of all trees are *summed* 
+----
 ![slide1](img/forest/0006.png)
 
 
 
 Deep Dive into Agaricus with Gradient Boosted Trees
 =========
-Alternate title, would you eat this?
+Modeling question : Is this safe to eat?
 --------
 <a title="By George Chernilevsky (Own work) [Public domain], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3AAgaricus_augustus_2011_G1.jpg"><img width="512" alt="Agaricus augustus 2011 G1" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Agaricus_augustus_2011_G1.jpg/512px-Agaricus_augustus_2011_G1.jpg"/></a>
 
 
 Agaricus Data
 ========
+We have a variety of measurements/classes, and a label (poisonous/not)
 
 ```r
-  require(xgboost)
+  library(xgboost)
+  library(DiagrammeR)
   data(agaricus.train)
   data(agaricus.test)
   train <- agaricus.train
@@ -903,17 +677,17 @@ Agaricus Data
 ```
 
 ```r
-  head(cbind(as.matrix(agaricus.train$data)[,1:6], etc="...", label=agaricus.train$label))
+  head(cbind(as.matrix(agaricus.train$data)[,1:3], etc="...", label=agaricus.train$label))
 ```
 
 ```
-     cap-shape=bell cap-shape=conical cap-shape=convex cap-shape=flat cap-shape=knobbed cap-shape=sunken etc   label
-[1,] "0"            "0"               "1"              "0"            "0"               "0"              "..." "1"  
-[2,] "0"            "0"               "1"              "0"            "0"               "0"              "..." "0"  
-[3,] "1"            "0"               "0"              "0"            "0"               "0"              "..." "0"  
-[4,] "0"            "0"               "1"              "0"            "0"               "0"              "..." "1"  
-[5,] "0"            "0"               "1"              "0"            "0"               "0"              "..." "0"  
-[6,] "0"            "0"               "1"              "0"            "0"               "0"              "..." "0"  
+     cap-shape=bell cap-shape=conical cap-shape=convex etc   label
+[1,] "0"            "0"               "1"              "..." "1"  
+[2,] "0"            "0"               "1"              "..." "0"  
+[3,] "1"            "0"               "0"              "..." "0"  
+[4,] "0"            "0"               "1"              "..." "1"  
+[5,] "0"            "0"               "1"              "..." "0"  
+[6,] "0"            "0"               "1"              "..." "0"  
 ```
 
 
@@ -921,28 +695,103 @@ Agaricus Data
 Gradient Boosted Trees
 =========
 GBT models were some of the best performing classifications models in the original study.
-But, they carry some more parameters than forests :
-----------
+----
+But, they require more parameters than forests :
 - objective = "binary:logistic" : Training a binary classifier
 - max_depth = 2 : The trees are shallow (atypically low)
 - nrounds = 2 : Two passes on the data (low)
 - eta = 1 : Control the learning rate (high)
 - verbose = 2 : Add more debug information on the tress (high)
 
+Gradient Boosted Trees
+=========
+Build
+----
+
 ```r
 bst <- xgboost(data = train$data,  objective = "binary:logistic", label = train$label, max_depth = 2, nrounds = 2, eta = 1, verbose=2)
 ```
 
 ```
-[17:38:52] amalgamation/../src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 6 extra nodes, 0 pruned nodes, max_depth=2
+[15:02:42] amalgamation/../src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 6 extra nodes, 0 pruned nodes, max_depth=2
 [1]	train-error:0.046522 
-[17:38:52] amalgamation/../src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 4 extra nodes, 0 pruned nodes, max_depth=2
+[15:02:42] amalgamation/../src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 4 extra nodes, 0 pruned nodes, max_depth=2
 [2]	train-error:0.022263 
 ```
 
+Gradient Boosted Trees
+=========
+Visualize
+-----
+
+```r
+xgb.plot.tree(feature_names = colnames(agaricus.train$data), model=bst)
+```
+
+<img src="Trees-figure/unnamed-chunk-22-1.png" title="plot of chunk unnamed-chunk-22" alt="plot of chunk unnamed-chunk-22" width="700px" />
+
+
+Gradient Boosted Trees
+=========
+Evaluate
+-----
+
+```r
+pred = predict(bst, test$data)
+head(pred)
+```
+
+```
+[1] 0.28583017 0.92392391 0.28583017 0.28583017 0.05169873 0.92392391
+```
+
+```r
+pred_label = as.numeric(pred > .5)
+```
+Test error:
+
+```r
+mean(as.numeric((pred  > .5) != test$label))
+```
+
+```
+[1] 0.02172564
+```
+Not bad, but consider risk of false positive!
+
+
+XGBoost performance
+=======
+A fast cross-platform (python/R/C++) option for gradient boosted trees.
+----
+![higgs_boson_competition](img/SpeedFigure.png)
+
+(taken from recent Higgs Boson competition on Kaggle)
 
 
 
+#```{r child="sub/AdultDeepDive.Rpres"}
+#
+#```
 
+Conclusion
+======
+type : sub-section
+- Trees are unreasonably effective!
+- Trees:
+  - fast/flexible
+  - among most intuitive models
+- Random forests :
+  - only 1 common hyperparameter
+  - dominant when >4K features
+  - embarassingly parallel training, predictions
+  - OOB error rates allow use of entire dataset for training
+- Gradient Boosted Trees :
+  - dominant when <4K features
+  - few hyperparameters compared to more sophisticated linear models.
+  - fast training with specialized libraries.
+  - OOB error rates with stochastic gradient boosting
+
+  
 
 

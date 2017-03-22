@@ -151,21 +151,18 @@ Deep Dive into Adult.csv
 varImpPlot(rf)
 ```
 
-Deep Dive into Adult.csv
-========================
-```{r}
-varImpPlot(rf)
-```
-
 
 Deep Dive into Adult.csv
 ========================
+We need to clear leakage/noise variables
+----
 ```{r}
 adult2 = adult
 adult2$capital.gain = NULL
 adult2$capital.loss = NULL
 adult2$fnlwgt = NULL
 rf = randomForest(class ~ . , adult2, importance=T)
+
 ```
 
 
@@ -174,3 +171,10 @@ Deep Dive into Adult.csv
 ```{r}
 varImpPlot(rf)
 ```
+
+Adult.csv conclusions
+========================
+type : sub-section
+- Random forest models salary using the fields we believed were important
+- However, what are the ethics considerations here?
+- What are different types of bias that you can encounter? 
