@@ -12,6 +12,10 @@ Clustering
 require(GGally)
 require(RColorBrewer)
 opts_chunk$set(out.width='900px', dpi=200,cache=TRUE, fig.width=9, fig.height=5 )
+local({r <- getOption("repos")
+       r["CRAN"] <- "http://cran.r-project.org" 
+       options(repos=r)
+})
 ```
 
 
@@ -144,6 +148,13 @@ K-means is the classic centroid-based technique.
   kc <-kmeans(dist(USArrests), 5)
   kc
 ```
+K-Means
+============
+K-means is the classic centroid-based technique.
+- Assignment Step : $S_i^{(t)} = \big \{ x_p : \big \| x_p - m^{(t)}_i \big \|^2 \le \big \| x_p - m^{(t)}_j \big \|^2 \ \forall j, 1 \le j \le k \big\}$
+  - Assign each data point to cluster whose mean is the smallest within-cluster sum of squares.
+- Update Step : $m^{(t+1)}_i = \frac{1}{|S^{(t)}_i|} \sum_{x_j \in S^{(t)}_i} x_j$
+  - Calculate new centroids
 
 K-Means
 ============
@@ -153,11 +164,111 @@ K-Means
   ggpairs(arrests, mapping=ggplot2::aes(fill=clusters,color=clusters))
 ```
 
+K-Means
+============
+K-means is more sensitive to scaling
+```{r}
+  arrests = data.frame(scale(USArrests))
+```
 
+```{r, echo=FALSE}
+  arrests = data.frame(scale(USArrests))
+  kc <-kmeans(arrests, 5)
+  arrests$clusters = colors[kc$cluster]
+  ggpairs(arrests, mapping=ggplot2::aes(fill=clusters,color=clusters))
+```
 
+Quick aside on scaling
+=====
+Field measurements can have different *scales*
+```{r}
+dat = cbind(
+  x=rnorm(100, mean =  0, sd = 1),
+  y=rnorm(100, mean = -4, sd = 2),
+  z=rnorm(100, mean =  4, sd = 9)
+  )
+boxplot(dat)
+```
 
+Quick aside on scaling
+=====
+In some cases it may be useful to *noramlize* the scales.
+Standard normalization:
+- mean = 0
+- standard deviation = 1
+```{r}
+boxplot(scale(dat))
+```
+
+K-means compared to Hierarchical Clustering
+======
+Hierarchical Clustering
+-----
+- cluster count can be determined post hoc
+- linkages are robust against scaling differences in fields
+- good at extracting "strand" clusters
+- quadratic time complexity : ~ $O(n^2)$
+- repeatable
+
+K-Means
+----
+- "k" cluster count must be given up front.
+- scaling affects centroid calculation, consider normalizing if possible.
+- good at extracting "spherical" clusters
+- near-linear time complexity : ~ $O(n)$
+- requires random initialization, results may not be repeatable in some cases
 
 Distribution-based clustering
 ========================================================
 type : sub-section
 
+Expectation Maximization
+==========
+```{r}
+require(EMCluster)
+```
+- based on probability distributions
+- no hard assignment of points to clusters, instead use probabilities
+- underlying distributions can be anything, gaussians are common 
+- optimize : $Q(\boldsymbol\theta|\boldsymbol\theta^{(t)}) = \operatorname{E}_{\mathbf{Z}|\mathbf{X},\boldsymbol\theta^{(t)}}\left[ \log L (\boldsymbol\theta;\mathbf{X},\mathbf{Z})  \right]$
+
+Expectation Maximization
+==========
+EM works well when you have a good idea of the underlying distribution of the data.
+In this case, normal deviates
+```{r}
+means = c(0,20,-15)
+x = rnorm(300, means[1], 10)
+y = rnorm(100, means[2], 1)
+z = rnorm(100, means[3], 1)
+dat = data.frame(x=c(x,y,z))
+ggplot(data = dat,aes(x=x)) + geom_histogram()
+```
+
+Expectation Maximization
+==========
+EM fits a GMM to the data
+```{r}
+library(EMCluster)
+em = shortemcluster(dat, simple.init(dat, nclass = 3))
+em = emcluster(dat, em, assign.class=T)
+colors = brewer.pal(3, "Spectral")[em$class]
+dat$class = colors
+ggplot(data = dat, aes(x=x, fill=class)) + geom_histogram(position="dodge")
+
+```
+
+Expectation Maximization
+==========
+EM models the distribution parameters, and can capture them even if distributions overlap.
+```{r}
+em$Mu
+as.matrix(means)
+```
+
+Expectation Maximization
+==========
+Considerations
+- If distribution characteristics are known, EM works well at recovering from noise and overlap in cluster boundaries.
+- Parameterization includes cluster count *and* mixture model specification. 
+- Most similar to K-means, except cluster assignment is *soft*, rather than *hard* as in km.
