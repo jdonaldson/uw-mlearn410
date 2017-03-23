@@ -5,7 +5,7 @@ author: Justin Donaldson
 date: March-23-2017
 autosize: true
 
-Decision Trees and Random Forests
+Trees and Forests
 ---------------------------------
 (AKA: divide and concur)
 
