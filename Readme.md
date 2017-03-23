@@ -7,4 +7,5 @@ for the UW Mlearn 410 program.
 A planning document exists for this
 [here](https://docs.google.com/document/d/1LPTNBrLB8syypKTGfla70kYcyfNQxrEBGAbnvo1RmTo/edit#heading=h.x88lr3dagoah).
 
+The rendered slides are available [online](jdonaldson.github.io/uw-mlearn410)
 

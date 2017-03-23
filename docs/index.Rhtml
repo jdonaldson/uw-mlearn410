@@ -1,0 +1,25 @@
+<html>
+
+<head>
+<title>Title</title>
+</head>
+
+<body>
+
+
+<p>You can also embed plots, for example:</p>
+
+<!--begin.rcode fig.width=7, fig.height=6
+require(rvest)
+require(tm)
+require(wordcloud)
+url<- read_html("https://en.wikipedia.org/wiki/Machine_learning")
+nodes<-html_nodes(x=url, css="#mw-content-text")
+texts <-html_text(nodes)
+pal <- brewer.pal(11,"PRGn")
+corp = paste(texts,collapse=" ")
+wordcloud(corp, colors=pal)
+end.rcode-->
+
+</body>
+</html>

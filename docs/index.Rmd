@@ -1,0 +1,28 @@
+---
+title: "Overview"
+output:  html_document
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+require(rvest)
+require(tm)
+require(wordcloud)
+```
+
+# UW 410 - Applied Machine Learning
+
+```{r, echo=FALSE}
+url<- read_html("https://en.wikipedia.org/wiki/Machine_learning")
+nodes<-html_nodes(x=url, css="#mw-content-text")
+texts <-html_text(nodes)
+pal <- brewer.pal(11, "Spectral")
+pal <- pal[-(4:5)]
+corp = paste(texts,collapse=" ")
+wordcloud(corp, colors=pal, max.words=100, min.freq=5,ordered.colors=F)
+```
+
+## Module Overview:
++ Module 2 - [Trees and Forests](https://jdonaldson.github.io/uw-mlearn410/module2/Trees.html) 
++ Module 3 - [Clustering](https://jdonaldson.github.io/uw-mlearn410/module3/Clustering.html) 
