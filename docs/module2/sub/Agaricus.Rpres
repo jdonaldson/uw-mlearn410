@@ -67,8 +67,8 @@ Not bad, but consider risk of false positive!
 
 XGBoost performance
 =======
-A fast cross-platform (python/R/C++) option for gradient boosted trees.
-----
 ![higgs_boson_competition](img/SpeedFigure.png)
-
-(taken from recent Higgs Boson competition on Kaggle)
+***
+ - taken from recent Higgs Boson competition on Kaggle
+ - XGBoost takes advantage of multiple cores
+ - Available on multiple platforms

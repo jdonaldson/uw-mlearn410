@@ -29,7 +29,6 @@ Looking into Iris
 ```{r}
 varImpPlot(iris.rf)
 ```
-***
 
 
 
@@ -61,19 +60,19 @@ irisTweak("Petal.Length")
 
 ```
 
-Example : Tweak Petal.Width while holding training set fixed
+Example : Tweak Petal.Width
 =======
 ```{r,echo=FALSE}
 irisTweak("Petal.Width")
 ```
 
-Example : Tweak Sepal.Length while holding training set fixed
+Example : Tweak Sepal.Length 
 =======
 ```{r,echo=FALSE}
 irisTweak("Sepal.Length")
 ```
 
-Example : Tweak Sepal.Width while holding training set fixed
+Example : Tweak Sepal.Width
 =======
 ```{r,echo=FALSE}
 irisTweak("Sepal.Width")

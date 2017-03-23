@@ -77,6 +77,12 @@ mosaic_feature = function(feature){
    labs(title=paste(feature, "vs. class")) + 
    theme(axis.text.x = element_text(size=20,angle = 45, hjust = 1))
 }
+```
+
+
+Deep Dive into Adult.csv
+=======================
+```{r, echo=FALSE}
 mosaic_feature("age")
 ```
 
@@ -86,39 +92,29 @@ Deep Dive into Adult.csv
 mosaic_feature("sex")
 ```
 
-Deep Dive into Adult.csv
-=======================
-```{r, echo=FALSE}
-mosaic_feature("age")
-
-```
 
 Deep Dive into Adult.csv
 =======================
 ```{r, echo=FALSE}
 mosaic_feature("race")
-
 ```
 
 Deep Dive into Adult.csv
 =======================
 ```{r, echo=FALSE}
 mosaic_feature("marital.status")
-
 ```
 
 Deep Dive into Adult.csv
 =======================
 ```{r, echo=FALSE}
 mosaic_feature("education")
-
 ```
 
 Deep Dive into Adult.csv
 =======================
 ```{r, echo=FALSE}
 mosaic_feature("native.country")
-
 ```
 
 
@@ -126,14 +122,12 @@ Deep Dive into Adult.csv
 =======================
 ```{r, echo=FALSE}
 mosaic_feature("workclass")
-
 ```
 
 Deep Dive into Adult.csv
 =======================
 ```{r, echo=FALSE}
 mosaic_feature("occupation")
-
 ```
 
 

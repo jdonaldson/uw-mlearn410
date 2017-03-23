@@ -2,21 +2,18 @@ Applied Machine Learning 410
 ========================================================
 css: ../../assets/style/uw.css
 author: Justin Donaldson
-date: March-22-2017
+date: March-23-2017
 autosize: true
 
 Decision Trees and Random Forests
 ---------------------------------
 (AKA: divide and concur)
- 
- 
-
 
 Setup
 =====
 
 ```r
-opts_chunk$set(out.width='700px', dpi=200,cache=TRUE, fig.width=10, fig.height=8 )
+opts_chunk$set(out.width='900px', dpi=200,cache=TRUE, fig.width=9, fig.height=5 )
 
 options(width =1960)
 local({r <- getOption("repos")
@@ -216,7 +213,7 @@ Looking into Iris
 =======
 incremental : True
 left : 70%
-<img src="Trees-figure/unnamed-chunk-2-1.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" width="700px" />
+<img src="Trees-figure/unnamed-chunk-2-1.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" width="900px" />
 ***
 Leading Questions...
 --------------------
@@ -350,7 +347,7 @@ plot(m$finalModel)
 text(m$finalModel)
 ```
 
-<img src="Trees-figure/unnamed-chunk-4-1.png" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" width="700px" />
+<img src="Trees-figure/unnamed-chunk-4-1.png" title="plot of chunk unnamed-chunk-4" alt="plot of chunk unnamed-chunk-4" width="900px" />
 
 Decision Tree
 =======
@@ -359,7 +356,7 @@ Decision Tree
 plot(varImp(m)) 
 ```
 
-<img src="Trees-figure/unnamed-chunk-5-1.png" title="plot of chunk unnamed-chunk-5" alt="plot of chunk unnamed-chunk-5" width="700px" />
+<img src="Trees-figure/unnamed-chunk-5-1.png" title="plot of chunk unnamed-chunk-5" alt="plot of chunk unnamed-chunk-5" width="900px" />
 ***
 Luckily, we can get a measure of the *importance* of each field according to the model.
 - importance can be defined a number of different ways :
@@ -438,7 +435,7 @@ heads
 plot(heads,eta(heads), type='l')
 ```
 
-<img src="Trees-figure/unnamed-chunk-7-1.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" width="700px" />
+<img src="Trees-figure/unnamed-chunk-7-1.png" title="plot of chunk unnamed-chunk-7" alt="plot of chunk unnamed-chunk-7" width="900px" />
 
 Information Entropy
 ====
@@ -492,7 +489,7 @@ legend(1.75,4.5,legend=unique(iris$Species),col=unique(as.numeric(iris$Species))
 Partition Tree
 ==============
 A nice option if you have exactly 2 input dimensions
-<img src="Trees-figure/unnamed-chunk-9-1.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" width="700px" />
+<img src="Trees-figure/unnamed-chunk-9-1.png" title="plot of chunk unnamed-chunk-9" alt="plot of chunk unnamed-chunk-9" width="900px" />
 
 Deep Dive into Forests
 ==============
@@ -529,12 +526,12 @@ Call:
                      Number of trees: 500
 No. of variables tried at each split: 2
 
-        OOB estimate of  error rate: 4.67%
+        OOB estimate of  error rate: 4%
 Confusion matrix:
            setosa versicolor virginica class.error
 setosa         50          0         0        0.00
 versicolor      0         47         3        0.06
-virginica       0          4        46        0.08
+virginica       0          3        47        0.06
 ```
 
 Looking into Iris
@@ -547,29 +544,27 @@ getTree(iris.rf,k=23)
 
 ```
    left daughter right daughter split var split point status prediction
-1              2              3         4        0.75      1          0
+1              2              3         4        0.80      1          0
 2              0              0         0        0.00     -1          1
-3              4              5         1        7.05      1          0
-4              6              7         4        1.65      1          0
-5              0              0         0        0.00     -1          3
-6              8              9         4        1.45      1          0
-7             10             11         3        4.85      1          0
-8              0              0         0        0.00     -1          2
-9             12             13         3        5.00      1          0
-10            14             15         1        5.95      1          0
-11            16             17         3        5.05      1          0
-12             0              0         0        0.00     -1          2
-13            18             19         1        6.15      1          0
-14            20             21         4        1.75      1          0
+3              4              5         3        4.95      1          0
+4              6              7         3        4.85      1          0
+5              8              9         2        2.75      1          0
+6             10             11         1        4.95      1          0
+7             12             13         1        6.60      1          0
+8             14             15         4        1.75      1          0
+9              0              0         0        0.00     -1          3
+10            16             17         4        1.35      1          0
+11             0              0         0        0.00     -1          2
+12            18             19         1        6.20      1          0
+13             0              0         0        0.00     -1          2
+14             0              0         0        0.00     -1          2
 15             0              0         0        0.00     -1          3
-16            22             23         4        1.75      1          0
+16             0              0         0        0.00     -1          2
 17             0              0         0        0.00     -1          3
-18             0              0         0        0.00     -1          2
-19             0              0         0        0.00     -1          3
-20             0              0         0        0.00     -1          3
-21             0              0         0        0.00     -1          2
-22             0              0         0        0.00     -1          2
-23             0              0         0        0.00     -1          3
+18             0              0         0        0.00     -1          3
+19            20             21         4        1.65      1          0
+20             0              0         0        0.00     -1          2
+21             0              0         0        0.00     -1          3
 ```
 Unfortunately, it's very difficult to inspect individual trees, or form an understanding of how they reach consensus on a given case.
 
@@ -580,8 +575,7 @@ Looking into Iris
 varImpPlot(iris.rf)
 ```
 
-<img src="Trees-figure/unnamed-chunk-16-1.png" title="plot of chunk unnamed-chunk-16" alt="plot of chunk unnamed-chunk-16" width="700px" />
-***
+<img src="Trees-figure/unnamed-chunk-16-1.png" title="plot of chunk unnamed-chunk-16" alt="plot of chunk unnamed-chunk-16" width="900px" />
 
 
 
@@ -609,19 +603,19 @@ irisTweak = function(var){
 
 Example : Tweak Petal.Length while holding training set fixed
 =======
-<img src="Trees-figure/unnamed-chunk-18-1.png" title="plot of chunk unnamed-chunk-18" alt="plot of chunk unnamed-chunk-18" width="700px" />
+<img src="Trees-figure/unnamed-chunk-18-1.png" title="plot of chunk unnamed-chunk-18" alt="plot of chunk unnamed-chunk-18" width="900px" />
 
-Example : Tweak Petal.Width while holding training set fixed
+Example : Tweak Petal.Width
 =======
-<img src="Trees-figure/unnamed-chunk-19-1.png" title="plot of chunk unnamed-chunk-19" alt="plot of chunk unnamed-chunk-19" width="700px" />
+<img src="Trees-figure/unnamed-chunk-19-1.png" title="plot of chunk unnamed-chunk-19" alt="plot of chunk unnamed-chunk-19" width="900px" />
 
-Example : Tweak Sepal.Length while holding training set fixed
+Example : Tweak Sepal.Length 
 =======
-<img src="Trees-figure/unnamed-chunk-20-1.png" title="plot of chunk unnamed-chunk-20" alt="plot of chunk unnamed-chunk-20" width="700px" />
+<img src="Trees-figure/unnamed-chunk-20-1.png" title="plot of chunk unnamed-chunk-20" alt="plot of chunk unnamed-chunk-20" width="900px" />
 
-Example : Tweak Sepal.Width while holding training set fixed
+Example : Tweak Sepal.Width
 =======
-<img src="Trees-figure/unnamed-chunk-21-1.png" title="plot of chunk unnamed-chunk-21" alt="plot of chunk unnamed-chunk-21" width="700px" />
+<img src="Trees-figure/unnamed-chunk-21-1.png" title="plot of chunk unnamed-chunk-21" alt="plot of chunk unnamed-chunk-21" width="900px" />
 
 
 RF vs. GBT
@@ -724,9 +718,9 @@ bst <- xgboost(data = train$data,  objective = "binary:logistic", label = train$
 ```
 
 ```
-[15:22:50] amalgamation/../src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 6 extra nodes, 0 pruned nodes, max_depth=2
+[11:24:47] amalgamation/../src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 6 extra nodes, 0 pruned nodes, max_depth=2
 [1]	train-error:0.046522 
-[15:22:50] amalgamation/../src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 4 extra nodes, 0 pruned nodes, max_depth=2
+[11:24:47] amalgamation/../src/tree/updater_prune.cc:74: tree pruning end, 1 roots, 4 extra nodes, 0 pruned nodes, max_depth=2
 [2]	train-error:0.022263 
 ```
 
@@ -739,7 +733,7 @@ Visualize
 xgb.plot.tree(feature_names = colnames(agaricus.train$data), model=bst)
 ```
 
-<img src="Trees-figure/unnamed-chunk-24-1.png" title="plot of chunk unnamed-chunk-24" alt="plot of chunk unnamed-chunk-24" width="700px" />
+<img src="Trees-figure/unnamed-chunk-24-1.png" title="plot of chunk unnamed-chunk-24" alt="plot of chunk unnamed-chunk-24" width="900px" />
 
 
 Gradient Boosted Trees
@@ -773,11 +767,11 @@ Not bad, but consider risk of false positive!
 
 XGBoost performance
 =======
-A fast cross-platform (python/R/C++) option for gradient boosted trees.
-----
 ![higgs_boson_competition](img/SpeedFigure.png)
-
-(taken from recent Higgs Boson competition on Kaggle)
+***
+ - taken from recent Higgs Boson competition on Kaggle
+ - XGBoost takes advantage of multiple cores
+ - Available on multiple platforms
 
 
 
@@ -887,7 +881,7 @@ num_data
 ```
 
 ```
-[1]  0.349275225  0.401848805  0.006756153 -0.750641950 -0.825637656
+[1] -1.223677 -0.261312  2.487786 -1.274416  1.129566
 ```
 
 ```r
@@ -895,7 +889,7 @@ filter_feature(num_data)
 ```
 
 ```
-[1]  0  0  0 -1 -1
+[1] -2 -1  2 -2  1
 ```
 
 ```r
@@ -920,43 +914,42 @@ mosaic_feature = function(feature){
    labs(title=paste(feature, "vs. class")) + 
    theme(axis.text.x = element_text(size=20,angle = 45, hjust = 1))
 }
-mosaic_feature("age")
 ```
 
-<img src="Trees-figure/unnamed-chunk-32-1.png" title="plot of chunk unnamed-chunk-32" alt="plot of chunk unnamed-chunk-32" width="700px" />
 
 Deep Dive into Adult.csv
 =======================
-<img src="Trees-figure/unnamed-chunk-33-1.png" title="plot of chunk unnamed-chunk-33" alt="plot of chunk unnamed-chunk-33" width="700px" />
+<img src="Trees-figure/unnamed-chunk-33-1.png" title="plot of chunk unnamed-chunk-33" alt="plot of chunk unnamed-chunk-33" width="900px" />
 
 Deep Dive into Adult.csv
 =======================
-<img src="Trees-figure/unnamed-chunk-34-1.png" title="plot of chunk unnamed-chunk-34" alt="plot of chunk unnamed-chunk-34" width="700px" />
-
-Deep Dive into Adult.csv
-=======================
-<img src="Trees-figure/unnamed-chunk-35-1.png" title="plot of chunk unnamed-chunk-35" alt="plot of chunk unnamed-chunk-35" width="700px" />
-
-Deep Dive into Adult.csv
-=======================
-<img src="Trees-figure/unnamed-chunk-36-1.png" title="plot of chunk unnamed-chunk-36" alt="plot of chunk unnamed-chunk-36" width="700px" />
-
-Deep Dive into Adult.csv
-=======================
-<img src="Trees-figure/unnamed-chunk-37-1.png" title="plot of chunk unnamed-chunk-37" alt="plot of chunk unnamed-chunk-37" width="700px" />
-
-Deep Dive into Adult.csv
-=======================
-<img src="Trees-figure/unnamed-chunk-38-1.png" title="plot of chunk unnamed-chunk-38" alt="plot of chunk unnamed-chunk-38" width="700px" />
+<img src="Trees-figure/unnamed-chunk-34-1.png" title="plot of chunk unnamed-chunk-34" alt="plot of chunk unnamed-chunk-34" width="900px" />
 
 
 Deep Dive into Adult.csv
 =======================
-<img src="Trees-figure/unnamed-chunk-39-1.png" title="plot of chunk unnamed-chunk-39" alt="plot of chunk unnamed-chunk-39" width="700px" />
+<img src="Trees-figure/unnamed-chunk-35-1.png" title="plot of chunk unnamed-chunk-35" alt="plot of chunk unnamed-chunk-35" width="900px" />
 
 Deep Dive into Adult.csv
 =======================
-<img src="Trees-figure/unnamed-chunk-40-1.png" title="plot of chunk unnamed-chunk-40" alt="plot of chunk unnamed-chunk-40" width="700px" />
+<img src="Trees-figure/unnamed-chunk-36-1.png" title="plot of chunk unnamed-chunk-36" alt="plot of chunk unnamed-chunk-36" width="900px" />
+
+Deep Dive into Adult.csv
+=======================
+<img src="Trees-figure/unnamed-chunk-37-1.png" title="plot of chunk unnamed-chunk-37" alt="plot of chunk unnamed-chunk-37" width="900px" />
+
+Deep Dive into Adult.csv
+=======================
+<img src="Trees-figure/unnamed-chunk-38-1.png" title="plot of chunk unnamed-chunk-38" alt="plot of chunk unnamed-chunk-38" width="900px" />
+
+
+Deep Dive into Adult.csv
+=======================
+<img src="Trees-figure/unnamed-chunk-39-1.png" title="plot of chunk unnamed-chunk-39" alt="plot of chunk unnamed-chunk-39" width="900px" />
+
+Deep Dive into Adult.csv
+=======================
+<img src="Trees-figure/unnamed-chunk-40-1.png" title="plot of chunk unnamed-chunk-40" alt="plot of chunk unnamed-chunk-40" width="900px" />
 
 
 
@@ -976,11 +969,11 @@ Call:
                      Number of trees: 500
 No. of variables tried at each split: 3
 
-        OOB estimate of  error rate: 19%
+        OOB estimate of  error rate: 18%
 Confusion matrix:
       <=50K >50K class.error
-<=50K    71    4  0.05333333
->50K     15   10  0.60000000
+<=50K    73    2  0.02666667
+>50K     16    9  0.64000000
 ```
 
 Deep Dive into Adult.csv
@@ -990,7 +983,7 @@ Deep Dive into Adult.csv
 varImpPlot(rf)
 ```
 
-<img src="Trees-figure/unnamed-chunk-42-1.png" title="plot of chunk unnamed-chunk-42" alt="plot of chunk unnamed-chunk-42" width="700px" />
+<img src="Trees-figure/unnamed-chunk-42-1.png" title="plot of chunk unnamed-chunk-42" alt="plot of chunk unnamed-chunk-42" width="900px" />
 
 
 Deep Dive into Adult.csv
@@ -1014,7 +1007,7 @@ Deep Dive into Adult.csv
 varImpPlot(rf)
 ```
 
-<img src="Trees-figure/unnamed-chunk-44-1.png" title="plot of chunk unnamed-chunk-44" alt="plot of chunk unnamed-chunk-44" width="700px" />
+<img src="Trees-figure/unnamed-chunk-44-1.png" title="plot of chunk unnamed-chunk-44" alt="plot of chunk unnamed-chunk-44" width="900px" />
 
 Adult.csv conclusions
 ========================

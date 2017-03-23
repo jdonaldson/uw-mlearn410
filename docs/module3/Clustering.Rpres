@@ -8,6 +8,11 @@ autosize: true
 Clustering
 ---------------------------------
 (AKA: Birds of a feather)
+```{r setup}
+require(GGally)
+require(RColorBrewer)
+opts_chunk$set(out.width='900px', dpi=200,cache=TRUE, fig.width=9, fig.height=5 )
+```
 
 
 Clustering History
@@ -22,13 +27,135 @@ relatives-in-law were or tended to be inherently connected."
 ![quant_expression](img/quant_expression.png)
 
 
+Clustering Needs
+========================================================
+![clustering needs](img/cluster_desire.png)
+“Data Clustering: 50 Years Beyond K-Means”, A.K. Jain (2008
+
 Connectivity-based clustering
 ========================================================
 type : sub-section
 
+Hierarchical Clustering
+============
+Hierarchical clustering seeks to group together observations based on *proximity* in space.
+For this analysis, let's look at arrest rates at a state level.
+```{r}
+  head(USArrests)
+```
+
+Hierarchical Clustering
+============
+The arrest information is not expressed in distances, so we need to transform it.
+```{r}
+  head(as.matrix(dist(USArrests)))
+```
+
+Hierarchical Clustering
+============
+R provides a good hierarchical clustering method in the standard distribution.
+```{r}
+  hc <-hclust(dist(USArrests))
+  hc
+```
+
+Hierarchical Clustering
+============
+Plotting it gives us a representation of the clusters in a tree-like form.
+```{r}
+plot(hc, hang=-1)
+```
+
+Hierarchical Clustering
+============
+We can set a split point using "cutree", which will give us the desired number of clusters
+```{r}
+clusters = cutree(hc, k=5) # cut into 5 clusters
+clusters
+```
+
+Hierarchical Clustering
+============
+We can overlay the cluster boundaries on the original plot.
+```{r}
+plot(hc)
+rect.hclust(hc, k=5, border="purple")
+```
+
+Hierarchical Clustering
+===========
+```{r}
+USArrests[clusters==1,]
+USArrests[clusters==2,]
+```
+
+Hierarchical Clustering
+===========
+```{r,echo=FALSE}
+arrests = USArrests
+colors =brewer.pal(5, "Spectral")
+arrests$clusters = colors[as.numeric(clusters)]
+ggpairs(arrests, mapping=ggplot2::aes(fill=clusters,color=clusters))
+```
+
+
+Hierarchical Clustering
+============
+```{r}
+head(as.matrix(UScitiesD))
+```
+
+Hierarchical Clustering
+============
+```{r}
+hc = hclust(dist(UScitiesD))
+plot(hc)
+rect.hclust(hc, k=3, border="purple")
+```
+
+Hierarchical Clustering
+============
+Options - Distance (**good defaults**)
+-----
+- **Euclidean** $\|a-b \|_2 = \sqrt{\sum_i (a_i-b_i)^2}$
+- Squared Euclidean $\|a-b \|_2^2 = \sum_i (a_i-b_i)^2$
+- Manhattan $\|a-b \|_1 = \sum_i |a_i-b_i|$
+- Maximum Distance $\|a-b \|_\infty = \max_i |a_i-b_i|$
+- Mahalanobis Distance : ($S$  is the covariance matrix)* $\sqrt{(a-b)^{\top}S^{-1}(a-b)}$  
+
+Hierarchical Clustering
+============
+Options - Linkage (**good defaults**)
+-----
+- single = closest neighbor to any point in cluster gets merged 
+- **complete** = closest neighbor to furthest point in cluster gets added 
+- UPGMA - Average of distances $d(x,y)$ : ${1 \over {|\mathcal{A}|\cdot|\mathcal{B}|}}\sum_{x \in \mathcal{A}}\sum_{ y \in \mathcal{B}} d(x,y)$
+- centroid - distance between average of points in cluster.
+
 Centroid-based clustering
 ========================================================
 type : sub-section
+
+
+K-Means
+============
+K-means is the classic centroid-based technique.
+```{r}
+  kc <-kmeans(dist(USArrests), 5)
+  kc
+```
+
+K-Means
+============
+```{r}
+  colors =brewer.pal(5, "Spectral")
+  arrests$clusters = colors[kc$cluster]
+  ggpairs(arrests, mapping=ggplot2::aes(fill=clusters,color=clusters))
+```
+
+
+
+
 
 Distribution-based clustering
 ========================================================

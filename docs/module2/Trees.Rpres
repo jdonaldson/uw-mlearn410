@@ -8,14 +8,11 @@ autosize: true
 Decision Trees and Random Forests
 ---------------------------------
 (AKA: divide and concur)
- 
- 
-
 
 Setup
 =====
 ```{r setup}
-opts_chunk$set(out.width='700px', dpi=200,cache=TRUE, fig.width=10, fig.height=8 )
+opts_chunk$set(out.width='900px', dpi=200,cache=TRUE, fig.width=9, fig.height=5 )
 
 options(width =1960)
 local({r <- getOption("repos")
@@ -31,6 +28,7 @@ library(reshape2)
 library(rpart)
 library(caret)
 library(e1071)
+
 ```
 
 

@@ -53,3 +53,6 @@
 .small-equation .MathJax_Display{
   font-size : 50%;
 }
+.reveal strong {
+    color: #4b2e83;
+}
