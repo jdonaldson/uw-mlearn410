@@ -312,6 +312,8 @@ $$
 Further Tree Methods
 ======
 type : sub-section
+Bio break! - 15m
+-----
 
 Partition Tree
 ==============
@@ -386,6 +388,10 @@ The results of all trees are *summed*
 
 ```
 
+Deep Dive into Adult.csv
+=======================
+type: sub-section
+Bio break? - 15m
 
 
 ```{r child="sub/AdultDeepDive.Rpres"}

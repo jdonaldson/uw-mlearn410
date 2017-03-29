@@ -9,15 +9,6 @@ Clustering
 ---------------------------------
 (AKA: Birds of a feather)
 
-```r
-require(GGally)
-require(RColorBrewer)
-opts_chunk$set(out.width='900px', dpi=200,cache=TRUE, fig.width=9, fig.height=5 )
-local({r <- getOption("repos")
-       r["CRAN"] <- "http://cran.r-project.org" 
-       options(repos=r)
-})
-```
 
 
 Clustering History
@@ -489,6 +480,7 @@ K-Means
 Distribution-based clustering
 ========================================================
 type : sub-section
+Bio break? - 15m
 
 Expectation Maximization
 ==========
@@ -564,3 +556,17 @@ Considerations
 - If distribution characteristics are known, EM works well at recovering from noise and overlap in cluster boundaries.
 - Parameterization includes cluster count *and* mixture model specification. 
 - Most similar to K-means, except cluster assignment is *soft*, rather than *hard* as in km.
+
+Density-based Clustering
+=========
+type : sub-section
+
+
+DBScan
+==========
+
+```r
+library("dbscan")
+```
+
+

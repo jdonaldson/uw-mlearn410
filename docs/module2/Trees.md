@@ -474,6 +474,8 @@ $$
 Further Tree Methods
 ======
 type : sub-section
+Bio break! - 15m
+-----
 
 Partition Tree
 ==============
@@ -773,6 +775,10 @@ XGBoost performance
  - XGBoost takes advantage of multiple cores
  - Available on multiple platforms
 
+Deep Dive into Adult.csv
+=======================
+type: sub-section
+Bio break? - 15m
 
 
 
