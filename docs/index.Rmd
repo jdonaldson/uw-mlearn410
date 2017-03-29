@@ -26,3 +26,6 @@ wordcloud(corp, colors=pal, max.words=100, min.freq=5,ordered.colors=F)
 ## Module Overview:
 + Module 2 - [Trees and Forests](https://jdonaldson.github.io/uw-mlearn410/module2/Trees.html) 
 + Module 3 - [Clustering](https://jdonaldson.github.io/uw-mlearn410/module3/Clustering.html) 
+
+## Homework : 
++ Homework 1 -[Supervised Learning](https://jdonaldson.github.io/uw-mlearn410/homework1.html)
