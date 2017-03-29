@@ -3,5 +3,38 @@ title: "Homework 1"
 output: html_notebook
 ---
 
+# Supervised Learning
 
-# 
+
+### Generalize the entropy function from the slides
+Support the calculation of information entropy to accept a vector of probabilities, rather than just inferring a binary probability.
+```{r}
+eta = function(h){
+  t = 1-h
+  - ((h * log2(h)) + (t * log2(t)))
+}
+# e.g. should succeed:
+# eta(list(.1, .2, .4, .3))
+```
+
+### Write a function to produce an ROC curve
+```{r}
+roc = function(pred, dat){
+  #...
+}
+# e.g.
+# pred = c(.1, .2., .9, .8)
+# dat = c(1, 0, 0, 0, 1, 1)
+# roc(pred, dat)
+```
+
+### Use the roc curve function to calculate AUC
+```{r}
+auc = function(pred, dat){
+  # roc(...)
+}
+# e.g.
+# auc(pred,dat)
+```
+
+### 

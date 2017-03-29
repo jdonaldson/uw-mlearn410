@@ -1,0 +1,28 @@
+---
+title: "Homework 2"
+output: html_notebook
+---
+
+# Unsupervised Learning
+
+### Find model parameters using EM 
+The dataset below contains a model generated from a number of gaussians.  Use EM to find the model parameters
+```{r}
+dat = read.csv("tbd.csv")
+# e.g.
+# clusters = some_em_algorithm(dat,...)
+```
+
+### Find cluster topics using k means
+The dataset below contains documents taken from several different topical areas.  Use nlp techniques to extract the words into vectors and weight them.
+Use your choice of clustering technique to group the documents into clusters
+```{r}
+dat = read.csv("tbd.csv")
+```
+
+
+
+
+
+
+
