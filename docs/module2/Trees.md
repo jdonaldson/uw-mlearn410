@@ -2,7 +2,7 @@ Applied Machine Learning 410
 ========================================================
 css: ../../assets/style/uw.css
 author: Justin Donaldson
-date: March-23-2017
+date: March-30-2017
 autosize: true
 
 Trees and Forests
@@ -791,7 +791,7 @@ Deep Dive into Adult.csv
 =======================
 
 ```r
-adult = read.csv("../../../data/adult.csv", header=T, stringsAsFactors=T,nrow=100)
+adult = read.csv("https://jdonaldson.github.io/uw-mlearn410/module2/sub/adult.csv", header=T, stringsAsFactors=T)
 head(adult[names(adult)[1:5]])
 ```
 

@@ -10,7 +10,7 @@ require(randomForest)
 Deep Dive into Adult.csv
 =======================
 ```{r}
-adult = read.csv("../../data/adult.csv", header=T, stringsAsFactors=T,nrow=100)
+adult = read.csv("https://jdonaldson.github.io/uw-mlearn410/module2/sub/adult.csv", header=T, stringsAsFactors=T)
 head(adult[names(adult)[1:5]])
 head(adult[names(adult)[6:10]])
 #continued...

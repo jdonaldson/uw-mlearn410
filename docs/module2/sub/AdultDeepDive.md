@@ -7,7 +7,7 @@ Deep Dive into Adult.csv
 =======================
 
 ```r
-adult = read.csv("../../data/adult.csv", header=T, stringsAsFactors=T,nrow=100)
+adult = read.csv("https://jdonaldson.github.io/uw-mlearn410/module2/sub/adult.csv", header=T, stringsAsFactors=T)
 head(adult[names(adult)[1:5]])
 ```
 
@@ -103,7 +103,7 @@ num_data
 ```
 
 ```
-[1]  0.09020036 -0.60396317 -0.76457007  1.74641344  0.92547820
+[1] -0.05395467  1.37725033  0.75599292  1.39471514 -0.10513845
 ```
 
 ```r
@@ -111,7 +111,7 @@ filter_feature(num_data)
 ```
 
 ```
-[1]  0.0 -1.0 -1.0  1.5  0.5
+[1] -0.5  1.0  0.5  1.0 -0.5
 ```
 
 ```r
@@ -167,5 +167,5 @@ Deep Dive into Adult.csv
 
 
 ```
-Error in mosaic_feature("age") : could not find function "ggplot"
+Error in mosaic_feature("age") : could not find function "geom_mosaic"
 ```

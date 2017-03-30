@@ -4,6 +4,12 @@ output: html_notebook
 ---
 
 # Supervised Learning
+Necessary packages
+```{r}
+library(caret)
+library(e1071)
+```
+
 
 
 ### Generalize the entropy function from the slides
@@ -37,6 +43,63 @@ auc = function(pred, dat){
 # auc(pred,dat)
 ```
 
-###  Read in the titanic csv
+###  Read in the titanic csv and analyze it (e.g. with boxplots, scatterplots, etc.)
 ```{r}
-read
+titanic = read.csv("https://jdonaldson.github.io/uw-mlearn410/homework/titanic3.csv")
+head(titanic)
+```
+
+Use the plots to answer the following questions: 
+
+1. Which fields seem to be important for predicting survival?  
+2. Which fields are leakage? 
+3. Which fields look like noise?
+
+### Create a sampling function that fairly splits the titanic dataset into 80% train, 20% test dataframe.
+
+```{r}
+datasplit = function(d){
+ # ... 
+}
+split = datasplit(titanic)
+# e.g. should contain split$train and split$test
+```
+
+### Use caret/rpart to train a decision tree on the test dataset.  Configure it to pass on missing values
+
+```{r}
+# e.g., use your train data from the split.  Fill in the proper fields in "?"
+# tm = train(factor(survived) ~ ? , data=split$train, method="rpart", na.action=na.pass)
+summary(tm)
+```
+
+### Use caret/rf to train a random forest on the test dataset. 
+
+```{r}
+# e.g., use your train data:
+# rfm = train(factor(survived) ~ ? , data=split$train, method="rf", na.action=na.pass)
+summary(rfm)
+```
+
+### Use caret/lm to train a logistic model on the test dataset
+
+```{r}
+# e.g., use your train data:
+# lmm = train(factor(survived) ~ ? , data=split$train, method="lm", na.action=na.pass)
+summary(lmm)
+```
+
+
+### Gather predictions from your models on the test dataset
+```{r}
+# e.g.
+tm_eval  = predict(tm, split$test)
+#...
+```
+
+### Use your roc/auc functions to plot and compare model performance 
+```{r}
+#e.g
+roc(tm_eval, split$test$survived)
+auc(tm_eval, split$test$survived)
+```

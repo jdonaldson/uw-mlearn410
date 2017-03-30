@@ -174,6 +174,19 @@ $(document).ready(function () {
 <!-- rnb-text-begin -->
 <div id="supervised-learning" class="section level1">
 <h1>Supervised Learning</h1>
+<p>Necessary packages</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShjYXJldClcblxuYGBgIn0= -->
+<pre class="r"><code>library(caret)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiTG9hZGluZyByZXF1aXJlZCBwYWNrYWdlOiBsYXR0aWNlXG5Mb2FkaW5nIHJlcXVpcmVkIHBhY2thZ2U6IGdncGxvdDJcbiJ9 -->
+<pre><code>Loading required package: lattice
+Loading required package: ggplot2</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
 <div id="generalize-the-entropy-function-from-the-slides" class="section level3">
 <h3>Generalize the entropy function from the slides</h3>
 <p>Support the calculation of information entropy to accept a vector of probabilities, rather than just inferring a binary probability.</p>
@@ -220,18 +233,99 @@ $(document).ready(function () {
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-<div id="read-in-the-titanic-csv" class="section level3">
-<h3>Read in the titanic csv</h3>
+<div id="read-in-the-titanic-csv-and-analyze-it-e.g.with-boxplots-scatterplots-etc." class="section level3">
+<h3>Read in the titanic csv and analyze it (e.g. with boxplots, scatterplots, etc.)</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVhZFxuYGBgIn0= -->
-<pre class="r"><code>read</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGl0YW5pYyA9IHJlYWQuY3N2KFwiaHR0cHM6Ly9qZG9uYWxkc29uLmdpdGh1Yi5pby91dy1tbGVhcm40MTAvaG9tZXdvcmsvdGl0YW5pYzMuY3N2XCIpXG5oZWFkKHRpdGFuaWMpXG5gYGAifQ== -->
+<pre class="r"><code>titanic = read.csv(&quot;https://jdonaldson.github.io/uw-mlearn410/homework/titanic3.csv&quot;)
+head(titanic)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Use the plots to answer the following questions:</p>
+<ol style="list-style-type: decimal">
+<li>Which fields seem to be important for predicting survival?<br />
+</li>
+<li>Which fields are leakage?</li>
+<li>Which fields look like noise?</li>
+</ol>
+</div>
+<div id="create-a-sampling-function-that-fairly-splits-the-titanic-dataset-into-80-train-20-test-dataframe." class="section level3">
+<h3>Create a sampling function that fairly splits the titanic dataset into 80% train, 20% test dataframe.</h3>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YXNwbGl0ID0gZnVuY3Rpb24oZCl7XG4gIyAuLi4gXG59XG5zcGxpdCA9IGRhdGFzcGxpdCh0aXRhbmljKVxuIyBlLmcuIHNob3VsZCBjb250YWluIHNwbGl0JHRyYWluIGFuZCBzcGxpdCR0ZXN0XG5gYGAifQ== -->
+<pre class="r"><code>datasplit = function(d){
+ # ... 
+}
+split = datasplit(titanic)
+# e.g. should contain split$train and split$test</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="use-caretrpart-to-train-a-decision-tree-on-the-test-dataset.-configure-it-to-pass-on-missing-values" class="section level3">
+<h3>Use caret/rpart to train a decision tree on the test dataset. Configure it to pass on missing values</h3>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIHQgPSB0cmFpbihmYWN0b3Ioc3Vydml2ZWQpIH4gLiAsIGRhdGE9dGl0YW5pY1sxOjEwMDAsXSwgbWV0aG9kPVwicnBhcnRcIiwgbmEuYWN0aW9uPW5hLnBhc3MpXG5cbmBgYCJ9 -->
+<pre class="r"><code> t = train(factor(survived) ~ . , data=titanic[1:1000,], method=&quot;rpart&quot;, na.action=na.pass)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="use-caretrf-to-train-a-random-forest-on-the-test-dataset." class="section level3">
+<h3>Use caret/rf to train a random forest on the test dataset.</h3>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBlLmcuLCB1c2UgeW91ciB0cmFpbiBkYXRhOlxuIyByZm0gPSB0cmFpbihmYWN0b3Ioc3Vydml2ZWQpIH4gPyAsIGRhdGE9c3BsaXQkdHJhaW4sIG1ldGhvZD1cInJmXCIsIG5hLmFjdGlvbj1uYS5wYXNzKVxuc3VtbWFyeShyZm0pXG5gYGAifQ== -->
+<pre class="r"><code># e.g., use your train data:
+# rfm = train(factor(survived) ~ ? , data=split$train, method=&quot;rf&quot;, na.action=na.pass)
+summary(rfm)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="use-caretlm-to-train-a-logistic-model-on-the-test-dataset" class="section level3">
+<h3>Use caret/lm to train a logistic model on the test dataset</h3>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBlLmcuLCB1c2UgeW91ciB0cmFpbiBkYXRhOlxuIyBsbW0gPSB0cmFpbihmYWN0b3Ioc3Vydml2ZWQpIH4gPyAsIGRhdGE9c3BsaXQkdHJhaW4sIG1ldGhvZD1cImxtXCIsIG5hLmFjdGlvbj1uYS5wYXNzKVxuc3VtbWFyeShsbW0pXG5gYGAifQ== -->
+<pre class="r"><code># e.g., use your train data:
+# lmm = train(factor(survived) ~ ? , data=split$train, method=&quot;lm&quot;, na.action=na.pass)
+summary(lmm)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="gather-predictions-from-your-models-on-the-test-dataset" class="section level3">
+<h3>Gather predictions from your models on the test dataset</h3>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBlLmcuXG50bV9ldmFsICA9IHByZWRpY3QodG0sIHNwbGl0JHRlc3QpXG4jLi4uXG5gYGAifQ== -->
+<pre class="r"><code># e.g.
+tm_eval  = predict(tm, split$test)
+#...</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="use-your-rocauc-functions-to-plot-and-compare-model-performance" class="section level3">
+<h3>Use your roc/auc functions to plot and compare model performance</h3>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2UuZ1xucm9jKHRtX2V2YWwsIHNwbGl0JHRlc3Qkc3Vydml2ZWQpXG5hdWModG1fZXZhbCwgc3BsaXQkdGVzdCRzdXJ2aXZlZClcbmBgYCJ9 -->
+<pre class="r"><code>#e.g
+roc(tm_eval, split$test$survived)
+auc(tm_eval, split$test$survived)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 </div>
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiSG9tZXdvcmsgMSIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKIyBTdXBlcnZpc2VkIExlYXJuaW5nCgoKIyMjIEdlbmVyYWxpemUgdGhlIGVudHJvcHkgZnVuY3Rpb24gZnJvbSB0aGUgc2xpZGVzClN1cHBvcnQgdGhlIGNhbGN1bGF0aW9uIG9mIGluZm9ybWF0aW9uIGVudHJvcHkgdG8gYWNjZXB0IGEgdmVjdG9yIG9mIHByb2JhYmlsaXRpZXMsIHJhdGhlciB0aGFuIGp1c3QgaW5mZXJyaW5nIGEgYmluYXJ5IHByb2JhYmlsaXR5LgpgYGB7cn0KZXRhID0gZnVuY3Rpb24oaCl7CiAgdCA9IDEtaAogIC0gKChoICogbG9nMihoKSkgKyAodCAqIGxvZzIodCkpKQp9CiMgZS5nLiBzaG91bGQgc3VjY2VlZDoKIyBldGEobGlzdCguMSwgLjIsIC40LCAuMykpCmBgYAoKIyMjIFdyaXRlIGEgZnVuY3Rpb24gdG8gcHJvZHVjZSBhbiBST0MgY3VydmUKYGBge3J9CnJvYyA9IGZ1bmN0aW9uKHByZWQsIGRhdCl7CiAgIy4uLgp9CiMgZS5nLgojIHByZWQgPSBjKC4xLCAuMi4sIC45LCAuOCkKIyBkYXQgPSBjKDEsIDAsIDAsIDAsIDEsIDEpCiMgcm9jKHByZWQsIGRhdCkKYGBgCgojIyMgVXNlIHRoZSByb2MgY3VydmUgZnVuY3Rpb24gdG8gY2FsY3VsYXRlIEFVQwpgYGB7cn0KYXVjID0gZnVuY3Rpb24ocHJlZCwgZGF0KXsKICAjIHJvYyguLi4pCn0KIyBlLmcuCiMgYXVjKHByZWQsZGF0KQpgYGAKCiMjIyAgUmVhZCBpbiB0aGUgdGl0YW5pYyBjc3YKYGBge3J9CnJlYWQ=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiSG9tZXdvcmsgMSIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKIyBTdXBlcnZpc2VkIExlYXJuaW5nCk5lY2Vzc2FyeSBwYWNrYWdlcwpgYGB7cn0KbGlicmFyeShjYXJldCkKbGlicmFyeShlMTA3MSkKYGBgCgoKCiMjIyBHZW5lcmFsaXplIHRoZSBlbnRyb3B5IGZ1bmN0aW9uIGZyb20gdGhlIHNsaWRlcwpTdXBwb3J0IHRoZSBjYWxjdWxhdGlvbiBvZiBpbmZvcm1hdGlvbiBlbnRyb3B5IHRvIGFjY2VwdCBhIHZlY3RvciBvZiBwcm9iYWJpbGl0aWVzLCByYXRoZXIgdGhhbiBqdXN0IGluZmVycmluZyBhIGJpbmFyeSBwcm9iYWJpbGl0eS4KYGBge3J9CmV0YSA9IGZ1bmN0aW9uKGgpewogIHQgPSAxLWgKICAtICgoaCAqIGxvZzIoaCkpICsgKHQgKiBsb2cyKHQpKSkKfQojIGUuZy4gc2hvdWxkIHN1Y2NlZWQ6CiMgZXRhKGxpc3QoLjEsIC4yLCAuNCwgLjMpKQpgYGAKCiMjIyBXcml0ZSBhIGZ1bmN0aW9uIHRvIHByb2R1Y2UgYW4gUk9DIGN1cnZlCmBgYHtyfQpyb2MgPSBmdW5jdGlvbihwcmVkLCBkYXQpewogICMuLi4KfQojIGUuZy4KIyBwcmVkID0gYyguMSwgLjIuLCAuOSwgLjgpCiMgZGF0ID0gYygxLCAwLCAwLCAwLCAxLCAxKQojIHJvYyhwcmVkLCBkYXQpCmBgYAoKIyMjIFVzZSB0aGUgcm9jIGN1cnZlIGZ1bmN0aW9uIHRvIGNhbGN1bGF0ZSBBVUMKYGBge3J9CmF1YyA9IGZ1bmN0aW9uKHByZWQsIGRhdCl7CiAgIyByb2MoLi4uKQp9CiMgZS5nLgojIGF1YyhwcmVkLGRhdCkKYGBgCgojIyMgIFJlYWQgaW4gdGhlIHRpdGFuaWMgY3N2IGFuZCBhbmFseXplIGl0IChlLmcuIHdpdGggYm94cGxvdHMsIHNjYXR0ZXJwbG90cywgZXRjLikKYGBge3J9CnRpdGFuaWMgPSByZWFkLmNzdigiaHR0cHM6Ly9qZG9uYWxkc29uLmdpdGh1Yi5pby91dy1tbGVhcm40MTAvaG9tZXdvcmsvdGl0YW5pYzMuY3N2IikKaGVhZCh0aXRhbmljKQpgYGAKClVzZSB0aGUgcGxvdHMgdG8gYW5zd2VyIHRoZSBmb2xsb3dpbmcgcXVlc3Rpb25zOiAKCjEuIFdoaWNoIGZpZWxkcyBzZWVtIHRvIGJlIGltcG9ydGFudCBmb3IgcHJlZGljdGluZyBzdXJ2aXZhbD8gIAoyLiBXaGljaCBmaWVsZHMgYXJlIGxlYWthZ2U/IAozLiBXaGljaCBmaWVsZHMgbG9vayBsaWtlIG5vaXNlPwoKIyMjIENyZWF0ZSBhIHNhbXBsaW5nIGZ1bmN0aW9uIHRoYXQgZmFpcmx5IHNwbGl0cyB0aGUgdGl0YW5pYyBkYXRhc2V0IGludG8gODAlIHRyYWluLCAyMCUgdGVzdCBkYXRhZnJhbWUuCgpgYGB7cn0KZGF0YXNwbGl0ID0gZnVuY3Rpb24oZCl7CiAjIC4uLiAKfQpzcGxpdCA9IGRhdGFzcGxpdCh0aXRhbmljKQojIGUuZy4gc2hvdWxkIGNvbnRhaW4gc3BsaXQkdHJhaW4gYW5kIHNwbGl0JHRlc3QKYGBgCgojIyMgVXNlIGNhcmV0L3JwYXJ0IHRvIHRyYWluIGEgZGVjaXNpb24gdHJlZSBvbiB0aGUgdGVzdCBkYXRhc2V0LiAgQ29uZmlndXJlIGl0IHRvIHBhc3Mgb24gbWlzc2luZyB2YWx1ZXMKCmBgYHtyfQojIGUuZy4sIHVzZSB5b3VyIHRyYWluIGRhdGEgZnJvbSB0aGUgc3BsaXQuICBGaWxsIGluIHRoZSBwcm9wZXIgZmllbGRzIGluICI/IgojIHRtID0gdHJhaW4oZmFjdG9yKHN1cnZpdmVkKSB+ID8gLCBkYXRhPXNwbGl0JHRyYWluLCBtZXRob2Q9InJwYXJ0IiwgbmEuYWN0aW9uPW5hLnBhc3MpCnN1bW1hcnkodG0pCmBgYAoKIyMjIFVzZSBjYXJldC9yZiB0byB0cmFpbiBhIHJhbmRvbSBmb3Jlc3Qgb24gdGhlIHRlc3QgZGF0YXNldC4gCgpgYGB7cn0KIyBlLmcuLCB1c2UgeW91ciB0cmFpbiBkYXRhOgojIHJmbSA9IHRyYWluKGZhY3RvcihzdXJ2aXZlZCkgfiA/ICwgZGF0YT1zcGxpdCR0cmFpbiwgbWV0aG9kPSJyZiIsIG5hLmFjdGlvbj1uYS5wYXNzKQpzdW1tYXJ5KHJmbSkKYGBgCgojIyMgVXNlIGNhcmV0L2xtIHRvIHRyYWluIGEgbG9naXN0aWMgbW9kZWwgb24gdGhlIHRlc3QgZGF0YXNldAoKYGBge3J9CiMgZS5nLiwgdXNlIHlvdXIgdHJhaW4gZGF0YToKIyBsbW0gPSB0cmFpbihmYWN0b3Ioc3Vydml2ZWQpIH4gPyAsIGRhdGE9c3BsaXQkdHJhaW4sIG1ldGhvZD0ibG0iLCBuYS5hY3Rpb249bmEucGFzcykKc3VtbWFyeShsbW0pCmBgYAoKCiMjIyBHYXRoZXIgcHJlZGljdGlvbnMgZnJvbSB5b3VyIG1vZGVscyBvbiB0aGUgdGVzdCBkYXRhc2V0CmBgYHtyfQojIGUuZy4KdG1fZXZhbCAgPSBwcmVkaWN0KHRtLCBzcGxpdCR0ZXN0KQojLi4uCmBgYAoKIyMjIFVzZSB5b3VyIHJvYy9hdWMgZnVuY3Rpb25zIHRvIHBsb3QgYW5kIGNvbXBhcmUgbW9kZWwgcGVyZm9ybWFuY2UgCmBgYHtyfQojZS5nCnJvYyh0bV9ldmFsLCBzcGxpdCR0ZXN0JHN1cnZpdmVkKQphdWModG1fZXZhbCwgc3BsaXQkdGVzdCRzdXJ2aXZlZCkKYGBgCg==</div>
 
 
 
