@@ -7,7 +7,7 @@ Deep Dive into Adult.csv
 =======================
 
 ```r
-adult = read.csv("../../../data/adult.csv", header=T, stringsAsFactors=T,nrow=100)
+adult = read.csv("../../data/adult.csv", header=T, stringsAsFactors=T,nrow=100)
 head(adult[names(adult)[1:5]])
 ```
 
@@ -103,7 +103,7 @@ num_data
 ```
 
 ```
-[1]  0.2850108 -1.0958669 -1.5794822 -1.4469814 -0.1206162
+[1]  0.09020036 -0.60396317 -0.76457007  1.74641344  0.92547820
 ```
 
 ```r
@@ -111,7 +111,7 @@ filter_feature(num_data)
 ```
 
 ```
-[1]  0.0 -1.5 -2.0 -1.5 -0.5
+[1]  0.0 -1.0 -1.0  1.5  0.5
 ```
 
 ```r
@@ -136,105 +136,36 @@ mosaic_feature = function(feature){
    labs(title=paste(feature, "vs. class")) + 
    theme(axis.text.x = element_text(size=20,angle = 45, hjust = 1))
 }
-mosaic_feature("age")
-```
-
-![plot of chunk unnamed-chunk-6](AdultDeepDive-figure/unnamed-chunk-6-1.png)
-
-Deep Dive into Adult.csv
-=======================
-![plot of chunk unnamed-chunk-7](AdultDeepDive-figure/unnamed-chunk-7-1.png)
-
-Deep Dive into Adult.csv
-=======================
-![plot of chunk unnamed-chunk-8](AdultDeepDive-figure/unnamed-chunk-8-1.png)
-
-Deep Dive into Adult.csv
-=======================
-![plot of chunk unnamed-chunk-9](AdultDeepDive-figure/unnamed-chunk-9-1.png)
-
-Deep Dive into Adult.csv
-=======================
-![plot of chunk unnamed-chunk-10](AdultDeepDive-figure/unnamed-chunk-10-1.png)
-
-Deep Dive into Adult.csv
-=======================
-![plot of chunk unnamed-chunk-11](AdultDeepDive-figure/unnamed-chunk-11-1.png)
-
-Deep Dive into Adult.csv
-=======================
-![plot of chunk unnamed-chunk-12](AdultDeepDive-figure/unnamed-chunk-12-1.png)
-
-
-Deep Dive into Adult.csv
-=======================
-![plot of chunk unnamed-chunk-13](AdultDeepDive-figure/unnamed-chunk-13-1.png)
-
-Deep Dive into Adult.csv
-=======================
-![plot of chunk unnamed-chunk-14](AdultDeepDive-figure/unnamed-chunk-14-1.png)
-
-
-
-Deep Dive into Adult.csv
-========================
-
-```r
-rf = randomForest(class ~ . , adult, importance=T)
-rf
-```
-
-```
-
-Call:
- randomForest(formula = class ~ ., data = adult, importance = T) 
-               Type of random forest: classification
-                     Number of trees: 500
-No. of variables tried at each split: 3
-
-        OOB estimate of  error rate: 19%
-Confusion matrix:
-      <=50K >50K class.error
-<=50K    71    4  0.05333333
->50K     15   10  0.60000000
-```
-
-Deep Dive into Adult.csv
-========================
-
-```r
-varImpPlot(rf)
-```
-
-![plot of chunk unnamed-chunk-16](AdultDeepDive-figure/unnamed-chunk-16-1.png)
-
-
-Deep Dive into Adult.csv
-========================
-We need to clear leakage/noise variables
-----
-
-```r
-adult2 = adult
-adult2$capital.gain = NULL
-adult2$capital.loss = NULL
-adult2$fnlwgt = NULL
-rf = randomForest(class ~ . , adult2, importance=T)
 ```
 
 
 Deep Dive into Adult.csv
-========================
+=======================
 
-```r
-varImpPlot(rf)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ```
-
-![plot of chunk unnamed-chunk-18](AdultDeepDive-figure/unnamed-chunk-18-1.png)
-
-Adult.csv conclusions
-========================
-type : sub-section
-- Random forest models salary using the fields we believed were important
-- However, what are the ethics considerations here?
-- What are different types of bias that you can encounter? 
+Error in mosaic_feature("age") : could not find function "ggplot"
+```

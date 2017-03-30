@@ -1,6 +1,6 @@
 Deep Dive into Adult.csv
 =======================
-```{r,echo=FALSE}
+```{r, echo=F}
 require(ggplot2)
 require(ggmosaic)
 require(randomForest)
@@ -10,7 +10,7 @@ require(randomForest)
 Deep Dive into Adult.csv
 =======================
 ```{r}
-adult = read.csv("../../../data/adult.csv", header=T, stringsAsFactors=T,nrow=100)
+adult = read.csv("../../data/adult.csv", header=T, stringsAsFactors=T,nrow=100)
 head(adult[names(adult)[1:5]])
 head(adult[names(adult)[6:10]])
 #continued...

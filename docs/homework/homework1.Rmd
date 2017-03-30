@@ -37,4 +37,6 @@ auc = function(pred, dat){
 # auc(pred,dat)
 ```
 
-### 
+###  Read in the titanic csv
+```{r}
+read
