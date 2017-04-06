@@ -1,0 +1,59 @@
+---
+title: "Titanic Logistic Regression Exercise"
+output: html_notebook
+---
+
+This data set provides information on the passengers on the fatal maiden voyage of the ocean liner ‘Titanic’, summarized according to economic status (class), sex, age and survival. We are going to do a similar end-to-end modeling exercise using logistic regression to predict whether a passenger survived the sinking of the titanic or not. Details on the dataset can be found here: https://www.kaggle.com/c/titanic/data
+
+```{r}
+library(titanic)
+library(glmnet)
+
+titanic_train <- titanic::titanic_train
+titanic_test <- titanic::titanic_test
+```
+
+The column `Pclass` takes values in ${1,2,3}$ corresponding to first, second and third class cabins respectively, `Sibsp` is the total number of siblings and spouses on board with the passenger. There are three potential ports of embarkation (	"C" = Cherbourg, "Q" = Queenstown, "S" = Southampton) as logged in the `Embarked` column. The `ticket` column is just the ticket number and we don't know what those codes mean (if anything).
+
+<br>
+
+#### Q1. Look at the dataframe `titanic_train` and decide which columns you would want to use.
+
+##### Think about whether the it makes sense to include a column based on what it is.
+
+##### Other factors to consider - how much data is null/missing and how would you want to handle the data? Impute it from the other variables? Drop the row? Mark missing/null as a factor of its own?
+
+<br>
+
+#### Q2. Extract the titles (use `strsplit`) and look at the counts of each unique title. If there are some that are very low, decide what to do with them - you can create a manual ontology and rename them, create an "Other" class, or drop those rows.
+
+##### Keep in mind - if you drop `null` rows during training, you still need to decide what to do with them while testing/running in production.
+
+<br>
+
+#### Q3. Let's deal with imputing (filling-in) `NAs` and missing values in `Age` and `Embarked`:
+
+##### `Age` is numeric, so we can replace it with the mean of all the non-null ages. `Embarked` is categorical, so let's just replace it with the most frequent port of embarkation.
+
+##### What assumptions are we implicitly making by using these methods of imputation?
+
+<br>
+
+#### Q4. Convert all the categorical variables into factors.
+
+##### What's the deal with `Pclass`? Is it categorical?
+
+<br>
+
+#### Q5. Now for the easy part! Train a logistic regression with optimized hyperparameter(s). Use a 75-25 train-test split.
+
+##### Is accuracy a good metric for evaluating this model? If so, what is the "chance" level?
+
+##### **Note:** If you are copying your commands from the linear regression notebook, please make sure you make the appropriate changes to the `family`, `type`, and `type.measure` parameters in the `fit` and `predict` functions. For reference: https://web.stanford.edu/~hastie/glmnet/glmnet_alpha.html#log
+
+##### **Note 2:** When using `glmnet`, you need to provide a matrix, not a dataframe. This means you cannot just pass columns as factors, but most one-hot encode them first. The following line converts an input dataframe `df`, and returns a matrix with all factor columns appropriately encoded. You only need to do this for the feature matrix, not the output labels.
+```
+model.matrix( ~ .-1, df)
+```
+
+##### Keep in mind that titanic_test does not have the labels. So you will have to evaluate on a test split that you create. Or better yet, submit your responses to Kaggle and see how you did: https://www.kaggle.com/c/titanic

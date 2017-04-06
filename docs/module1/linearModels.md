@@ -98,21 +98,21 @@ Call:
 lm(formula = olstarget ~ X1 + X2 + X3, data = x)
 
 Residuals:
-     Min       1Q   Median       3Q      Max 
--0.26903 -0.07119 -0.01586  0.07357  0.37505 
+      Min        1Q    Median        3Q       Max 
+-0.261629 -0.056514  0.003524  0.066996  0.232048 
 
 Coefficients:
             Estimate Std. Error t value Pr(>|t|)    
-(Intercept)  5.03844    0.02257  223.26   <2e-16 ***
-X1          -6.01932    0.02517 -239.19   <2e-16 ***
-X2           2.94443    0.02619  112.44   <2e-16 ***
-X3          -2.00698    0.02595  -77.35   <2e-16 ***
+(Intercept)  4.98747    0.02092  238.35   <2e-16 ***
+X1          -5.99994    0.02401 -249.84   <2e-16 ***
+X2           2.98252    0.02247  132.76   <2e-16 ***
+X3          -1.94995    0.02364  -82.48   <2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 0.1058 on 196 degrees of freedom
-Multiple R-squared:  0.9973,	Adjusted R-squared:  0.9973 
-F-statistic: 2.447e+04 on 3 and 196 DF,  p-value: < 2.2e-16
+Residual standard error: 0.09466 on 196 degrees of freedom
+Multiple R-squared:  0.9977,	Adjusted R-squared:  0.9977 
+F-statistic: 2.834e+04 on 3 and 196 DF,  p-value: < 2.2e-16
 ```
 
 Visualize Fit
@@ -162,11 +162,11 @@ confint.default(logisticmdl)
 ```
 
 ```
-                2.5 %     97.5 %
-(Intercept)  2.739526  6.1406433
-X1          -6.324222 -2.6630978
-X2           0.906081  4.2824401
-X3          -4.098716 -0.7260491
+                2.5 %    97.5 %
+(Intercept)  2.761958  6.562481
+X1          -9.009325 -4.117794
+X2           1.072077  4.435680
+X3          -2.043255  1.203091
 ```
 
 Visualize Logistic Fit

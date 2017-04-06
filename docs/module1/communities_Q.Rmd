@@ -1,0 +1,90 @@
+---
+title: "Crime and Communities Linear Regression Exercise"
+output: html_notebook
+---
+
+This dataset combines socio-economic data from the 1990 US Census, law enforcement data from the 1990 US LEMAS survey, and crime data from the 1995 FBI UCR.
+
+In this exercise, we will be comparing ridge regression, LASSO regression, and elastic net regularization. First we load the data.
+
+```{r}
+library(RCurl)
+library(glmnet)
+
+## get column names
+# specify the URL for the column names and descriptions
+names.file.url <- 'http://archive.ics.uci.edu/ml/machine-learning-databases/communities/communities.names'
+names.file.lines <- readLines(names.file.url)
+# only keep the attribute names, and discard the rest of the lines
+names.dirtylines <- grep("@attribute ", names.file.lines, value = TRUE)
+# split on spaces and pick the second word
+names <- sapply(strsplit(names.dirtylines, " "), "[[", 2)
+# drop the first 5 columns
+names <- names[6:length(names)]
+
+## download data and join in names
+# specify the URL for the Crime and Communities data CSV
+urlfile <-'http://archive.ics.uci.edu/ml/machine-learning-databases/communities/communities.data'
+# download the file
+downloaded <- getURL(urlfile, ssl.verifypeer=FALSE)
+# treat the text data as a steam so we can read from it
+connection <- textConnection(downloaded)
+# parse the downloaded data as CSV
+dataset <- read.csv(connection, header=FALSE, na.strings=c("?"))
+# drop irrelevant columns
+dataset <- dataset[ ,6:ncol(dataset)]
+# drop rows with null columns
+dataset <- dataset[rowSums(is.na(dataset)) == 0,]
+# fix the column names
+colnames(dataset) <- names
+# preview the first 5 rows
+head(dataset)
+```
+
+We now split this dataset into train and test sets (an alternative would be to use cross-validation).
+
+```{r}
+## perform train-test split
+# 75% of the sample size
+smp_size <- floor(0.75 * nrow(dataset))
+
+## set the seed to make your partition reproductible
+set.seed(123)
+train_ind <- sample(seq_len(nrow(dataset)), size = smp_size)
+
+df.train <- dataset[train_ind, ]
+df.test <- dataset[-train_ind, ]
+```
+<br>
+
+#### Q1. Fit a linear regression model on df.train. The goal is to predict 'ViolentCrimesPerPop' from the other columns. What is the r-squared on the train data? What about the test data?
+
+<br>
+
+#### Q2. Also fit each of a ridge, lasso, and elastic net regression on the same data. Use the function `cv.glmnet` to cross-validate and find the best values of $\lambda$. For elastic net, try a few values of $\alpha$ as well.
+
+##### Hint: `cv.glmnet` does not optimize for $\alpha$. You should use the command `set.seed(k)` for some fixed `k` before each value of $\alpha$ being run. You can do the cross validation for $\alpha$ manually for the purpose of this exercise. `cv.glmnet` automatically picks appropriate values of $\lambda$ to try.
+<br>
+
+#### Q3. Which model performs the best?
+
+<br>
+
+#### Q4. Make the following scatterplot:
+#### - Each point corresponds to one predictor in the data
+#### - The x-value is the coefficient of that predictor under OLS regression
+#### - The y-value is the coefficient of that predictor using ridge regularization
+<br>
+
+#### Q5. Do the same for OLS vs Lasso, and OLS vs ElasticNet. What do you notice about the magnitude of the parameters and numbers of zeros?
+
+<br>
+
+#### Q6. Make the following scatterplot:
+#### - Each point corresponds to one predictor in the data
+#### - The x-value is the coefficient of that predictor under OLS regression
+#### - The y-value is the correlation coefficient of that predictor with the target
+
+<br>
+
+#### Q7. Based on the above plot, what can you say about the interpretation of the regression coefficients? Does the sign of the coefficient implying the relationship of that variable and the target? What are some potential issues interpreting the magnitude?
