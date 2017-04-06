@@ -2,7 +2,7 @@ Applied Machine Learning 410
 ========================================================
 css: ../../assets/style/uw.css
 author: Justin Donaldson
-date: March-23-2017
+date: April-06-2017
 autosize: true
 
 Clustering
@@ -28,13 +28,28 @@ Clustering Needs
 ![clustering needs](img/cluster_desire.png)
 “Data Clustering: 50 Years Beyond K-Means”, A.K. Jain (2008
 
+Overview
+========================================================
+type : sub-section
+- Connectivity Clustering
+- Centroid-based Clustering
+- Density-based Clustering
+
+
 Connectivity-based clustering
 ========================================================
 type : sub-section
 
 Hierarchical Clustering
 ============
-Hierarchical clustering seeks to group together observations based on *proximity* in space.
+- Group together observations based on *proximity* in space.
+- Agglomerative clustering (clusters grow from individual observations)
+
+***
+<a title="By [[File:Hierarchical_clustering_diagram.png#file|]]: Stathis Sideris on 10/02/2005 derivative work:  Mhbrugman ([[File:Hierarchical_clustering_diagram.png#file|]]) [CC-BY-SA-3.0 (http://creativecommons.org/licenses/by-sa/3.0/) or GFDL (http://www.gnu.org/copyleft/fdl.html)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3AHierarchical_clustering_simple_diagram.svg"><img width="256" alt="Hierarchical clustering simple diagram" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Hierarchical_clustering_simple_diagram.svg/256px-Hierarchical_clustering_simple_diagram.svg.png"/></a>
+
+Hierarchical Clustering
+============
 For this analysis, let's look at arrest rates at a state level.
 
 ```r
@@ -515,8 +530,8 @@ EM fits a GMM to the data
 
 ```r
 library(EMCluster)
-em = shortemcluster(dat, simple.init(dat, nclass = 3))
-em = emcluster(dat, em, assign.class=T)
+sem = shortemcluster(dat, simple.init(dat, nclass = 3))
+em = emcluster(dat, sem, assign.class=T)
 colors = brewer.pal(3, "Spectral")[em$class]
 dat$class = colors
 ggplot(data = dat, aes(x=x, fill=class)) + geom_histogram(position="dodge")

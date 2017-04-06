@@ -29,5 +29,4 @@ wordcloud(corp, colors=pal, max.words=100, min.freq=5,ordered.colors=F)
 + Module 3 - [Clustering](https://jdonaldson.github.io/uw-mlearn410/module3/Clustering.html) 
 
 ## Homework : 
-+ Homework 1 - [Supervised Learning](https://jdonaldson.github.io/uw-mlearn410/homework/homework1.nb.html)
-+ Homework 2 - [Unsupervised Learning](https://jdonaldson.github.io/uw-mlearn410/homework/homework2.nb.html)
+Posted soon!

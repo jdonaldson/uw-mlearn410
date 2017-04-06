@@ -20,9 +20,3 @@ Use your choice of clustering technique to group the documents into clusters
 dat = read.csv("tbd.csv")
 ```
 
-
-
-
-
-
-
