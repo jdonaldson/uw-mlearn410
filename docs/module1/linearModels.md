@@ -2,7 +2,7 @@
 ========================================================
 css: ../../assets/style/uw.css
 author: Sid Rajaram
-date: April-03-2017
+date: April-06-2017
 autosize: true
 UW ML410 - Applied Machine Learning
 ---------------
@@ -74,21 +74,21 @@ Call:
 lm(formula = olstarget ~ X1 + X2 + X3, data = x)
 
 Residuals:
-     Min       1Q   Median       3Q      Max 
--0.25028 -0.07397 -0.00601  0.06469  0.31767 
+      Min        1Q    Median        3Q       Max 
+-0.282343 -0.073104 -0.002206  0.068112  0.258855 
 
 Coefficients:
             Estimate Std. Error t value Pr(>|t|)    
-(Intercept)  4.97137    0.02298  216.35   <2e-16 ***
-X1          -5.98576    0.02581 -231.88   <2e-16 ***
-X2           3.04117    0.02523  120.52   <2e-16 ***
-X3          -1.99033    0.02476  -80.38   <2e-16 ***
+(Intercept)  5.00557    0.02358  212.28   <2e-16 ***
+X1          -5.98877    0.02587 -231.50   <2e-16 ***
+X2           2.98882    0.02676  111.68   <2e-16 ***
+X3          -2.01226    0.02684  -74.99   <2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 0.1013 on 196 degrees of freedom
-Multiple R-squared:  0.9975,	Adjusted R-squared:  0.9975 
-F-statistic: 2.606e+04 on 3 and 196 DF,  p-value: < 2.2e-16
+Residual standard error: 0.11 on 196 degrees of freedom
+Multiple R-squared:  0.9971,	Adjusted R-squared:  0.9971 
+F-statistic: 2.243e+04 on 3 and 196 DF,  p-value: < 2.2e-16
 ```
 
 Visualize Fit
@@ -138,11 +138,11 @@ confint.default(logisticmdl)
 ```
 
 ```
-                 2.5 %     97.5 %
-(Intercept)   3.564798  8.1863694
-X1          -10.091558 -4.6645548
-X2            0.682958  3.9884401
-X3           -3.062120  0.1013569
+                2.5 %     97.5 %
+(Intercept)  2.274381  6.0098718
+X1          -6.971002 -2.9416463
+X2           1.655297  5.3621157
+X3          -3.201705  0.3577207
 ```
 
 Visualize Logistic Fit
