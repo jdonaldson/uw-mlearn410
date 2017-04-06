@@ -26,6 +26,30 @@ Carl Friedrich Gauss<br>1801</center>
 - They can be used when the assumptions are not met, but then it needs to be graded based on *performance on the test data*.<br><br>
 - Metrics like p-values, F-test statistics, etc...are *valid only if the assumptions are true*.
 
+(Generalized) Linear Models
+========================================================
+right : 80%
+<br><center><img alt="Logistic function" src="img/Logistic.png"/>
+Logistic function<br>
+<img alt="Log function" src="img/Log.png"/>
+Log function</center>
+***
+<br>
+- Assumes a *linear* relationship between the features and some hidden variable.
+- This hidden variable can then be transformed through a *link function* to produce outputs with different distributions.
+- This allows us to model many different kinds of data:
+  - Logistic link - *Classification* (binary and multi-class)
+  - Log link - *Poisson regression for count data* (how many cars crossed this bridge?)
+  - Tan link - *Von Mises regression for circular data* (what day of the week?)
+  - other applications...
+  
+The Linearity constraint
+========================================================
+- Only works when the relationship with the hidden variable is linear.
+<br><center><img alt="Anscombe's quarter" width=512 src="img/Anscombe.png"/><br>
+Anscombe's quartet<br>
+- In each of these, the $x$ and $y$ axes have the same correlation coefficient!
+
 Linear Regression (Ordinary Least Squares)
 ========================================================
 
@@ -74,21 +98,21 @@ Call:
 lm(formula = olstarget ~ X1 + X2 + X3, data = x)
 
 Residuals:
-      Min        1Q    Median        3Q       Max 
--0.301843 -0.071275  0.000335  0.052766  0.227334 
+     Min       1Q   Median       3Q      Max 
+-0.26903 -0.07119 -0.01586  0.07357  0.37505 
 
 Coefficients:
             Estimate Std. Error t value Pr(>|t|)    
-(Intercept)  5.04054    0.02178  231.40   <2e-16 ***
-X1          -6.04983    0.02288 -264.39   <2e-16 ***
-X2           2.99165    0.02282  131.09   <2e-16 ***
-X3          -2.03700    0.02340  -87.07   <2e-16 ***
+(Intercept)  5.03844    0.02257  223.26   <2e-16 ***
+X1          -6.01932    0.02517 -239.19   <2e-16 ***
+X2           2.94443    0.02619  112.44   <2e-16 ***
+X3          -2.00698    0.02595  -77.35   <2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Residual standard error: 0.09495 on 196 degrees of freedom
-Multiple R-squared:  0.998,	Adjusted R-squared:  0.9979 
-F-statistic: 3.205e+04 on 3 and 196 DF,  p-value: < 2.2e-16
+Residual standard error: 0.1058 on 196 degrees of freedom
+Multiple R-squared:  0.9973,	Adjusted R-squared:  0.9973 
+F-statistic: 2.447e+04 on 3 and 196 DF,  p-value: < 2.2e-16
 ```
 
 Visualize Fit
@@ -138,11 +162,11 @@ confint.default(logisticmdl)
 ```
 
 ```
-                 2.5 %     97.5 %
-(Intercept)   3.567767  8.3775290
-X1          -10.901540 -4.9889376
-X2            2.920453  6.9440480
-X3           -4.660107 -0.7581263
+                2.5 %     97.5 %
+(Intercept)  2.739526  6.1406433
+X1          -6.324222 -2.6630978
+X2           0.906081  4.2824401
+X3          -4.098716 -0.7260491
 ```
 
 Visualize Logistic Fit
