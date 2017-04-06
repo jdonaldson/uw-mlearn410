@@ -780,3 +780,140 @@ type : sub-section
 
 HCS
 ====
+Highly Connected Subgraph
+- Find the *minimum cut* on a graph
+- Partition graph into two subgraphs
+- Recursively run on the subgraphs
+
+***
+<a title="By Fredseadroid (Own work) [CC0], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3AHCS_Algorithm.gif"><img width="256" alt="HCS Algorithm" src="https://upload.wikimedia.org/wikipedia/commons/1/1b/HCS_Algorithm.gif"/></a>
+
+
+HCS
+====
+
+```r
+# source("https://bioconductor.org/biocLite.R")
+# biocLite("RBGL")
+# biocLite("Rgraphviz")
+library(RBGL)
+library(Rgraphviz)
+con <- file(system.file("XML/conn.gxl",package="RBGL"), open="r")
+coex <- fromGXL(con)
+coex
+```
+
+```
+A graphNEL graph with undirected edges
+Number of Nodes = 8 
+Number of Edges = 14 
+```
+
+HCS
+=====
+
+```r
+plot(coex)
+```
+
+<img src="Clustering-figure/unnamed-chunk-28-1.png" title="plot of chunk unnamed-chunk-28" alt="plot of chunk unnamed-chunk-28" width="900px" />
+
+
+HCS
+=====
+
+```r
+plot(coex)
+```
+
+<img src="Clustering-figure/unnamed-chunk-29-1.png" title="plot of chunk unnamed-chunk-29" alt="plot of chunk unnamed-chunk-29" width="900px" />
+***
+
+```r
+highlyConnSG(coex)
+```
+
+```
+$clusters
+$clusters[[1]]
+[1] "A" "B" "C" "D"
+
+$clusters[[2]]
+[1] "E" "H" "F" "G"
+```
+
+MCL
+===
+MCL - Markov Cluster Algorithm
+
+<a title="Micans.org : MCL - a cluster algorithm for graphs" href="http://micans.org"><img width=512 src="http://micans.org/mcl/img/fa75.png"/></a> 
+- Process has four phases:
+  - (Optional-required for directed graphs) add self links
+  - "Expansion" through standard matrix multiplication
+  - "Inflation" through column wise exponentiation (I) and renormalization
+  - Rinse and repeat
+
+Picture courtesy of http://micans.org and Stijn van Dongen
+
+MCL
+===
+MCL works with adjacency matrices
+
+```r
+library(MCL)
+adjacency <- matrix(c(0,1,1,1,0,0,0,0,0,1,0,1,1,1,0,0,0,0,1,1,
+                      0,1,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,1,0,0,
+                      0,1,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,1,1,
+                      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
+                    byrow=TRUE, nrow=9)
+library(igraph)
+gu<-graph.adjacency(adjacency, mode="undirected")
+plot(gu)
+```
+
+<img src="Clustering-figure/unnamed-chunk-31-1.png" title="plot of chunk unnamed-chunk-31" alt="plot of chunk unnamed-chunk-31" width="900px" />
+
+MCL
+===
+Here we're running mcl and adding optional self-loops, and returning an equlibrium state matrix.
+
+```r
+mcl(x = adjacency, addLoops=TRUE, ESM = TRUE)
+```
+
+```
+$K
+[1] 3
+
+$n.iterations
+[1] 14
+
+$Cluster
+[1] 1 1 1 1 2 2 2 0 0
+
+$Equilibrium.state.matrix
+  1 2 3 4 5 6 7 8 9
+1 0 0 0 0 0 0 0 0 0
+2 1 1 1 1 0 0 0 0 0
+3 0 0 0 0 0 0 0 0 0
+4 0 0 0 0 0 0 0 0 0
+5 0 0 0 0 1 1 1 0 0
+6 0 0 0 0 0 0 0 0 0
+7 0 0 0 0 0 0 0 0 0
+8 0 0 0 0 0 0 0 1 0
+9 0 0 0 0 0 0 0 0 1
+```
+
+MCL
+===
+Here we're running mcl and adding optional self-loops, and returning an equlibrium state matrix.
+
+```r
+res = mcl(x = adjacency, addLoops=TRUE)
+plot(graph.adjacency(adjacency), vertex.color = res$Cluster)
+```
+
+<img src="Clustering-figure/unnamed-chunk-33-1.png" title="plot of chunk unnamed-chunk-33" alt="plot of chunk unnamed-chunk-33" width="900px" />
+
+
+

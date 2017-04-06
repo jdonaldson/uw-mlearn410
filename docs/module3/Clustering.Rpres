@@ -437,3 +437,88 @@ type : sub-section
 
 HCS
 ====
+Highly Connected Subgraph
+- Find the *minimum cut* on a graph
+- Partition graph into two subgraphs
+- Recursively run on the subgraphs
+
+***
+<a title="By Fredseadroid (Own work) [CC0], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3AHCS_Algorithm.gif"><img width="256" alt="HCS Algorithm" src="https://upload.wikimedia.org/wikipedia/commons/1/1b/HCS_Algorithm.gif"/></a>
+
+
+HCS
+====
+```{r}
+# source("https://bioconductor.org/biocLite.R")
+# biocLite("RBGL")
+# biocLite("Rgraphviz")
+library(RBGL)
+library(Rgraphviz)
+con <- file(system.file("XML/conn.gxl",package="RBGL"), open="r")
+coex <- fromGXL(con)
+coex
+```
+
+HCS
+=====
+```{r}
+plot(coex)
+```
+
+
+HCS
+=====
+```{r}
+plot(coex)
+```
+***
+```{r}
+highlyConnSG(coex)
+```
+
+MCL
+===
+MCL - Markov Cluster Algorithm
+
+<a title="Micans.org : MCL - a cluster algorithm for graphs" href="http://micans.org"><img width=512 src="http://micans.org/mcl/img/fa75.png"/></a> 
+- Process has four phases:
+  - (Optional-required for directed graphs) add self links
+  - "Expansion" through standard matrix multiplication
+  - "Inflation" through column wise exponentiation (I) and renormalization
+  - Rinse and repeat
+
+Picture courtesy of http://micans.org and Stijn van Dongen
+
+MCL
+===
+MCL works with adjacency matrices
+```{r}
+library(MCL)
+adjacency <- matrix(c(0,1,1,1,0,0,0,0,0,1,0,1,1,1,0,0,0,0,1,1,
+                      0,1,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,1,0,0,
+                      0,1,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,1,1,
+                      0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),
+                    byrow=TRUE, nrow=9)
+library(igraph)
+gu<-graph.adjacency(adjacency, mode="undirected")
+plot(gu)
+```
+
+MCL
+===
+Here we're running mcl and adding optional self-loops, and returning an equlibrium state matrix.
+```{r}
+mcl(x = adjacency, addLoops=TRUE, ESM = TRUE)
+
+```
+
+MCL
+===
+Here we're running mcl and adding optional self-loops, and returning an equlibrium state matrix.
+```{r}
+res = mcl(x = adjacency, addLoops=TRUE)
+plot(graph.adjacency(adjacency), vertex.color = res$Cluster)
+```
+
+
+
