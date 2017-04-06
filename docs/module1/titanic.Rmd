@@ -1,0 +1,155 @@
+---
+title: "Titanic Logistic Regression Exercise"
+output: html_notebook
+---
+
+This data set provides information on the passengers on the fatal maiden voyage of the ocean liner ‘Titanic’, summarized according to economic status (class), sex, age and survival. We are going to do a similar end-to-end modeling exercise using logistic regression to predict whether a passenger survived the sinking of the titanic or not. Details on the dataset can be found here: https://www.kaggle.com/c/titanic/data
+
+```{r}
+library(titanic)
+library(glmnet)
+
+titanic_train <- titanic::titanic_train
+titanic_test <- titanic::titanic_test
+```
+
+The column `Pclass` takes values in ${1,2,3}$ corresponding to first, second and third class cabins respectively, `Sibsp` is the total number of siblings and spouses on board with the passenger. There are three potential ports of embarkation (	"C" = Cherbourg, "Q" = Queenstown, "S" = Southampton) as logged in the `Embarked` column. The `ticket` column is just the ticket number and we don't know what those codes mean (if anything).
+
+#### Q1. Look at the dataframe `titanic_train` and decide which columns you would want to use.
+
+##### Think about whether the it makes sense to include a column based on what it is.
+
+##### Other factors to consider - how much data is null/missing and how would you want to handle the data? Impute it from the other variables? Drop the row? Mark missing/null as a factor of its own?
+
+`PassengerId` is just a row number - unless the data is sorted in some specific order, it should be useless (and even otherwise, it will not generalize well to new data). `Pclass` is probably useful. `Name` is interesting - a family name (and even a first name) does contain information about socio-economic status, but you will need a much larger dataset to be able to learn such a relationship (side note: this dataset exists for modern day names: https://catalog.data.gov/dataset/baby-names-from-social-security-card-applications-data-by-state-and-district-of-). However, if you noticed we do have salutations (Mr., Mrs., Miss., Master., Rev., Dr., etc.) - let's use those!
+
+`Sex` and `Age` are likely going to be useful, but there are quite a few nulls in `Age` - we'll have to deal with that. `Ticket` we really know nothing about how those are coded and while there may be something there, it's not clear, so drop it for the first pass. `Fare` will probably be correlated to class of travel and therefore to survival - definitely include it. `Cabin` probably matters, but it's very sparse, and we're not sure if we just want the letter or the numbers or both? I would lean towards dropping it for those reasons. `Embarked` port may matter, doesn't have too many `null` values, and doesn't increase dimensionality too much - add it in.
+
+```{r}
+drops <- c("PassengerId","Ticket","Cabin")
+titanic_train <- titanic_train[ , !(names(titanic_train) %in% drops)]
+```
+
+#### Q2. Extract the titles (use `strsplit`) and look at the counts of each unique title. If there are some that are very low, decide what to do with them - you can create a manual ontology and rename them, create an "Other" class, or drop those rows.
+
+##### Keep in mind - if you drop `null` rows during training, you still need to decide what to do with them while testing/running in production.
+
+```{r}
+# split the name on commas or periods and pick the second element
+titanic_train$Title = sapply(titanic_train$Name, FUN=function(x) {strsplit(x, split='[,.]')[[1]][2]})
+# remove the extra space
+titanic_train$Title <- sub(' ', '', titanic_train$Title)
+# just to keep things tidy - drop the Name column
+titanic_train <- titanic_train[ , !(names(titanic_train) %in% c("Name"))]
+# look at counts of each unique token
+table(titanic_train$Title)
+```
+```{r}
+keep_titles <- c("Master", "Miss", "Mr", "Mrs")
+titanic_train$Title[!(titanic_train$Title %in% keep_titles)] <- "Other"
+table(titanic_train$Title)
+```
+
+#### Q3. Let's deal with imputing (filling-in) `NAs` and missing values in `Age` and `Embarked`:
+
+##### `Age` is numeric, so we can replace it with the mean of all the non-null ages. `Embarked` is categorical, so let's just replace it with the most frequent port of embarkation.
+
+##### What assumptions are we implicitly making by using these methods of imputation?
+
+```{r}
+titanic_train$Age[is.na(titanic_train$Age)] <- mean(titanic_train$Age, na.rm=TRUE)
+table(titanic_train$Embarked)
+# "S" is the most frequent port
+titanic_train$Embarked[titanic_train$Embarked==""] <- "S"
+```
+
+We are assuming that the data are $missing at random$, or at least in a way that is uncorrelated with the target variable. If they are missing because some specific set of passengers intentionally left it blank, we need to try and match it to the mean age of that specific subset. In the limit, this would mean building a machine learning model to predict the missing variables, based on all the other variables. You can do precisely this with libraries such as `mice`.
+
+#### Q4. Convert all the categorical variables into factors.
+
+##### What's the deal with `Pclass`? Is it categorical?
+
+```{r}
+titanic_train$Embarked <- as.factor(titanic_train$Embarked)
+titanic_train$Sex <- as.factor(titanic_train$Sex)
+titanic_train$Title <- as.factor(titanic_train$Title)
+```
+
+`Pclass` is an _ordinal variable_. The is an ordinal relationship - in terms of *badness of service*, $3 > 2 > 1$. But there isn't a strict numerical relationship as implied by the numbers. It might be better to do ${1,3,4}$ instead of ${1,2,3}$. You need to look at the data and determine this, or treat this as a sort of *hyperparameter* to optimize (although there is no well defined ordered space to search through).
+
+#### Q5. Now for the easy part! Train a logistic regression with optimized hyperparameter(s). Use a 75-25 train-test split.
+
+##### Is accuracy a good metric for evaluating this model? If so, what is the "chance" level?
+
+##### **Note:** If you are copying your commands from the linear regression notebook, please make sure you make the appropriate changes to the `family`, `type`, and `type.measure` parameters in the `fit` and `predict` functions. For reference: https://web.stanford.edu/~hastie/glmnet/glmnet_alpha.html#log
+
+##### **Note 2:** When using `glmnet`, you need to provide a matrix, not a dataframe. This means you cannot just pass columns as factors, but most one-hot encode them first. The following line converts an input dataframe `df`, and returns a matrix with all factor columns appropriately encoded. You only need to do this for the feature matrix, not the output labels.
+```
+model.matrix( ~ .-1, df)
+```
+
+##### Keep in mind that titanic_test does not have the labels. So you will have to evaluate on a test split that you create. Or better yet, submit your responses to Kaggle and see how you did: https://www.kaggle.com/c/titanic
+
+```{r}
+# extract the index of the label column
+labelColIdx = match(c("Survived"), names(titanic_train))
+
+# The baseline accuracy is the accuracy obtained by always predicting the majority class
+cat("Baseline accuracy: ", 1-mean(titanic_train[,labelColIdx]))
+
+# break the data up into train and test sets
+set.seed(1234)
+smp_size <- floor(0.825 * nrow(titanic_train))
+train_ind <- sample(seq_len(nrow(titanic_train)), size = smp_size)
+
+df.train <- titanic_train[train_ind, ]
+df.test <- titanic_train[-train_ind, ]
+
+# break up the train set into smaller train and test sets to optimize alpha
+set.seed(12345)
+smp_size <- floor(0.825 * nrow(df.train))
+train_ind <- sample(seq_len(nrow(df.train)), size = smp_size)
+
+df.alphatrain <- df.train[train_ind, ]
+df.alphatest <- df.train[-train_ind, ]
+
+for (a in log10(seq(1,10,1))) {
+  
+  cat("\nalpha =", a)
+  fit.elastic <- cv.glmnet(model.matrix( ~ .-1, df.alphatrain[,-labelColIdx]),
+                           as.matrix(df.alphatrain[,labelColIdx]),
+                           type.measure="class", alpha=a, family="binomial",
+                           standardize=TRUE)
+
+  fitted.elastic.train <- predict(fit.elastic,
+                                  newx = model.matrix( ~ .-1, df.alphatrain[,-labelColIdx]),
+                                  s="lambda.min", type = "class")
+  fitted.elastic.test <- predict(fit.elastic,
+                                 newx = model.matrix( ~ .-1, df.alphatest[,-labelColIdx]),
+                                 s="lambda.min", type = "class")
+
+  cat("\nTrain accuracy: ", mean((fitted.elastic.train=="1")==as.matrix(df.alphatrain[,labelColIdx])))
+  cat("\nTest accuracy: ", mean((fitted.elastic.test=="1")==as.matrix(df.alphatest[,labelColIdx])))
+}
+```
+
+Test error is optimized at $\alpha = 0.30103$.
+
+```{r}
+# With the optimal alpha, build a model with the entire train set and measure accuracy
+optalpha <- 0.30103
+fit.elastic <- cv.glmnet(model.matrix( ~ .-1, df.train[,-labelColIdx]),
+                         as.matrix(df.train[,labelColIdx]),
+                         type.measure="class", alpha=optalpha, 
+                         family="binomial", standardize=TRUE)
+
+fitted.elastic.test <- predict(fit.elastic,
+                               newx = model.matrix( ~ .-1, df.test[,-labelColIdx]),
+                               s="lambda.min", type = "class")
+
+cat("\nTest accuracy: ", mean((fitted.elastic.test=="1")==as.matrix(df.test[,labelColIdx])))
+```
+
+We are only using accuracy here because the class imbalance is not *too* bad. The baseline accuracy is measured by always picking the majority class, so here it is $61.6\%$. Ideally, you should be looking at other metrics as well - the *2x2 contingency table* (or *confusion matrix*), and other measures derived from that, like *precision*, *recall*, *F-score*, *area under the ROC curve* to fully understand the kinds of errors your model is making - that is usually the best place to iterate and improve the model.
+
+You should also be looking at the important coefficients and see if what your model is doing makes sense. If a feature you thought should be important turns out not to be, dig into it - there might be a bug in your feature engineering that is throwing valuable information away.

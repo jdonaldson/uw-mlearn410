@@ -1,5 +1,5 @@
 ---
-title: "Crime and Communities Exercise"
+title: "Crime and Communities Linear Regression Exercise"
 output: html_notebook
 ---
 
@@ -125,30 +125,41 @@ cat("\nTrain correlation coefficient: ", cor(as.matrix(df.train$ViolentCrimesPer
 cat("\nTest correlation coefficient: ", cor(as.matrix(df.test$ViolentCrimesPerPop), fitted.lasso.test)[1])
 ```
 #### Elastic Net
+
+#### Note that since we are doing nested grid-search, we have to split the train dataset further into train and test.
+
 ```{r}
+set.seed(1)
+smp_size <- floor(0.75 * nrow(df.train))
+train_ind <- sample(seq_len(nrow(df.train)), size = smp_size)
+
+df.alphatrain <- df.train[train_ind, ]
+df.alphatest <- df.train[-train_ind, ]
+
 for (a in log10(seq(1,10,1))) {
-  set.seed(1)
+  set.seed(123)
+  
   cat("\nalpha =", a)
-  fit.elastic <- cv.glmnet(as.matrix(df.train[,-labelColIdx]),
-                         as.matrix(df.train$ViolentCrimesPerPop),
+  fit.elastic <- cv.glmnet(as.matrix(df.alphatrain[,-labelColIdx]),
+                         as.matrix(df.alphatrain$ViolentCrimesPerPop),
                          type.measure="mse", alpha=a, family="gaussian",
                          standardize=FALSE)
 
   fitted.elastic.train <- predict(fit.elastic,
-                                  newx = data.matrix(df.train[,-labelColIdx]),
+                                  newx = data.matrix(df.alphatrain[,-labelColIdx]),
                                   s="lambda.min")
   fitted.elastic.test <- predict(fit.elastic,
-                                 newx = data.matrix(df.test[,-labelColIdx]),
+                                 newx = data.matrix(df.alphatest[,-labelColIdx]),
                                  s="lambda.min")
 
-  cat("\nTrain correlation coefficient: ", cor(as.matrix(df.train$ViolentCrimesPerPop),       
+  cat("\nTrain correlation coefficient: ", cor(as.matrix(df.alphatrain$ViolentCrimesPerPop),       
                                              fitted.elastic.train)[1])
-  cat("\nTest correlation coefficient: ", cor(as.matrix(df.test$ViolentCrimesPerPop), 
+  cat("\nTest correlation coefficient: ", cor(as.matrix(df.alphatest$ViolentCrimesPerPop), 
                                             fitted.elastic.test)[1])
 }
 ```
 
-Elastic net performs the best (looking at the test correlation coefficient), but not by much. This is unsurprising, since elastic net is a superset of the other models. Picking the optimal value from above, $\alpha = 0.30103$.
+Elastic net performs the best (looking at the test correlation coefficient). This is unsurprising, since elastic net is a superset of the other models. Picking the optimal value from above, $\alpha = 0.30103$.
 
 ```{r}
 optalpha <- 0.30103
@@ -197,5 +208,9 @@ for (feat in rownames(coef(fit.linreg, s=0))[-1]) {
 }
 
 plot(coef(fit.linreg, s=0)[-1], corrs, main="Regression coefficients versus correlation coefficients", 
-  	xlab="Linear regression coefficients", ylab="Correlation coefficients", pch=19)
+    	xlab="Linear regression coefficients", ylab="Correlation coefficients", pch=19)
 ```
+
+We should be very careful in interpreting regression coefficients directly. While a predictor $x_i$ may be postively (negatively) correlated with the target, $\beta_i$ may be negative (positive) in the presence of other predictors, which are correlated with $x_i$. Similarly, a small $\beta_i$ does not mean that $x_i$ is uninformative, but it may be that other variables have 'captured' the information, and left $x_i$ with nothing left to contribute.
+
+Additionally, we have to consider issues of scale - whether we measure distance in meters or feet, the information content does not change. But the regression coefficient would change to scale appropriately. Thus, we have to ensure that our variables are normalized to have zero mean and unit standard deviation prior to fitting the model.
