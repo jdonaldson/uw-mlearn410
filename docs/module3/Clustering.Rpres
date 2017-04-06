@@ -42,6 +42,7 @@ type : sub-section
 - Connectivity Clustering
 - Centroid-based Clustering
 - Density-based Clustering
+- Graph-based Clustering
 
 
 Connectivity-based clustering
@@ -67,7 +68,7 @@ Hierarchical Clustering
 ============
 The arrest information is not expressed in distances, so we need to transform it.
 ```{r}
-  head(as.matrix(dist(USArrests)))
+  as.matrix(dist(USArrests))[1:6, 1:6]
 ```
 
 Hierarchical Clustering
@@ -237,16 +238,40 @@ Distribution-based clustering
 ========================================================
 type : sub-section
 Bio break? - 15m
+- Expectation Maximaztion
 
 Expectation Maximization
 ==========
 ```{r}
 require(EMCluster)
 ```
+<a title="By 3mta3 (talk) 16:55, 23 March 2009 (UTC) (Own work) [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0) or GFDL (http://www.gnu.org/copyleft/fdl.html)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3AEm_old_faithful.gif"><img width="512" alt="Em old faithful" src="https://upload.wikimedia.org/wikipedia/commons/a/a7/Em_old_faithful.gif"/></a>
+***
 - based on probability distributions
 - no hard assignment of points to clusters, instead use probabilities
 - underlying distributions can be anything, gaussians are common 
-- optimize : $Q(\boldsymbol\theta|\boldsymbol\theta^{(t)}) = \operatorname{E}_{\mathbf{Z}|\mathbf{X},\boldsymbol\theta^{(t)}}\left[ \log L (\boldsymbol\theta;\mathbf{X},\mathbf{Z})  \right]$
+-  Calculate expected value of log likelihood function:
+$$
+Q(\boldsymbol\theta|\boldsymbol\theta^{(t)}) = \operatorname{E}_{\mathbf{Z}|\mathbf{X},\boldsymbol\theta^{(t)}}\left[ \log L (\boldsymbol\theta;\mathbf{X},\mathbf{Z})  \right]
+$$
+  - with respect to the conditional distribution of $Z$ given $X$ under the current estimate of the parameters $\theta^{(t)}$.
+- Find the parameter that maximizes : 
+$$
+\boldsymbol\theta^{(t+1)} = \underset{\boldsymbol\theta}{\operatorname{arg\,max}} \ Q(\boldsymbol\theta|\boldsymbol\theta^{(t)})
+$$
+
+Expectation Maximization
+==========
+<a title="By 3mta3 (talk) 16:55, 23 March 2009 (UTC) (Own work) [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0) or GFDL (http://www.gnu.org/copyleft/fdl.html)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3AEm_old_faithful.gif"><img width="512" alt="Em old faithful" src="https://upload.wikimedia.org/wikipedia/commons/a/a7/Em_old_faithful.gif"/></a>
+
+***
+Plain english: 
+
+- Initialize $\theta$ to one or more random values.
+- Compute the best value for $Z$ given the $\theta$ values.
+- Then use the computed values to compute a better value for $\theta$.
+- Rinse and repeat.
+
 
 Expectation Maximization
 ==========
@@ -289,15 +314,126 @@ Considerations
 - Parameterization includes cluster count *and* mixture model specification. 
 - Most similar to K-means, except cluster assignment is *soft*, rather than *hard* as in km.
 
+Expectation Maximization
+==========
+
+Strengths:
+- Can easily adapt to different models/kernels (besides gaussian).
+- Retrieves clusters *and* cluster model coefficients!
+- Fast, iterative algorithm. Complexity depends on number of iterations and time to compute E and M steps.
+
+Weaknesses:
+- Requires more parameterization up front than any other model(cluster count, model expectation (e.g. gaussian), convergence, tolerance, etc.)
+- Complexity dependent on chosen model parameters.
+
 Density-based Clustering
 =========
 type : sub-section
+- DBScan
+
 
 
 DBScan
 ==========
+Density-based Spatial Clustering of Applications With Noise
+Points are:
+- Core - within $\epsilon$ of $p$ (min points).
+- Reachable - within $\epsilon$ of a core point.
+- Outliner - neither are true.
+
+***
+
+<a title="By Chire (Own work) [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3ADBSCAN-Illustration.svg"><img width="512" alt="DBSCAN-Illustration" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/DBSCAN-Illustration.svg/640px-DBSCAN-Illustration.svg.png"/></a>
+
+
+DBScan
+==========
+Look at iris again
 ```{r}
 library("dbscan")
+data(iris)
+iris <- as.matrix(iris[,1:4])
+res <- dbscan(iris, eps = .5, minPts = 5)
+res
 ```
 
+DBScan
+==========
+Look at iris again
+```{r}
+library("dbscan")
+kNNdistplot(USArrests, k = 5)
+eps = 20
+abline(h=eps, col = "red", lty=2)
+res <- dbscan(USArrests, eps = eps, minPts = 3)
+res
+```
 
+DBScan
+==========
+```{r}
+arrests = USArrests
+arrests$cluster = factor(res$cluster)
+arrests[arrests$cluster ==1,]
+arrests[arrests$cluster ==2,]
+arrests[arrests$cluster ==3,]
+```
+
+DBScan
+==========
+```{r}
+arrests = USArrests
+arrests$cluster = factor(res$cluster)
+ggpairs(arrests, mapping=ggplot2::aes(fill=cluster,color=cluster))
+```
+
+DBScan
+==========
+Scale fields with differing mean/variance in order to prevent one dimension from dominating the NN cluster metric
+```{r}
+res <- dbscan(scale(USArrests), eps = 1, minPts = 3)
+res
+```
+
+DBScan
+==========
+```{r}
+arrests = USArrests
+arrests$cluster = factor(res$cluster)
+ggpairs(arrests, mapping=ggplot2::aes(fill=cluster,color=cluster))
+```
+
+DBScan
+===========
+
+Strengths:
+- Does not require cluster count parameter
+- Finds arbitrary shapes with consistent density
+  - Avoid thin line effect of hierarchical clustering
+- Excludes outliers from clusters (i.e. can eliminate noise)
+- Requires two parameters
+- (Mostly) invariant to ordering
+
+Weaknesses:
+- Non-deterministic clusters possible during "ties" among neighbors
+- Suffers from curse of dimensionality issues
+- Doesn't handle clusters of differing density 
+- Relies on expert knowledge to set $\epsilon$ and $p$.
+- Expensive algorithm $O(n^2)$, although pre-indexing can yield $O(log(n))$.
+
+DBScan
+=========
+See Also : OPTICS
+- "Ordering Points to Identify The Clustering Structure"
+- Overcomes density variance between clusters problem in DBScan
+
+***
+<a title="By Chire (Own work) [Public domain], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3AOPTICS.svg"><img width="512" alt="OPTICS" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/OPTICS.svg/512px-OPTICS.svg.png"/></a>
+
+Graph-based Clustering
+===========
+type : sub-section
+- HCS 
+
+HCS
+====

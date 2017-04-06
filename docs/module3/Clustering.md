@@ -34,6 +34,7 @@ type : sub-section
 - Connectivity Clustering
 - Centroid-based Clustering
 - Density-based Clustering
+- Graph-based Clustering
 
 
 Connectivity-based clustering
@@ -71,7 +72,7 @@ Hierarchical Clustering
 The arrest information is not expressed in distances, so we need to transform it.
 
 ```r
-  head(as.matrix(dist(USArrests)))
+  as.matrix(dist(USArrests))[1:6, 1:6]
 ```
 
 ```
@@ -82,62 +83,6 @@ Arizona    63.00833 46.59249   0.00000 108.85192   23.19418 90.35115
 Arkansas   46.92814 77.19741 108.85192   0.00000   97.58202 36.73486
 California 55.52477 45.10222  23.19418  97.58202    0.00000 73.19713
 Colorado   41.93256 66.47594  90.35115  36.73486   73.19713  0.00000
-           Connecticut Delaware   Florida  Georgia   Hawaii     Idaho
-Alabama      128.20694 16.80625 102.00162 25.84183 191.8031 116.76198
-Alaska       159.40656 45.18296  79.97450 57.03026 221.1935 146.48498
-Arizona      185.15953 58.61638  41.65453 86.03796 248.2690 176.81767
-Arkansas      85.02829 53.01038 148.73574 25.58613 147.7760  70.58704
-California   169.27711 49.29148  60.98073 73.99730 231.0711 162.61279
-Colorado      98.08119 41.47783 131.40582 25.09303 159.1792  90.88641
-           Illinois   Indiana     Iowa    Kansas  Kentucky Louisiana
-Alabama    28.45488 123.34521 180.6101 121.51987 127.28417  15.45445
-Alaska     42.91165 152.80409 209.9835 151.48020 156.61204  32.34888
-Arizona    45.69781 181.89780 239.9915 180.02891 187.69030  48.49464
-Arkansas   67.77027  78.47809 134.5949  76.75344  81.09285  61.54551
-California 32.71880 166.22996 224.6347 164.51675 173.20791  41.63556
-Colorado   47.66907  93.61506 152.0797  92.17972 101.02475  49.97499
-              Maine  Maryland Massachusetts Michigan Minnesota Mississippi
-Alabama    154.1453  64.99362      91.64851 28.48543  164.6510    27.39014
-Alaska     183.8975  44.83949     123.25421 28.85775  194.2536    28.63512
-Arizona    214.3274  15.01599     145.87591 39.87242  223.0883    52.70873
-Arkansas   107.8507 111.64291      54.18118 71.10028  119.3246    69.68536
-California 199.9311  36.34735     129.52471 27.74635  207.2225    55.68357
-Colorado   127.9002  97.30041      59.90000 51.45483  134.7645    68.66440
-            Missouri   Montana  Nebraska   Nevada New Hampshire New Jersey
-Alabama     59.78829 127.39262 134.43697 37.43047      179.7362   83.24302
-Alaska      89.30672 156.67358 164.11426 34.88682      209.2544  114.73557
-Arizona    116.46738 187.54085 193.42360 44.79743      239.2556  135.85040
-Arkansas    24.89438  81.16311  88.97893 74.28869      133.6783   49.84426
-California 100.98891 172.99607 178.10081 26.74696      224.0554  119.04117
-Colorado    29.17979 100.75167 105.66835 48.83421      151.5892   50.42083
-           New Mexico New York North Carolina North Dakota      Ohio
-Alabama      51.64349 33.71083      101.96102     192.4161 117.38761
-Alaska       33.52193 43.18298       79.37607     221.3786 147.37334
-Arizona      13.89604 40.85352       57.61961     252.8082 174.33818
-Arkansas     97.93120 73.76212      147.18424     145.8555  74.36975
-California   24.49510 26.90093       80.33212     238.2145 157.99851
-Colorado     81.73622 52.27810      138.97759     165.7509  85.81754
-            Oklahoma    Oregon Pennsylvania Rhode Island South Carolina
-Alabama     85.84870  78.38686    131.08509     70.33811       44.18292
-Alaska     116.42942 106.93012    161.60090    103.90380       27.55649
-Arizona    143.93141 135.67288    188.86622    122.41887       36.89092
-Arkansas    43.01267  36.89512     86.99086     42.18531       89.24887
-California 128.77935 120.03958    172.99936    107.21311       47.06134
-Colorado    57.09974  47.36412    101.03960     43.87949       82.64194
-           South Dakota Tennessee    Texas      Utah  Vermont  Virginia
-Alabama        151.0891  48.34760 41.56609 118.50270 190.3707  80.29533
-Alaska         179.9481  77.88453 72.36221 148.27609 218.2905 110.64669
-Arizona        211.7516 108.25812 93.27599 174.25734 251.4893 139.42471
-Arkansas       104.4552  12.61428 32.74462  76.43900 143.5286  36.42156
-California     197.5244  94.72766 77.38023 157.49263 237.4355 124.82091
-Colorado       125.3021  28.00589 14.50103  85.62552 165.0477  53.41685
-           Washington West Virginia Wisconsin   Wyoming
-Alabama      92.82047      156.7924  183.7757  75.50709
-Alaska      122.14700      185.6409  213.5754 106.74010
-Arizona     149.29786      218.0061  242.3124 135.38039
-Arkansas     51.20478      110.0711  138.3442  30.98726
-California  133.10657      204.2537  226.4575 121.72034
-Colorado     60.64206      132.3601  154.1152  52.03672
 ```
 
 Hierarchical Clustering
@@ -496,6 +441,7 @@ Distribution-based clustering
 ========================================================
 type : sub-section
 Bio break? - 15m
+- Expectation Maximaztion
 
 Expectation Maximization
 ==========
@@ -503,10 +449,33 @@ Expectation Maximization
 ```r
 require(EMCluster)
 ```
+<a title="By 3mta3 (talk) 16:55, 23 March 2009 (UTC) (Own work) [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0) or GFDL (http://www.gnu.org/copyleft/fdl.html)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3AEm_old_faithful.gif"><img width="512" alt="Em old faithful" src="https://upload.wikimedia.org/wikipedia/commons/a/a7/Em_old_faithful.gif"/></a>
+***
 - based on probability distributions
 - no hard assignment of points to clusters, instead use probabilities
 - underlying distributions can be anything, gaussians are common 
-- optimize : $Q(\boldsymbol\theta|\boldsymbol\theta^{(t)}) = \operatorname{E}_{\mathbf{Z}|\mathbf{X},\boldsymbol\theta^{(t)}}\left[ \log L (\boldsymbol\theta;\mathbf{X},\mathbf{Z})  \right]$
+-  Calculate expected value of log likelihood function:
+$$
+Q(\boldsymbol\theta|\boldsymbol\theta^{(t)}) = \operatorname{E}_{\mathbf{Z}|\mathbf{X},\boldsymbol\theta^{(t)}}\left[ \log L (\boldsymbol\theta;\mathbf{X},\mathbf{Z})  \right]
+$$
+  - with respect to the conditional distribution of $Z$ given $X$ under the current estimate of the parameters $\theta^{(t)}$.
+- Find the parameter that maximizes : 
+$$
+\boldsymbol\theta^{(t+1)} = \underset{\boldsymbol\theta}{\operatorname{arg\,max}} \ Q(\boldsymbol\theta|\boldsymbol\theta^{(t)})
+$$
+
+Expectation Maximization
+==========
+<a title="By 3mta3 (talk) 16:55, 23 March 2009 (UTC) (Own work) [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0) or GFDL (http://www.gnu.org/copyleft/fdl.html)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3AEm_old_faithful.gif"><img width="512" alt="Em old faithful" src="https://upload.wikimedia.org/wikipedia/commons/a/a7/Em_old_faithful.gif"/></a>
+
+***
+Plain english: 
+
+- Initialize $\theta$ to one or more random values.
+- Compute the best value for $Z$ given the $\theta$ values.
+- Then use the computed values to compute a better value for $\theta$.
+- Rinse and repeat.
+
 
 Expectation Maximization
 ==========
@@ -572,16 +541,242 @@ Considerations
 - Parameterization includes cluster count *and* mixture model specification. 
 - Most similar to K-means, except cluster assignment is *soft*, rather than *hard* as in km.
 
+Expectation Maximization
+==========
+
+Strengths:
+- Can easily adapt to different models/kernels (besides gaussian).
+- Retrieves clusters *and* cluster model coefficients!
+- Fast, iterative algorithm. Complexity depends on number of iterations and time to compute E and M steps.
+
+Weaknesses:
+- Requires more parameterization up front than any other model(cluster count, model expectation (e.g. gaussian), convergence, tolerance, etc.)
+- Complexity dependent on chosen model parameters.
+
 Density-based Clustering
 =========
 type : sub-section
+- DBScan
 
+
+
+DBScan
+==========
+Density-based Spatial Clustering of Applications With Noise
+Points are:
+- Core - within $\epsilon$ of $p$ (min points).
+- Reachable - within $\epsilon$ of a core point.
+- Outliner - neither are true.
+
+***
+
+<a title="By Chire (Own work) [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3ADBSCAN-Illustration.svg"><img width="512" alt="DBSCAN-Illustration" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/DBSCAN-Illustration.svg/640px-DBSCAN-Illustration.svg.png"/></a>
+
+
+DBScan
+==========
+Look at iris again
+
+```r
+library("dbscan")
+data(iris)
+iris <- as.matrix(iris[,1:4])
+res <- dbscan(iris, eps = .5, minPts = 5)
+res
+```
+
+```
+DBSCAN clustering for 150 objects.
+Parameters: eps = 0.5, minPts = 5
+The clustering contains 2 cluster(s) and 17 noise points.
+
+ 0  1  2 
+17 49 84 
+
+Available fields: cluster, eps, minPts
+```
+
+DBScan
+==========
+Look at iris again
+
+```r
+library("dbscan")
+kNNdistplot(USArrests, k = 5)
+eps = 20
+abline(h=eps, col = "red", lty=2)
+```
+
+<img src="Clustering-figure/unnamed-chunk-22-1.png" title="plot of chunk unnamed-chunk-22" alt="plot of chunk unnamed-chunk-22" width="900px" />
+
+```r
+res <- dbscan(USArrests, eps = eps, minPts = 3)
+res
+```
+
+```
+DBSCAN clustering for 50 objects.
+Parameters: eps = 20, minPts = 3
+The clustering contains 5 cluster(s) and 10 noise points.
+
+ 0  1  2  3  4  5 
+10  7  3 10  9 11 
+
+Available fields: cluster, eps, minPts
+```
 
 DBScan
 ==========
 
 ```r
-library("dbscan")
+arrests = USArrests
+arrests$cluster = factor(res$cluster)
+arrests[arrests$cluster ==1,]
 ```
 
+```
+               Murder Assault UrbanPop Rape cluster
+Alabama          13.2     236       58 21.2       1
+Alaska           10.0     263       48 44.5       1
+Arizona           8.1     294       80 31.0       1
+Arkansas          8.8     190       50 19.5       1
+California        9.0     276       91 40.6       1
+Colorado          7.9     204       78 38.7       1
+Connecticut       3.3     110       77 11.1       1
+Delaware          5.9     238       72 15.8       1
+Georgia          17.4     211       60 25.8       1
+Hawaii            5.3      46       83 20.2       1
+Idaho             2.6     120       54 14.2       1
+Illinois         10.4     249       83 24.0       1
+Indiana           7.2     113       65 21.0       1
+Iowa              2.2      56       57 11.3       1
+Kansas            6.0     115       66 18.0       1
+Kentucky          9.7     109       52 16.3       1
+Louisiana        15.4     249       66 22.2       1
+Maine             2.1      83       51  7.8       1
+Maryland         11.3     300       67 27.8       1
+Massachusetts     4.4     149       85 16.3       1
+Michigan         12.1     255       74 35.1       1
+Minnesota         2.7      72       66 14.9       1
+Mississippi      16.1     259       44 17.1       1
+Missouri          9.0     178       70 28.2       1
+Montana           6.0     109       53 16.4       1
+Nebraska          4.3     102       62 16.5       1
+Nevada           12.2     252       81 46.0       1
+New Hampshire     2.1      57       56  9.5       1
+New Jersey        7.4     159       89 18.8       1
+New Mexico       11.4     285       70 32.1       1
+New York         11.1     254       86 26.1       1
+North Dakota      0.8      45       44  7.3       1
+Ohio              7.3     120       75 21.4       1
+Oklahoma          6.6     151       68 20.0       1
+Oregon            4.9     159       67 29.3       1
+Pennsylvania      6.3     106       72 14.9       1
+Rhode Island      3.4     174       87  8.3       1
+South Carolina   14.4     279       48 22.5       1
+South Dakota      3.8      86       45 12.8       1
+Tennessee        13.2     188       59 26.9       1
+Texas            12.7     201       80 25.5       1
+Utah              3.2     120       80 22.9       1
+Vermont           2.2      48       32 11.2       1
+Virginia          8.5     156       63 20.7       1
+Washington        4.0     145       73 26.2       1
+West Virginia     5.7      81       39  9.3       1
+Wisconsin         2.6      53       66 10.8       1
+Wyoming           6.8     161       60 15.6       1
+```
 
+```r
+arrests[arrests$cluster ==2,]
+```
+
+```
+[1] Murder   Assault  UrbanPop Rape     cluster 
+<0 rows> (or 0-length row.names)
+```
+
+```r
+arrests[arrests$cluster ==3,]
+```
+
+```
+[1] Murder   Assault  UrbanPop Rape     cluster 
+<0 rows> (or 0-length row.names)
+```
+
+DBScan
+==========
+
+```r
+arrests = USArrests
+arrests$cluster = factor(res$cluster)
+ggpairs(arrests, mapping=ggplot2::aes(fill=cluster,color=cluster))
+```
+
+<img src="Clustering-figure/unnamed-chunk-24-1.png" title="plot of chunk unnamed-chunk-24" alt="plot of chunk unnamed-chunk-24" width="900px" />
+
+DBScan
+==========
+Scale fields with differing mean/variance in order to prevent one dimension from dominating the NN cluster metric
+
+```r
+res <- dbscan(scale(USArrests), eps = 1, minPts = 3)
+res
+```
+
+```
+DBSCAN clustering for 50 objects.
+Parameters: eps = 1, minPts = 3
+The clustering contains 4 cluster(s) and 9 noise points.
+
+ 0  1  2  3  4 
+ 9  6 29  3  3 
+
+Available fields: cluster, eps, minPts
+```
+
+DBScan
+==========
+
+```r
+arrests = USArrests
+arrests$cluster = factor(res$cluster)
+ggpairs(arrests, mapping=ggplot2::aes(fill=cluster,color=cluster))
+```
+
+<img src="Clustering-figure/unnamed-chunk-26-1.png" title="plot of chunk unnamed-chunk-26" alt="plot of chunk unnamed-chunk-26" width="900px" />
+
+DBScan
+===========
+
+Strengths:
+- Does not require cluster count parameter
+- Finds arbitrary shapes with consistent density
+  - Avoid thin line effect of hierarchical clustering
+- Excludes outliers from clusters (i.e. can eliminate noise)
+- Requires two parameters
+- (Mostly) invariant to ordering
+
+Weaknesses:
+- Non-deterministic clusters possible during "ties" among neighbors
+- Suffers from curse of dimensionality issues
+- Doesn't handle clusters of differing density 
+- Relies on expert knowledge to set $\epsilon$ and $p$.
+- Expensive algorithm $O(n^2)$, although pre-indexing can yield $O(log(n))$.
+
+DBScan
+=========
+See Also : OPTICS
+- "Ordering Points to Identify The Clustering Structure"
+- Overcomes density variance between clusters problem in DBScan
+
+***
+<a title="By Chire (Own work) [Public domain], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3AOPTICS.svg"><img width="512" alt="OPTICS" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/OPTICS.svg/512px-OPTICS.svg.png"/></a>
+
+Graph-based Clustering
+===========
+type : sub-section
+- HCS 
+
+HCS
+====
