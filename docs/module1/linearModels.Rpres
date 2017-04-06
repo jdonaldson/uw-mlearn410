@@ -26,6 +26,30 @@ Carl Friedrich Gauss<br>1801</center>
 - They can be used when the assumptions are not met, but then it needs to be graded based on *performance on the test data*.<br><br>
 - Metrics like p-values, F-test statistics, etc...are *valid only if the assumptions are true*.
 
+(Generalized) Linear Models
+========================================================
+right : 80%
+<br><center><img alt="Logistic function" src="img/Logistic.png"/>
+Logistic function<br>
+<img alt="Log function" src="img/Log.png"/>
+Log function</center>
+***
+<br>
+- Assumes a *linear* relationship between the features and some hidden variable.
+- This hidden variable can then be transformed through a *link function* to produce outputs with different distributions.
+- This allows us to model many different kinds of data:
+  - Logistic link - *Classification* (binary and multi-class)
+  - Log link - *Poisson regression for count data* (how many cars crossed this bridge?)
+  - Tan link - *Von Mises regression for circular data* (what day of the week?)
+  - other applications...
+  
+The Linearity constraint
+========================================================
+- Only works when the relationship with the hidden variable is linear.
+<br><center><img alt="Anscombe's quarter" width=512 src="img/Anscombe.png"/><br>
+Anscombe's quartet<br>
+- In each of these, the $x$ and $y$ axes have the same correlation coefficient!
+
 Linear Regression (Ordinary Least Squares)
 ========================================================
 
