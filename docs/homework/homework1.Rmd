@@ -11,7 +11,7 @@ library(e1071)
 ```
 
 
-# Utility Function Questions
+# Misc Metric Questions
 
 ## Q1: Generalize the entropy function from the slides
 Support the calculation of information entropy to accept a vector of probabilities, rather than just inferring a binary probability.
@@ -58,33 +58,39 @@ titanic = read.csv("https://jdonaldson.github.io/uw-mlearn410/homework/titanic3.
 head(titanic)
 
 ```
+
 Use the plots to answer the following questions: 
 
-1. Q4: Which fields seem to be important for predicting survival?  
-2. Q5: Which fields are leakage? 
-3. Q6: Which fields look like noise?
+## Q4: Which fields seem to be important for predicting survival?  
+## Q5: Which fields are leakage? 
+## Q6: Which fields look like noise?
 
 
-#### Q7: Extract the titles (use `strsplit`) and look at the counts of each unique title. If there are some that are very low, decide what to do with them - you can create a manual ontology and rename them, create an "Other" class, or drop those rows.
-##### Keep in mind - if you drop `null` rows during training, tell us what to do with them while testing/running in production.
+## Q7: Extract the titles from the ``name`` field 
+The ``name`` field contains some useful demographic information.  Use `strsplit` and look at the counts of each unique title. 
+These should be values like "Mr.", "Mrs.", etc. If there are some that are very low, decide what to do with them - you can create a manual ontology and rename them, create an "Other" class, or drop those rows. Keep in mind - if you drop `null` rows during training, tell us what to do with them while testing/running in production.
 ```{r}
 #modify titanic dataset here
 ```
 
-## Q8: Let's deal with imputing (filling-in) `NAs` and missing values in `age` and `embarked`:
-### `age` is numeric, so we can replace it with the mean of all the non-null ages. `embarked` is categorical, so let's just replace it with the most frequent port of embarkation.
-#### What assumptions are we implicitly making by using these methods of imputation?
+
+## Q8: Deal with NA values
+Let's deal with imputing (filling-in) `NAs` and missing values in `age` and `embarked`:
+`age` is numeric, so we can replace it with the mean of all the non-null ages. `embarked` is categorical, so let's just replace it with the most frequent port of embarkation.
 ```{r}
 # modify titanic dataset here. 
 ```
 
-## Q9: Convert all the categorical variables into factors.
-### What's the deal with `pclass`? Is it categorical?
+## Q9: What assumptions are we implicitly making by using these methods of imputation?
+
+
+## Q10: Convert all the categorical variables into appropriate factors.
+Example: What's the deal with `pclass`? Is it categorical?
 ```{r}
 # modify titanic here
 ```
 
-## Q10: Create a sampling function that splits the titanic dataset into 75% train, 25% test dataframe.
+## Q11: Create a sampling function that splits the titanic dataset into 75% train, 25% test dataframe.
 
 ```{r}
 # datasplit = function(d){
@@ -95,9 +101,9 @@ Use the plots to answer the following questions:
 ```
 
 # Modeling Questions
-## Q11: Is accuracy a good metric for evaluating this model? If so, what is the "chance" level for this dataset?
+## Q12: Is accuracy a good metric for evaluating this model? If so, what is the "chance" level for this dataset?
 
-## Q12: Use caret/rpart to train a decision tree on the test dataset.
+## Q13: Use caret/rpart to train a decision tree on the test dataset.
 
 ```{r}
 # e.g., use your train data from the split.  Fill in the proper fields in "?"
@@ -105,7 +111,7 @@ Use the plots to answer the following questions:
 # summary(tm)
 ```
 
-## Q13: Use caret/rf to train a random forest on the test dataset. 
+## Q14: Use caret/rf to train a random forest on the test dataset. 
 
 ```{r}
 # e.g., use your train data:
@@ -113,7 +119,7 @@ Use the plots to answer the following questions:
 # summary(rfm)
 ```
 
-## Q14: Use caret/glm to train a logistic model on the test dataset
+## Q15: Use caret/glm to train a logistic model on the test dataset
 
 ```{r}
 # e.g., use your train data:
@@ -122,21 +128,21 @@ Use the plots to answer the following questions:
 ```
 
 
-## Q15: Gather predictions from your models on the test dataset
+## Q16: Gather predictions from your models on the test dataset
 ```{r}
 # e.g.
 # tm_eval  = predict(tm, split$test)
 #...
 ```
 
-## Q16: Use your roc/auc functions to plot and compare your models' performance 
+## Q17: Use your roc/auc functions to plot and compare your models' performance 
 ```{r}
 #e.g
 # plot(roc(tm_eval, split$test$survived))
 # auc(roc(tm_eval, split$test$survived))
 ```
 
-## Q17: Which model performed the best and why do you think so?
+## Q17: Which model performed the best and why do you think it did better?
 
 # Closing Notes/Follow-up
 Consider submitting your responses to Kaggle and see how you did! 

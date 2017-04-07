@@ -184,8 +184,8 @@ library(e1071)</code></pre>
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-<div id="utility-function-questions" class="section level1">
-<h1>Utility Function Questions</h1>
+<div id="misc-metric-questions" class="section level1">
+<h1>Misc Metric Questions</h1>
 <div id="q1-generalize-the-entropy-function-from-the-slides" class="section level2">
 <h2>Q1: Generalize the entropy function from the slides</h2>
 <p>Support the calculation of information entropy to accept a vector of probabilities, rather than just inferring a binary probability.</p>
@@ -244,30 +244,28 @@ library(e1071)</code></pre>
 <p>The “Titanic” dataset is a passenger manifest that also includes a “survived” field, indicating whether the individual survived the trip. We’re interested in whether we can predict whether a passenger survived, based solely on the information we knew about them <em>before</em> they boarded the ship.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGl0YW5pYyA9IHJlYWQuY3N2KFwiaHR0cHM6Ly9qZG9uYWxkc29uLmdpdGh1Yi5pby91dy1tbGVhcm40MTAvaG9tZXdvcmsvdGl0YW5pYzMuY3N2XCIpXG5oZWFkKHRpdGFuaWMpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGl0YW5pYyA9IHJlYWQuY3N2KFwiaHR0cHM6Ly9qZG9uYWxkc29uLmdpdGh1Yi5pby91dy1tbGVhcm40MTAvaG9tZXdvcmsvdGl0YW5pYzMuY3N2XCIpXG5oZWFkKHRpdGFuaWMpXG5cbmBgYCJ9 -->
 <pre class="r"><code>titanic = read.csv(&quot;https://jdonaldson.github.io/uw-mlearn410/homework/titanic3.csv&quot;)
-head(titanic)</code></pre>
+head(titanic)
+</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImRhdGEuZnJhbWUiXSwibmNvbCI6MTQsIm5yb3ciOjZ9LCJyZGYiOiJINHNJQUFBQUFBQUFBOFZVelhMVE1CQlc3RGhwTWlWMHBsZCtkT0FBTTZtTFhWSUlNNFcwYVdjeVFGT2dNTFJISlZaaU5ZNlZrZXorM0xoeDRRV0FGK0lBajhLQkZ5akl0aFFiRFQyRUM1cVJ0YnY2ZHJXZlZ0N1h1MGR1L2FnT0FEQ0FhWnJBTUlWWU5zU25CTXFnbHF6bkFKaXJRbWlJZVUzTVNycjU5Nm52RjBlaXI2VDdXZUNiMjBHQXd5YmNKNXpiY0M4Z0hBMXc1TU4zS0lob0tFRzNCSWh3bXNBUWp6Q3pZUy8yaEE3Zk1IeEttVVRkeUZGcHNCNFdrZUVMeWhBSnNjVGN5VEY1bEdlVSt6R0NYWWJKMk05UFhTOWdlUTZHWFhoM0IzTk9jSktrUitFdUNna08rRDNwdHJvZGVwamxaeURHTGpUU2xSR2Vva0RsVkM3SWkrMWs1YWgwdHJLN2Zmcmo3WmV0NnRmbkhYblhuU2R5YmN1MU55K0RLcEVxU1hIcSs0WTJnY2JHY2g4NG0vZFZtbzZ6OGZDUnM3Qm1PZTEyeTUwek9qbjVKc2IzenVEbkp6RStYN2srL3BqaXRJeU1uWmFVcWwzWGhWMTM4MTlVYzg5eHRjQ2x3OFVFemR0VitUbUtOcmhpTFcyb0lyd1hIelhGK0ZDUWk3R1hEeVB4MUdQQ3hhczdrTGJiK3pTTUdFWkJFNzU4QmRkaDE4ZkozM05LeEMvWGhBZjkvd2xiN3VNemVFelpwQW43eDFxenNVSTB4VndTYktqbk1oc0dpSE9wTGZGWWhEekZudm9mRWhkVk40N1BsWWpHeW1weE11QXpwY3dRRy9vcWNrU0dFeHlwU0NQRTVqNUROQ0NxSFN6aDZRQ3hTWDdrZ0tJb2w3MExLZGQ4T3NXMkoxaHJ0R3FNbnRtS1dsSmJROWF4b3ZQUG1HYjhsYkh1b1FqWkk1YndCT0JTYzZuU1dVUm9LSnlNcEV0Ym1uT0phWWJyY1poazRxME4vVGljckxXU0E4Q2ZIYnlVWlRhWEc5bVJ4aThaeWxMWGg4TngzbUN0UVBUdlFDb053VGdsYk04WUNkVmwxWVdWMnhHTmtNTFZoelJRbHBRYnVQd05rSFpDVHBNR0FBQT0ifQ== -->
-<div data-pagedtable="false">
-<script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["pclass"],"name":[1],"type":["int"],"align":["right"]},{"label":["survived"],"name":[2],"type":["int"],"align":["right"]},{"label":["name"],"name":[3],"type":["chr"],"align":["left"]},{"label":["sex"],"name":[4],"type":["chr"],"align":["left"]},{"label":["age"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["sibsp"],"name":[6],"type":["int"],"align":["right"]},{"label":["parch"],"name":[7],"type":["int"],"align":["right"]},{"label":["ticket"],"name":[8],"type":["chr"],"align":["left"]},{"label":["fare"],"name":[9],"type":["dbl"],"align":["right"]},{"label":["cabin"],"name":[10],"type":["chr"],"align":["left"]},{"label":["embarked"],"name":[11],"type":["chr"],"align":["left"]},{"label":["boat"],"name":[12],"type":["chr"],"align":["left"]},{"label":["body"],"name":[13],"type":["int"],"align":["right"]},{"label":["home.dest"],"name":[14],"type":["chr"],"align":["left"]}],"data":[{"1":"1","2":"1","3":"Allen, Miss. Elisabeth Walton","4":"female","5":"29.0000","6":"0","7":"0","8":"24160","9":"211.3375","10":"B5","11":"S","12":"2","13":"NA","14":"St Louis, MO","_rn_":"1"},{"1":"1","2":"1","3":"Allison, Master. Hudson Trevor","4":"male","5":"0.9167","6":"1","7":"2","8":"113781","9":"151.5500","10":"C22 C26","11":"S","12":"11","13":"NA","14":"Montreal, PQ / Chesterville, ON","_rn_":"2"},{"1":"1","2":"0","3":"Allison, Miss. Helen Loraine","4":"female","5":"2.0000","6":"1","7":"2","8":"113781","9":"151.5500","10":"C22 C26","11":"S","12":"","13":"NA","14":"Montreal, PQ / Chesterville, ON","_rn_":"3"},{"1":"1","2":"0","3":"Allison, Mr. Hudson Joshua Creighton","4":"male","5":"30.0000","6":"1","7":"2","8":"113781","9":"151.5500","10":"C22 C26","11":"S","12":"","13":"135","14":"Montreal, PQ / Chesterville, ON","_rn_":"4"},{"1":"1","2":"0","3":"Allison, Mrs. Hudson J C (Bessie Waldo Daniels)","4":"female","5":"25.0000","6":"1","7":"2","8":"113781","9":"151.5500","10":"C22 C26","11":"S","12":"","13":"NA","14":"Montreal, PQ / Chesterville, ON","_rn_":"5"},{"1":"1","2":"1","3":"Anderson, Mr. Harry","4":"male","5":"48.0000","6":"0","7":"0","8":"19952","9":"26.5500","10":"E12","11":"S","12":"3","13":"NA","14":"New York, NY","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10],"total":[14]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
-  </script>
-</div>
-<!-- rnb-frame-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Use the plots to answer the following questions:</p>
-<ol style="list-style-type: decimal">
-<li>Q4: Which fields seem to be important for predicting survival?<br />
-</li>
-<li>Q5: Which fields are leakage?</li>
-<li>Q6: Which fields look like noise?</li>
-</ol>
-<div id="q7-extract-the-titles-use-strsplit-and-look-at-the-counts-of-each-unique-title.-if-there-are-some-that-are-very-low-decide-what-to-do-with-them---you-can-create-a-manual-ontology-and-rename-them-create-an-other-class-or-drop-those-rows." class="section level4">
-<h4>Q7: Extract the titles (use <code>strsplit</code>) and look at the counts of each unique title. If there are some that are very low, decide what to do with them - you can create a manual ontology and rename them, create an “Other” class, or drop those rows.</h4>
-<div id="keep-in-mind---if-you-drop-null-rows-during-training-tell-us-what-to-do-with-them-while-testingrunning-in-production." class="section level5">
-<h5>Keep in mind - if you drop <code>null</code> rows during training, tell us what to do with them while testing/running in production.</h5>
+</div>
+</div>
+<div id="q4-which-fields-seem-to-be-important-for-predicting-survival" class="section level2">
+<h2>Q4: Which fields seem to be important for predicting survival?</h2>
+</div>
+<div id="q5-which-fields-are-leakage" class="section level2">
+<h2>Q5: Which fields are leakage?</h2>
+</div>
+<div id="q6-which-fields-look-like-noise" class="section level2">
+<h2>Q6: Which fields look like noise?</h2>
+</div>
+<div id="q7-extract-the-titles-from-the-name-field" class="section level2">
+<h2>Q7: Extract the titles from the <code>name</code> field</h2>
+<p>The <code>name</code> field contains some useful demographic information. Use <code>strsplit</code> and look at the counts of each unique title. These should be values like “Mr.”, “Mrs.”, etc. If there are some that are very low, decide what to do with them - you can create a manual ontology and rename them, create an “Other” class, or drop those rows. Keep in mind - if you drop <code>null</code> rows during training, tell us what to do with them while testing/running in production.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI21vZGlmeSB0aXRhbmljIGRhdGFzZXQgaGVyZVxuYGBgIn0= -->
@@ -276,15 +274,9 @@ head(titanic)</code></pre>
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-</div>
-</div>
-</div>
-<div id="q8-lets-deal-with-imputing-filling-in-nas-and-missing-values-in-age-and-embarked" class="section level2">
-<h2>Q8: Let’s deal with imputing (filling-in) <code>NAs</code> and missing values in <code>age</code> and <code>embarked</code>:</h2>
-<div id="age-is-numeric-so-we-can-replace-it-with-the-mean-of-all-the-non-null-ages.-embarked-is-categorical-so-lets-just-replace-it-with-the-most-frequent-port-of-embarkation." class="section level3">
-<h3><code>age</code> is numeric, so we can replace it with the mean of all the non-null ages. <code>embarked</code> is categorical, so let’s just replace it with the most frequent port of embarkation.</h3>
-<div id="what-assumptions-are-we-implicitly-making-by-using-these-methods-of-imputation" class="section level4">
-<h4>What assumptions are we implicitly making by using these methods of imputation?</h4>
+<div id="q8-deal-with-na-values" class="section level2">
+<h2>Q8: Deal with NA values</h2>
+<p>Let’s deal with imputing (filling-in) <code>NAs</code> and missing values in <code>age</code> and <code>embarked</code>: <code>age</code> is numeric, so we can replace it with the mean of all the non-null ages. <code>embarked</code> is categorical, so let’s just replace it with the most frequent port of embarkation.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBtb2RpZnkgdGl0YW5pYyBkYXRhc2V0IGhlcmUuIFxuYGBgIn0= -->
@@ -293,12 +285,12 @@ head(titanic)</code></pre>
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
+<div id="q9-what-assumptions-are-we-implicitly-making-by-using-these-methods-of-imputation" class="section level2">
+<h2>Q9: What assumptions are we implicitly making by using these methods of imputation?</h2>
 </div>
-</div>
-<div id="q9-convert-all-the-categorical-variables-into-factors." class="section level2">
-<h2>Q9: Convert all the categorical variables into factors.</h2>
-<div id="whats-the-deal-with-pclass-is-it-categorical" class="section level3">
-<h3>What’s the deal with <code>pclass</code>? Is it categorical?</h3>
+<div id="q10-convert-all-the-categorical-variables-into-appropriate-factors." class="section level2">
+<h2>Q10: Convert all the categorical variables into appropriate factors.</h2>
+<p>Example: What’s the deal with <code>pclass</code>? Is it categorical?</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBtb2RpZnkgdGl0YW5pYyBoZXJlXG5gYGAifQ== -->
@@ -307,9 +299,8 @@ head(titanic)</code></pre>
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-</div>
-<div id="q10-create-a-sampling-function-that-splits-the-titanic-dataset-into-75-train-25-test-dataframe." class="section level2">
-<h2>Q10: Create a sampling function that splits the titanic dataset into 75% train, 25% test dataframe.</h2>
+<div id="q11-create-a-sampling-function-that-splits-the-titanic-dataset-into-75-train-25-test-dataframe." class="section level2">
+<h2>Q11: Create a sampling function that splits the titanic dataset into 75% train, 25% test dataframe.</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBkYXRhc3BsaXQgPSBmdW5jdGlvbihkKXtcbiMgICMgLi4uIFxuIyB9XG4jIHNwbGl0ID0gZGF0YXNwbGl0KHRpdGFuaWMpXG4jIGUuZy4gc2hvdWxkIGNvbnRhaW4gc3BsaXQkdHJhaW4gYW5kIHNwbGl0JHRlc3RcbmBgYCJ9 -->
@@ -325,11 +316,11 @@ head(titanic)</code></pre>
 </div>
 <div id="modeling-questions" class="section level1">
 <h1>Modeling Questions</h1>
-<div id="q11-is-accuracy-a-good-metric-for-evaluating-this-model-if-so-what-is-the-chance-level-for-this-dataset" class="section level2">
-<h2>Q11: Is accuracy a good metric for evaluating this model? If so, what is the “chance” level for this dataset?</h2>
+<div id="q12-is-accuracy-a-good-metric-for-evaluating-this-model-if-so-what-is-the-chance-level-for-this-dataset" class="section level2">
+<h2>Q12: Is accuracy a good metric for evaluating this model? If so, what is the “chance” level for this dataset?</h2>
 </div>
-<div id="q12-use-caretrpart-to-train-a-decision-tree-on-the-test-dataset." class="section level2">
-<h2>Q12: Use caret/rpart to train a decision tree on the test dataset.</h2>
+<div id="q13-use-caretrpart-to-train-a-decision-tree-on-the-test-dataset." class="section level2">
+<h2>Q13: Use caret/rpart to train a decision tree on the test dataset.</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBlLmcuLCB1c2UgeW91ciB0cmFpbiBkYXRhIGZyb20gdGhlIHNwbGl0LiAgRmlsbCBpbiB0aGUgcHJvcGVyIGZpZWxkcyBpbiBcIj9cIlxuIyB0bSA9IHRyYWluKHN1cnZpdmVkIH4gPyAsIGRhdGE9c3BsaXQkdHJhaW4sIG1ldGhvZD1cInJwYXJ0XCIpXG4jIHN1bW1hcnkodG0pXG5gYGAifQ== -->
@@ -340,8 +331,8 @@ head(titanic)</code></pre>
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-<div id="q13-use-caretrf-to-train-a-random-forest-on-the-test-dataset." class="section level2">
-<h2>Q13: Use caret/rf to train a random forest on the test dataset.</h2>
+<div id="q14-use-caretrf-to-train-a-random-forest-on-the-test-dataset." class="section level2">
+<h2>Q14: Use caret/rf to train a random forest on the test dataset.</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBlLmcuLCB1c2UgeW91ciB0cmFpbiBkYXRhOlxuIyByZm0gPSB0cmFpbihzdXJ2aXZlZCB+ID8gLCBkYXRhPXNwbGl0JHRyYWluLCBtZXRob2Q9XCJyZlwiKVxuIyBzdW1tYXJ5KHJmbSlcbmBgYCJ9 -->
@@ -352,8 +343,8 @@ head(titanic)</code></pre>
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-<div id="q14-use-caretglm-to-train-a-logistic-model-on-the-test-dataset" class="section level2">
-<h2>Q14: Use caret/glm to train a logistic model on the test dataset</h2>
+<div id="q15-use-caretglm-to-train-a-logistic-model-on-the-test-dataset" class="section level2">
+<h2>Q15: Use caret/glm to train a logistic model on the test dataset</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBlLmcuLCB1c2UgeW91ciB0cmFpbiBkYXRhOlxuIyBsbW0gPSB0cmFpbihzdXJ2aXZlZCB+ID8gLCBkYXRhPXNwbGl0JHRyYWluLCBtZXRob2Q9XCJnbG1cIilcbiMgc3VtbWFyeShsbW0pXG5gYGAifQ== -->
@@ -364,8 +355,8 @@ head(titanic)</code></pre>
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-<div id="q15-gather-predictions-from-your-models-on-the-test-dataset" class="section level2">
-<h2>Q15: Gather predictions from your models on the test dataset</h2>
+<div id="q16-gather-predictions-from-your-models-on-the-test-dataset" class="section level2">
+<h2>Q16: Gather predictions from your models on the test dataset</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBlLmcuXG4jIHRtX2V2YWwgID0gcHJlZGljdCh0bSwgc3BsaXQkdGVzdClcbiMuLi5cbmBgYCJ9 -->
@@ -376,8 +367,8 @@ head(titanic)</code></pre>
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-<div id="q16-use-your-rocauc-functions-to-plot-and-compare-your-models-performance" class="section level2">
-<h2>Q16: Use your roc/auc functions to plot and compare your models’ performance</h2>
+<div id="q17-use-your-rocauc-functions-to-plot-and-compare-your-models-performance" class="section level2">
+<h2>Q17: Use your roc/auc functions to plot and compare your models’ performance</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI2UuZ1xuIyBwbG90KHJvYyh0bV9ldmFsLCBzcGxpdCR0ZXN0JHN1cnZpdmVkKSlcbiMgYXVjKHJvYyh0bV9ldmFsLCBzcGxpdCR0ZXN0JHN1cnZpdmVkKSlcbmBgYCJ9 -->
@@ -388,8 +379,8 @@ head(titanic)</code></pre>
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-<div id="q17-which-model-performed-the-best-and-why-do-you-think-so" class="section level2">
-<h2>Q17: Which model performed the best and why do you think so?</h2>
+<div id="q17-which-model-performed-the-best-and-why-do-you-think-it-did-better" class="section level2">
+<h2>Q17: Which model performed the best and why do you think it did better?</h2>
 </div>
 </div>
 <div id="closing-notesfollow-up" class="section level1">
@@ -398,7 +389,7 @@ head(titanic)</code></pre>
 <!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiSG9tZXdvcmsgMSIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKIyBTdXBlcnZpc2VkIExlYXJuaW5nCk5lY2Vzc2FyeSBwYWNrYWdlcwpgYGB7cn0KbGlicmFyeShjYXJldCkKbGlicmFyeShlMTA3MSkKYGBgCgoKIyBVdGlsaXR5IEZ1bmN0aW9uIFF1ZXN0aW9ucwoKIyMgUTE6IEdlbmVyYWxpemUgdGhlIGVudHJvcHkgZnVuY3Rpb24gZnJvbSB0aGUgc2xpZGVzClN1cHBvcnQgdGhlIGNhbGN1bGF0aW9uIG9mIGluZm9ybWF0aW9uIGVudHJvcHkgdG8gYWNjZXB0IGEgdmVjdG9yIG9mIHByb2JhYmlsaXRpZXMsIHJhdGhlciB0aGFuIGp1c3QgaW5mZXJyaW5nIGEgYmluYXJ5IHByb2JhYmlsaXR5LgpgYGB7cn0KIyBlLmcuLCBoZXJlJ3MgdGhlIG9sZCBldGEgZnVuY3Rpb24gZnJvbSB0aGUgc2xpZGVzIHRoYXQgY2FsY3VsYXRlcyBlbnRyb3B5IGFzc3VtaW5nIGEgYmluYXJ5IGRpc3RyaWJ1dGlvbjoKIyBldGEgPSBmdW5jdGlvbihoKXsKIyAgIHQgPSAxLWgKIyAgIC0gKChoICogbG9nMihoKSkgKyAodCAqIGxvZzIodCkpKQojIH0KIyBlLmcuIGFmdGVyIHJld3JpdGluZyBzb21ldGhpbmcgbGlrZSB0aGlzIHNob3VsZCBzdWNjZWVkOgojIGV0YShsaXN0KC4xLCAuMiwgLjQsIC4zKSkKYGBgCgojIyBRMjogV3JpdGUgYSBmdW5jdGlvbiB0byBwcm9kdWNlIGFuIFJPQyBjdXJ2ZSAodHJ1ZSBwb3NpdGl2ZSByYXRlIGFuZCBmYWxzZSBwb3NpdGl2ZSByYXRlKQpgYGB7cn0Kcm9jID0gZnVuY3Rpb24ocHJlZCwgZGF0KXsKICAjLi4uCn0KIyBlLmcuCiMgcHJlZCA9IGMoLjEsIC4yLiwgLjksIC44KQojIGRhdCA9IGMoMSwgMCwgMCwgMCwgMSwgMSkKIyByb2MocHJlZCwgZGF0KQojIHBsb3Qocm9jKHByZWQsZGF0KSkKYGBgCgojIyBRMzogVXNlIHRoZSByb2MgY3VydmUgZnVuY3Rpb24gdG8gY2FsY3VsYXRlIGEgQVVDIG1ldHJpYwpgYGB7cn0KYXVjID0gZnVuY3Rpb24ocHJlZCwgZGF0KXsKICAjIHJvYyguLi4pCn0KIyBlLmcuCiMgYXVjKHJvYyhwcmVkLGRhdCkpCmBgYAoKIyBEYXRhIFByb2Nlc3NpbmcgUXVlc3Rpb25zCiMjICBSZWFkIGluIHRoZSB0aXRhbmljIGNzdiBhbmQgYW5hbHl6ZSBpdCAoZS5nLiBwbG90IGludGVyZXN0aW5nIGZpZWxkcyB5b3UgZmluZCB3aXRoIGJveHBsb3RzLCBzY2F0dGVycGxvdHMsIGV0Yy4pCiMjIyBUaGluayBhYm91dCB3aGV0aGVyIHRoZSBpdCBtYWtlcyBzZW5zZSB0byBpbmNsdWRlIGEgY29sdW1uIGJhc2VkIG9uIHdoYXQgaXQgaXMuCgpUaGUgIlRpdGFuaWMiIGRhdGFzZXQgaXMgYSBwYXNzZW5nZXIgbWFuaWZlc3QgdGhhdCBhbHNvIGluY2x1ZGVzIGEgInN1cnZpdmVkIiBmaWVsZCwgaW5kaWNhdGluZyB3aGV0aGVyIHRoZSBpbmRpdmlkdWFsIHN1cnZpdmVkIHRoZSB0cmlwLgpXZSdyZSBpbnRlcmVzdGVkIGluIHdoZXRoZXIgd2UgY2FuIHByZWRpY3Qgd2hldGhlciBhIHBhc3NlbmdlciBzdXJ2aXZlZCwgYmFzZWQgc29sZWx5IG9uIHRoZSBpbmZvcm1hdGlvbiB3ZSBrbmV3IGFib3V0IHRoZW0gKmJlZm9yZSogdGhleSBib2FyZGVkIHRoZSBzaGlwLgoKYGBge3J9CnRpdGFuaWMgPSByZWFkLmNzdigiaHR0cHM6Ly9qZG9uYWxkc29uLmdpdGh1Yi5pby91dy1tbGVhcm40MTAvaG9tZXdvcmsvdGl0YW5pYzMuY3N2IikKaGVhZCh0aXRhbmljKQoKYGBgClVzZSB0aGUgcGxvdHMgdG8gYW5zd2VyIHRoZSBmb2xsb3dpbmcgcXVlc3Rpb25zOiAKCjEuIFE0OiBXaGljaCBmaWVsZHMgc2VlbSB0byBiZSBpbXBvcnRhbnQgZm9yIHByZWRpY3Rpbmcgc3Vydml2YWw/ICAKMi4gUTU6IFdoaWNoIGZpZWxkcyBhcmUgbGVha2FnZT8gCjMuIFE2OiBXaGljaCBmaWVsZHMgbG9vayBsaWtlIG5vaXNlPwoKCiMjIyMgUTc6IEV4dHJhY3QgdGhlIHRpdGxlcyAodXNlIGBzdHJzcGxpdGApIGFuZCBsb29rIGF0IHRoZSBjb3VudHMgb2YgZWFjaCB1bmlxdWUgdGl0bGUuIElmIHRoZXJlIGFyZSBzb21lIHRoYXQgYXJlIHZlcnkgbG93LCBkZWNpZGUgd2hhdCB0byBkbyB3aXRoIHRoZW0gLSB5b3UgY2FuIGNyZWF0ZSBhIG1hbnVhbCBvbnRvbG9neSBhbmQgcmVuYW1lIHRoZW0sIGNyZWF0ZSBhbiAiT3RoZXIiIGNsYXNzLCBvciBkcm9wIHRob3NlIHJvd3MuCiMjIyMjIEtlZXAgaW4gbWluZCAtIGlmIHlvdSBkcm9wIGBudWxsYCByb3dzIGR1cmluZyB0cmFpbmluZywgdGVsbCB1cyB3aGF0IHRvIGRvIHdpdGggdGhlbSB3aGlsZSB0ZXN0aW5nL3J1bm5pbmcgaW4gcHJvZHVjdGlvbi4KYGBge3J9CiNtb2RpZnkgdGl0YW5pYyBkYXRhc2V0IGhlcmUKYGBgCgojIyBRODogTGV0J3MgZGVhbCB3aXRoIGltcHV0aW5nIChmaWxsaW5nLWluKSBgTkFzYCBhbmQgbWlzc2luZyB2YWx1ZXMgaW4gYGFnZWAgYW5kIGBlbWJhcmtlZGA6CiMjIyBgYWdlYCBpcyBudW1lcmljLCBzbyB3ZSBjYW4gcmVwbGFjZSBpdCB3aXRoIHRoZSBtZWFuIG9mIGFsbCB0aGUgbm9uLW51bGwgYWdlcy4gYGVtYmFya2VkYCBpcyBjYXRlZ29yaWNhbCwgc28gbGV0J3MganVzdCByZXBsYWNlIGl0IHdpdGggdGhlIG1vc3QgZnJlcXVlbnQgcG9ydCBvZiBlbWJhcmthdGlvbi4KIyMjIyBXaGF0IGFzc3VtcHRpb25zIGFyZSB3ZSBpbXBsaWNpdGx5IG1ha2luZyBieSB1c2luZyB0aGVzZSBtZXRob2RzIG9mIGltcHV0YXRpb24/CmBgYHtyfQojIG1vZGlmeSB0aXRhbmljIGRhdGFzZXQgaGVyZS4gCmBgYAoKIyMgUTk6IENvbnZlcnQgYWxsIHRoZSBjYXRlZ29yaWNhbCB2YXJpYWJsZXMgaW50byBmYWN0b3JzLgojIyMgV2hhdCdzIHRoZSBkZWFsIHdpdGggYHBjbGFzc2A/IElzIGl0IGNhdGVnb3JpY2FsPwpgYGB7cn0KIyBtb2RpZnkgdGl0YW5pYyBoZXJlCmBgYAoKIyMgUTEwOiBDcmVhdGUgYSBzYW1wbGluZyBmdW5jdGlvbiB0aGF0IHNwbGl0cyB0aGUgdGl0YW5pYyBkYXRhc2V0IGludG8gNzUlIHRyYWluLCAyNSUgdGVzdCBkYXRhZnJhbWUuCgpgYGB7cn0KIyBkYXRhc3BsaXQgPSBmdW5jdGlvbihkKXsKIyAgIyAuLi4gCiMgfQojIHNwbGl0ID0gZGF0YXNwbGl0KHRpdGFuaWMpCiMgZS5nLiBzaG91bGQgY29udGFpbiBzcGxpdCR0cmFpbiBhbmQgc3BsaXQkdGVzdApgYGAKCiMgTW9kZWxpbmcgUXVlc3Rpb25zCiMjIFExMTogSXMgYWNjdXJhY3kgYSBnb29kIG1ldHJpYyBmb3IgZXZhbHVhdGluZyB0aGlzIG1vZGVsPyBJZiBzbywgd2hhdCBpcyB0aGUgImNoYW5jZSIgbGV2ZWwgZm9yIHRoaXMgZGF0YXNldD8KCiMjIFExMjogVXNlIGNhcmV0L3JwYXJ0IHRvIHRyYWluIGEgZGVjaXNpb24gdHJlZSBvbiB0aGUgdGVzdCBkYXRhc2V0LgoKYGBge3J9CiMgZS5nLiwgdXNlIHlvdXIgdHJhaW4gZGF0YSBmcm9tIHRoZSBzcGxpdC4gIEZpbGwgaW4gdGhlIHByb3BlciBmaWVsZHMgaW4gIj8iCiMgdG0gPSB0cmFpbihzdXJ2aXZlZCB+ID8gLCBkYXRhPXNwbGl0JHRyYWluLCBtZXRob2Q9InJwYXJ0IikKIyBzdW1tYXJ5KHRtKQpgYGAKCiMjIFExMzogVXNlIGNhcmV0L3JmIHRvIHRyYWluIGEgcmFuZG9tIGZvcmVzdCBvbiB0aGUgdGVzdCBkYXRhc2V0LiAKCmBgYHtyfQojIGUuZy4sIHVzZSB5b3VyIHRyYWluIGRhdGE6CiMgcmZtID0gdHJhaW4oc3Vydml2ZWQgfiA/ICwgZGF0YT1zcGxpdCR0cmFpbiwgbWV0aG9kPSJyZiIpCiMgc3VtbWFyeShyZm0pCmBgYAoKIyMgUTE0OiBVc2UgY2FyZXQvZ2xtIHRvIHRyYWluIGEgbG9naXN0aWMgbW9kZWwgb24gdGhlIHRlc3QgZGF0YXNldAoKYGBge3J9CiMgZS5nLiwgdXNlIHlvdXIgdHJhaW4gZGF0YToKIyBsbW0gPSB0cmFpbihzdXJ2aXZlZCB+ID8gLCBkYXRhPXNwbGl0JHRyYWluLCBtZXRob2Q9ImdsbSIpCiMgc3VtbWFyeShsbW0pCmBgYAoKCiMjIFExNTogR2F0aGVyIHByZWRpY3Rpb25zIGZyb20geW91ciBtb2RlbHMgb24gdGhlIHRlc3QgZGF0YXNldApgYGB7cn0KIyBlLmcuCiMgdG1fZXZhbCAgPSBwcmVkaWN0KHRtLCBzcGxpdCR0ZXN0KQojLi4uCmBgYAoKIyMgUTE2OiBVc2UgeW91ciByb2MvYXVjIGZ1bmN0aW9ucyB0byBwbG90IGFuZCBjb21wYXJlIHlvdXIgbW9kZWxzJyBwZXJmb3JtYW5jZSAKYGBge3J9CiNlLmcKIyBwbG90KHJvYyh0bV9ldmFsLCBzcGxpdCR0ZXN0JHN1cnZpdmVkKSkKIyBhdWMocm9jKHRtX2V2YWwsIHNwbGl0JHRlc3Qkc3Vydml2ZWQpKQpgYGAKCiMjIFExNzogV2hpY2ggbW9kZWwgcGVyZm9ybWVkIHRoZSBiZXN0IGFuZCB3aHkgZG8geW91IHRoaW5rIHNvPwoKIyBDbG9zaW5nIE5vdGVzL0ZvbGxvdy11cApDb25zaWRlciBzdWJtaXR0aW5nIHlvdXIgcmVzcG9uc2VzIHRvIEthZ2dsZSBhbmQgc2VlIGhvdyB5b3UgZGlkISAKaHR0cHM6Ly93d3cua2FnZ2xlLmNvbS9jL3RpdGFuaWMKCgo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiSG9tZXdvcmsgMSIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKIyBTdXBlcnZpc2VkIExlYXJuaW5nCk5lY2Vzc2FyeSBwYWNrYWdlcwpgYGB7cn0KbGlicmFyeShjYXJldCkKbGlicmFyeShlMTA3MSkKYGBgCgoKIyBNaXNjIE1ldHJpYyBRdWVzdGlvbnMKCiMjIFExOiBHZW5lcmFsaXplIHRoZSBlbnRyb3B5IGZ1bmN0aW9uIGZyb20gdGhlIHNsaWRlcwpTdXBwb3J0IHRoZSBjYWxjdWxhdGlvbiBvZiBpbmZvcm1hdGlvbiBlbnRyb3B5IHRvIGFjY2VwdCBhIHZlY3RvciBvZiBwcm9iYWJpbGl0aWVzLCByYXRoZXIgdGhhbiBqdXN0IGluZmVycmluZyBhIGJpbmFyeSBwcm9iYWJpbGl0eS4KYGBge3J9CiMgZS5nLiwgaGVyZSdzIHRoZSBvbGQgZXRhIGZ1bmN0aW9uIGZyb20gdGhlIHNsaWRlcyB0aGF0IGNhbGN1bGF0ZXMgZW50cm9weSBhc3N1bWluZyBhIGJpbmFyeSBkaXN0cmlidXRpb246CiMgZXRhID0gZnVuY3Rpb24oaCl7CiMgICB0ID0gMS1oCiMgICAtICgoaCAqIGxvZzIoaCkpICsgKHQgKiBsb2cyKHQpKSkKIyB9CiMgZS5nLiBhZnRlciByZXdyaXRpbmcgc29tZXRoaW5nIGxpa2UgdGhpcyBzaG91bGQgc3VjY2VlZDoKIyBldGEobGlzdCguMSwgLjIsIC40LCAuMykpCmBgYAoKIyMgUTI6IFdyaXRlIGEgZnVuY3Rpb24gdG8gcHJvZHVjZSBhbiBST0MgY3VydmUgKHRydWUgcG9zaXRpdmUgcmF0ZSBhbmQgZmFsc2UgcG9zaXRpdmUgcmF0ZSkKYGBge3J9CnJvYyA9IGZ1bmN0aW9uKHByZWQsIGRhdCl7CiAgIy4uLgp9CiMgZS5nLgojIHByZWQgPSBjKC4xLCAuMi4sIC45LCAuOCkKIyBkYXQgPSBjKDEsIDAsIDAsIDAsIDEsIDEpCiMgcm9jKHByZWQsIGRhdCkKIyBwbG90KHJvYyhwcmVkLGRhdCkpCmBgYAoKIyMgUTM6IFVzZSB0aGUgcm9jIGN1cnZlIGZ1bmN0aW9uIHRvIGNhbGN1bGF0ZSBhIEFVQyBtZXRyaWMKYGBge3J9CmF1YyA9IGZ1bmN0aW9uKHByZWQsIGRhdCl7CiAgIyByb2MoLi4uKQp9CiMgZS5nLgojIGF1Yyhyb2MocHJlZCxkYXQpKQpgYGAKCiMgRGF0YSBQcm9jZXNzaW5nIFF1ZXN0aW9ucwojIyAgUmVhZCBpbiB0aGUgdGl0YW5pYyBjc3YgYW5kIGFuYWx5emUgaXQgKGUuZy4gcGxvdCBpbnRlcmVzdGluZyBmaWVsZHMgeW91IGZpbmQgd2l0aCBib3hwbG90cywgc2NhdHRlcnBsb3RzLCBldGMuKQojIyMgVGhpbmsgYWJvdXQgd2hldGhlciB0aGUgaXQgbWFrZXMgc2Vuc2UgdG8gaW5jbHVkZSBhIGNvbHVtbiBiYXNlZCBvbiB3aGF0IGl0IGlzLgoKVGhlICJUaXRhbmljIiBkYXRhc2V0IGlzIGEgcGFzc2VuZ2VyIG1hbmlmZXN0IHRoYXQgYWxzbyBpbmNsdWRlcyBhICJzdXJ2aXZlZCIgZmllbGQsIGluZGljYXRpbmcgd2hldGhlciB0aGUgaW5kaXZpZHVhbCBzdXJ2aXZlZCB0aGUgdHJpcC4KV2UncmUgaW50ZXJlc3RlZCBpbiB3aGV0aGVyIHdlIGNhbiBwcmVkaWN0IHdoZXRoZXIgYSBwYXNzZW5nZXIgc3Vydml2ZWQsIGJhc2VkIHNvbGVseSBvbiB0aGUgaW5mb3JtYXRpb24gd2Uga25ldyBhYm91dCB0aGVtICpiZWZvcmUqIHRoZXkgYm9hcmRlZCB0aGUgc2hpcC4KCmBgYHtyfQp0aXRhbmljID0gcmVhZC5jc3YoImh0dHBzOi8vamRvbmFsZHNvbi5naXRodWIuaW8vdXctbWxlYXJuNDEwL2hvbWV3b3JrL3RpdGFuaWMzLmNzdiIpCmhlYWQodGl0YW5pYykKCmBgYAoKVXNlIHRoZSBwbG90cyB0byBhbnN3ZXIgdGhlIGZvbGxvd2luZyBxdWVzdGlvbnM6IAoKIyMgUTQ6IFdoaWNoIGZpZWxkcyBzZWVtIHRvIGJlIGltcG9ydGFudCBmb3IgcHJlZGljdGluZyBzdXJ2aXZhbD8gIAojIyBRNTogV2hpY2ggZmllbGRzIGFyZSBsZWFrYWdlPyAKIyMgUTY6IFdoaWNoIGZpZWxkcyBsb29rIGxpa2Ugbm9pc2U/CgoKIyMgUTc6IEV4dHJhY3QgdGhlIHRpdGxlcyBmcm9tIHRoZSBgYG5hbWVgYCBmaWVsZCAKVGhlIGBgbmFtZWBgIGZpZWxkIGNvbnRhaW5zIHNvbWUgdXNlZnVsIGRlbW9ncmFwaGljIGluZm9ybWF0aW9uLiAgVXNlIGBzdHJzcGxpdGAgYW5kIGxvb2sgYXQgdGhlIGNvdW50cyBvZiBlYWNoIHVuaXF1ZSB0aXRsZS4gClRoZXNlIHNob3VsZCBiZSB2YWx1ZXMgbGlrZSAiTXIuIiwgIk1ycy4iLCBldGMuIElmIHRoZXJlIGFyZSBzb21lIHRoYXQgYXJlIHZlcnkgbG93LCBkZWNpZGUgd2hhdCB0byBkbyB3aXRoIHRoZW0gLSB5b3UgY2FuIGNyZWF0ZSBhIG1hbnVhbCBvbnRvbG9neSBhbmQgcmVuYW1lIHRoZW0sIGNyZWF0ZSBhbiAiT3RoZXIiIGNsYXNzLCBvciBkcm9wIHRob3NlIHJvd3MuIEtlZXAgaW4gbWluZCAtIGlmIHlvdSBkcm9wIGBudWxsYCByb3dzIGR1cmluZyB0cmFpbmluZywgdGVsbCB1cyB3aGF0IHRvIGRvIHdpdGggdGhlbSB3aGlsZSB0ZXN0aW5nL3J1bm5pbmcgaW4gcHJvZHVjdGlvbi4KYGBge3J9CiNtb2RpZnkgdGl0YW5pYyBkYXRhc2V0IGhlcmUKYGBgCgoKIyMgUTg6IERlYWwgd2l0aCBOQSB2YWx1ZXMKTGV0J3MgZGVhbCB3aXRoIGltcHV0aW5nIChmaWxsaW5nLWluKSBgTkFzYCBhbmQgbWlzc2luZyB2YWx1ZXMgaW4gYGFnZWAgYW5kIGBlbWJhcmtlZGA6CmBhZ2VgIGlzIG51bWVyaWMsIHNvIHdlIGNhbiByZXBsYWNlIGl0IHdpdGggdGhlIG1lYW4gb2YgYWxsIHRoZSBub24tbnVsbCBhZ2VzLiBgZW1iYXJrZWRgIGlzIGNhdGVnb3JpY2FsLCBzbyBsZXQncyBqdXN0IHJlcGxhY2UgaXQgd2l0aCB0aGUgbW9zdCBmcmVxdWVudCBwb3J0IG9mIGVtYmFya2F0aW9uLgpgYGB7cn0KIyBtb2RpZnkgdGl0YW5pYyBkYXRhc2V0IGhlcmUuIApgYGAKCiMjIFE5OiBXaGF0IGFzc3VtcHRpb25zIGFyZSB3ZSBpbXBsaWNpdGx5IG1ha2luZyBieSB1c2luZyB0aGVzZSBtZXRob2RzIG9mIGltcHV0YXRpb24/CgoKIyMgUTEwOiBDb252ZXJ0IGFsbCB0aGUgY2F0ZWdvcmljYWwgdmFyaWFibGVzIGludG8gYXBwcm9wcmlhdGUgZmFjdG9ycy4KRXhhbXBsZTogV2hhdCdzIHRoZSBkZWFsIHdpdGggYHBjbGFzc2A/IElzIGl0IGNhdGVnb3JpY2FsPwpgYGB7cn0KIyBtb2RpZnkgdGl0YW5pYyBoZXJlCmBgYAoKIyMgUTExOiBDcmVhdGUgYSBzYW1wbGluZyBmdW5jdGlvbiB0aGF0IHNwbGl0cyB0aGUgdGl0YW5pYyBkYXRhc2V0IGludG8gNzUlIHRyYWluLCAyNSUgdGVzdCBkYXRhZnJhbWUuCgpgYGB7cn0KIyBkYXRhc3BsaXQgPSBmdW5jdGlvbihkKXsKIyAgIyAuLi4gCiMgfQojIHNwbGl0ID0gZGF0YXNwbGl0KHRpdGFuaWMpCiMgZS5nLiBzaG91bGQgY29udGFpbiBzcGxpdCR0cmFpbiBhbmQgc3BsaXQkdGVzdApgYGAKCiMgTW9kZWxpbmcgUXVlc3Rpb25zCiMjIFExMjogSXMgYWNjdXJhY3kgYSBnb29kIG1ldHJpYyBmb3IgZXZhbHVhdGluZyB0aGlzIG1vZGVsPyBJZiBzbywgd2hhdCBpcyB0aGUgImNoYW5jZSIgbGV2ZWwgZm9yIHRoaXMgZGF0YXNldD8KCiMjIFExMzogVXNlIGNhcmV0L3JwYXJ0IHRvIHRyYWluIGEgZGVjaXNpb24gdHJlZSBvbiB0aGUgdGVzdCBkYXRhc2V0LgoKYGBge3J9CiMgZS5nLiwgdXNlIHlvdXIgdHJhaW4gZGF0YSBmcm9tIHRoZSBzcGxpdC4gIEZpbGwgaW4gdGhlIHByb3BlciBmaWVsZHMgaW4gIj8iCiMgdG0gPSB0cmFpbihzdXJ2aXZlZCB+ID8gLCBkYXRhPXNwbGl0JHRyYWluLCBtZXRob2Q9InJwYXJ0IikKIyBzdW1tYXJ5KHRtKQpgYGAKCiMjIFExNDogVXNlIGNhcmV0L3JmIHRvIHRyYWluIGEgcmFuZG9tIGZvcmVzdCBvbiB0aGUgdGVzdCBkYXRhc2V0LiAKCmBgYHtyfQojIGUuZy4sIHVzZSB5b3VyIHRyYWluIGRhdGE6CiMgcmZtID0gdHJhaW4oc3Vydml2ZWQgfiA/ICwgZGF0YT1zcGxpdCR0cmFpbiwgbWV0aG9kPSJyZiIpCiMgc3VtbWFyeShyZm0pCmBgYAoKIyMgUTE1OiBVc2UgY2FyZXQvZ2xtIHRvIHRyYWluIGEgbG9naXN0aWMgbW9kZWwgb24gdGhlIHRlc3QgZGF0YXNldAoKYGBge3J9CiMgZS5nLiwgdXNlIHlvdXIgdHJhaW4gZGF0YToKIyBsbW0gPSB0cmFpbihzdXJ2aXZlZCB+ID8gLCBkYXRhPXNwbGl0JHRyYWluLCBtZXRob2Q9ImdsbSIpCiMgc3VtbWFyeShsbW0pCmBgYAoKCiMjIFExNjogR2F0aGVyIHByZWRpY3Rpb25zIGZyb20geW91ciBtb2RlbHMgb24gdGhlIHRlc3QgZGF0YXNldApgYGB7cn0KIyBlLmcuCiMgdG1fZXZhbCAgPSBwcmVkaWN0KHRtLCBzcGxpdCR0ZXN0KQojLi4uCmBgYAoKIyMgUTE3OiBVc2UgeW91ciByb2MvYXVjIGZ1bmN0aW9ucyB0byBwbG90IGFuZCBjb21wYXJlIHlvdXIgbW9kZWxzJyBwZXJmb3JtYW5jZSAKYGBge3J9CiNlLmcKIyBwbG90KHJvYyh0bV9ldmFsLCBzcGxpdCR0ZXN0JHN1cnZpdmVkKSkKIyBhdWMocm9jKHRtX2V2YWwsIHNwbGl0JHRlc3Qkc3Vydml2ZWQpKQpgYGAKCiMjIFExNzogV2hpY2ggbW9kZWwgcGVyZm9ybWVkIHRoZSBiZXN0IGFuZCB3aHkgZG8geW91IHRoaW5rIGl0IGRpZCBiZXR0ZXI/CgojIENsb3NpbmcgTm90ZXMvRm9sbG93LXVwCkNvbnNpZGVyIHN1Ym1pdHRpbmcgeW91ciByZXNwb25zZXMgdG8gS2FnZ2xlIGFuZCBzZWUgaG93IHlvdSBkaWQhIApodHRwczovL3d3dy5rYWdnbGUuY29tL2MvdGl0YW5pYwoKCg==</div>
 
 
 
