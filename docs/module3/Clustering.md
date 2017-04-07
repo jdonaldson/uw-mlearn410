@@ -878,7 +878,8 @@ MCL
 Here we're running mcl and adding optional self-loops, and returning an equlibrium state matrix.
 
 ```r
-mcl(x = adjacency, addLoops=TRUE, ESM = TRUE)
+res = mcl(x = adjacency, addLoops=TRUE, ESM = TRUE)
+res
 ```
 
 ```
@@ -906,10 +907,10 @@ $Equilibrium.state.matrix
 
 MCL
 ===
-Here we're running mcl and adding optional self-loops, and returning an equlibrium state matrix.
+We can use igraph to plot the network with our clusters
+
 
 ```r
-res = mcl(x = adjacency, addLoops=TRUE)
 plot(graph.adjacency(adjacency), vertex.color = res$Cluster)
 ```
 
