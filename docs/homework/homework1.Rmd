@@ -11,19 +11,21 @@ library(e1071)
 ```
 
 
+# Utility Function Questions
 
-### Generalize the entropy function from the slides
+## Q1: Generalize the entropy function from the slides
 Support the calculation of information entropy to accept a vector of probabilities, rather than just inferring a binary probability.
 ```{r}
-eta = function(h){
-  t = 1-h
-  - ((h * log2(h)) + (t * log2(t)))
-}
-# e.g. should succeed:
+# e.g., here's the old eta function from the slides that calculates entropy assuming a binary distribution:
+# eta = function(h){
+#   t = 1-h
+#   - ((h * log2(h)) + (t * log2(t)))
+# }
+# e.g. after rewriting something like this should succeed:
 # eta(list(.1, .2, .4, .3))
 ```
 
-### Write a function to produce an ROC curve
+## Q2: Write a function to produce an ROC curve (true positive rate and false positive rate)
 ```{r}
 roc = function(pred, dat){
   #...
@@ -32,74 +34,112 @@ roc = function(pred, dat){
 # pred = c(.1, .2., .9, .8)
 # dat = c(1, 0, 0, 0, 1, 1)
 # roc(pred, dat)
+# plot(roc(pred,dat))
 ```
 
-### Use the roc curve function to calculate AUC
+## Q3: Use the roc curve function to calculate a AUC metric
 ```{r}
 auc = function(pred, dat){
   # roc(...)
 }
 # e.g.
-# auc(pred,dat)
+# auc(roc(pred,dat))
 ```
 
-###  Read in the titanic csv and analyze it (e.g. with boxplots, scatterplots, etc.)
+# Data Processing Questions
+##  Read in the titanic csv and analyze it (e.g. plot interesting fields you find with boxplots, scatterplots, etc.)
+### Think about whether the it makes sense to include a column based on what it is.
+
+The "Titanic" dataset is a passenger manifest that also includes a "survived" field, indicating whether the individual survived the trip.
+We're interested in whether we can predict whether a passenger survived, based solely on the information we knew about them *before* they boarded the ship.
+
 ```{r}
 titanic = read.csv("https://jdonaldson.github.io/uw-mlearn410/homework/titanic3.csv")
 head(titanic)
-```
 
+```
 Use the plots to answer the following questions: 
 
-1. Which fields seem to be important for predicting survival?  
-2. Which fields are leakage? 
-3. Which fields look like noise?
+1. Q4: Which fields seem to be important for predicting survival?  
+2. Q5: Which fields are leakage? 
+3. Q6: Which fields look like noise?
 
-### Create a sampling function that fairly splits the titanic dataset into 80% train, 20% test dataframe.
+
+#### Q7: Extract the titles (use `strsplit`) and look at the counts of each unique title. If there are some that are very low, decide what to do with them - you can create a manual ontology and rename them, create an "Other" class, or drop those rows.
+##### Keep in mind - if you drop `null` rows during training, tell us what to do with them while testing/running in production.
+```{r}
+#modify titanic dataset here
+```
+
+## Q8: Let's deal with imputing (filling-in) `NAs` and missing values in `age` and `embarked`:
+### `age` is numeric, so we can replace it with the mean of all the non-null ages. `embarked` is categorical, so let's just replace it with the most frequent port of embarkation.
+#### What assumptions are we implicitly making by using these methods of imputation?
+```{r}
+# modify titanic dataset here. 
+```
+
+## Q9: Convert all the categorical variables into factors.
+### What's the deal with `pclass`? Is it categorical?
+```{r}
+# modify titanic here
+```
+
+## Q10: Create a sampling function that splits the titanic dataset into 75% train, 25% test dataframe.
 
 ```{r}
-datasplit = function(d){
- # ... 
-}
-split = datasplit(titanic)
+# datasplit = function(d){
+#  # ... 
+# }
+# split = datasplit(titanic)
 # e.g. should contain split$train and split$test
 ```
 
-### Use caret/rpart to train a decision tree on the test dataset.  Configure it to pass on missing values
+# Modeling Questions
+## Q11: Is accuracy a good metric for evaluating this model? If so, what is the "chance" level for this dataset?
+
+## Q12: Use caret/rpart to train a decision tree on the test dataset.
 
 ```{r}
 # e.g., use your train data from the split.  Fill in the proper fields in "?"
-# tm = train(factor(survived) ~ ? , data=split$train, method="rpart", na.action=na.pass)
-summary(tm)
+# tm = train(survived ~ ? , data=split$train, method="rpart")
+# summary(tm)
 ```
 
-### Use caret/rf to train a random forest on the test dataset. 
+## Q13: Use caret/rf to train a random forest on the test dataset. 
 
 ```{r}
 # e.g., use your train data:
-# rfm = train(factor(survived) ~ ? , data=split$train, method="rf", na.action=na.pass)
-summary(rfm)
+# rfm = train(survived ~ ? , data=split$train, method="rf")
+# summary(rfm)
 ```
 
-### Use caret/lm to train a logistic model on the test dataset
+## Q14: Use caret/glm to train a logistic model on the test dataset
 
 ```{r}
 # e.g., use your train data:
-# lmm = train(factor(survived) ~ ? , data=split$train, method="lm", na.action=na.pass)
-summary(lmm)
+# lmm = train(survived ~ ? , data=split$train, method="glm")
+# summary(lmm)
 ```
 
 
-### Gather predictions from your models on the test dataset
+## Q15: Gather predictions from your models on the test dataset
 ```{r}
 # e.g.
-tm_eval  = predict(tm, split$test)
+# tm_eval  = predict(tm, split$test)
 #...
 ```
 
-### Use your roc/auc functions to plot and compare model performance 
+## Q16: Use your roc/auc functions to plot and compare your models' performance 
 ```{r}
 #e.g
-roc(tm_eval, split$test$survived)
-auc(tm_eval, split$test$survived)
+# plot(roc(tm_eval, split$test$survived))
+# auc(roc(tm_eval, split$test$survived))
 ```
+
+## Q17: Which model performed the best and why do you think so?
+
+# Closing Notes/Follow-up
+Consider submitting your responses to Kaggle and see how you did! 
+https://www.kaggle.com/c/titanic
+
+
