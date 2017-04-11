@@ -14,7 +14,7 @@ library(e1071)
 # Misc Metric Questions
 
 ## Q1: Generalize the entropy function from the slides
-Support the calculation of information entropy to accept a vector of probabilities, rather than just inferring a binary probability.
+Modify the information entropy function to  accept multinomial probabilities (as a list, etc.), rather than just inferring a binary probability.
 ```{r}
 # e.g., here's the old eta function from the slides that calculates entropy assuming a binary distribution:
 # eta = function(h){
