@@ -170,7 +170,7 @@ Looking into Iris
 =======
 
 ```{r}
-head(iris, n=30)
+head(iris, n=20)
 ```
 
 
@@ -189,6 +189,7 @@ Leading Questions...
 
 Decision Tree - rpart
 =======
+type : scrollable
 ```{r, echo=FALSE}
   m = train(Species ~ ., data=iris, method="rpart") 
   summary(m)

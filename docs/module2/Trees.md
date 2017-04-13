@@ -171,7 +171,7 @@ Looking into Iris
 
 
 ```r
-head(iris, n=30)
+head(iris, n=20)
 ```
 
 ```
@@ -196,16 +196,6 @@ head(iris, n=30)
 18          5.1         3.5          1.4         0.3  setosa
 19          5.7         3.8          1.7         0.3  setosa
 20          5.1         3.8          1.5         0.3  setosa
-21          5.4         3.4          1.7         0.2  setosa
-22          5.1         3.7          1.5         0.4  setosa
-23          4.6         3.6          1.0         0.2  setosa
-24          5.1         3.3          1.7         0.5  setosa
-25          4.8         3.4          1.9         0.2  setosa
-26          5.0         3.0          1.6         0.2  setosa
-27          5.0         3.4          1.6         0.4  setosa
-28          5.2         3.5          1.5         0.2  setosa
-29          5.2         3.4          1.4         0.2  setosa
-30          4.7         3.2          1.6         0.2  setosa
 ```
 
 
@@ -222,6 +212,7 @@ Leading Questions...
 
 Decision Tree - rpart
 =======
+type : scrollable
 
 ```
 Call:

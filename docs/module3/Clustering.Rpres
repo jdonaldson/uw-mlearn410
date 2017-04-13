@@ -159,6 +159,7 @@ type : sub-section
 
 K-Means
 ============
+type: scrollable
 K-means is the classic centroid-based technique.
 ```{r}
   kc <-kmeans(dist(USArrests), 5)
@@ -203,15 +204,22 @@ dat = cbind(
   y=rnorm(100, mean = -4, sd = 2),
   z=rnorm(100, mean =  4, sd = 9)
   )
+```
+***
+```{r}
 boxplot(dat)
 ```
 
+
+
 Quick aside on scaling
 =====
-In some cases it may be useful to *noramlize* the scales.
+In some cases it may be useful to *normalize* the scales.
 Standard normalization:
 - mean = 0
 - standard deviation = 1
+
+ ***
 ```{r}
 boxplot(scale(dat))
 ```
