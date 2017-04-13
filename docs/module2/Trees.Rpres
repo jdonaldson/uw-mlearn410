@@ -1,11 +1,11 @@
-Applied Machine Learning 410
+Trees and Forests
 ========================================================
 css: ../../assets/style/uw.css
 author: Justin Donaldson
 date: `r format(Sys.Date(), format="%B-%d-%Y")`
 autosize: true
 
-Trees and Forests
+Applied Machine Learning 410
 ---------------------------------
 (AKA: divide and concur)
 

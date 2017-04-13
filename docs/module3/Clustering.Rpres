@@ -1,11 +1,11 @@
-Applied Machine Learning 410
+Clustering
 ========================================================
 css: ../../assets/style/uw.css
 author: Justin Donaldson
 date: `r format(Sys.Date(), format="%B-%d-%Y")`
 autosize: true
 
-Clustering
+Applied Machine Learning 410
 ---------------------------------
 (AKA: Birds of a feather)
 ```{r setup, echo=FALSE}

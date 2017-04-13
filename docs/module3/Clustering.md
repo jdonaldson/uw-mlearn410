@@ -1,11 +1,11 @@
-Applied Machine Learning 410
+Clustering
 ========================================================
 css: ../../assets/style/uw.css
 author: Justin Donaldson
 date: April-13-2017
 autosize: true
 
-Clustering
+Applied Machine Learning 410
 ---------------------------------
 (AKA: Birds of a feather)
 

@@ -1,11 +1,11 @@
-Applied Machine Learning 410
+Trees and Forests
 ========================================================
 css: ../../assets/style/uw.css
 author: Justin Donaldson
-date: March-30-2017
+date: April-13-2017
 autosize: true
 
-Trees and Forests
+Applied Machine Learning 410
 ---------------------------------
 (AKA: divide and concur)
 
