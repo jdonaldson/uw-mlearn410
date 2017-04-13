@@ -2,7 +2,7 @@ Applied Machine Learning 410
 ========================================================
 css: ../../assets/style/uw.css
 author: Justin Donaldson
-date: April-06-2017
+date: April-13-2017
 autosize: true
 
 Clustering
@@ -26,7 +26,7 @@ relatives-in-law were or tended to be inherently connected."
 Clustering Needs
 ========================================================
 ![clustering needs](img/cluster_desire.png)
-“Data Clustering: 50 Years Beyond K-Means”, A.K. Jain (2008
+“Data Clustering: 50 Years Beyond K-Means”, A.K. Jain (2008)
 
 Overview
 ========================================================
@@ -454,6 +454,15 @@ require(EMCluster)
 - based on probability distributions
 - no hard assignment of points to clusters, instead use probabilities
 - underlying distributions can be anything, gaussians are common 
+
+Expectation Maximization
+==========
+
+```r
+require(EMCluster)
+```
+<a title="By 3mta3 (talk) 16:55, 23 March 2009 (UTC) (Own work) [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0) or GFDL (http://www.gnu.org/copyleft/fdl.html)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3AEm_old_faithful.gif"><img width="512" alt="Em old faithful" src="https://upload.wikimedia.org/wikipedia/commons/a/a7/Em_old_faithful.gif"/></a>
+***
 -  Calculate expected value of log likelihood function:
 $$
 Q(\boldsymbol\theta|\boldsymbol\theta^{(t)}) = \operatorname{E}_{\mathbf{Z}|\mathbf{X},\boldsymbol\theta^{(t)}}\left[ \log L (\boldsymbol\theta;\mathbf{X},\mathbf{Z})  \right]
@@ -491,11 +500,14 @@ dat = data.frame(x=c(x,y,z))
 ggplot(data = dat,aes(x=x)) + geom_histogram()
 ```
 
-<img src="Clustering-figure/unnamed-chunk-18-1.png" title="plot of chunk unnamed-chunk-18" alt="plot of chunk unnamed-chunk-18" width="900px" />
+Expectation Maximization
+==========
+EM works well when you have a good idea of the underlying distribution of the data.
+In this case, normal deviates
+<img src="Clustering-figure/unnamed-chunk-20-1.png" title="plot of chunk unnamed-chunk-20" alt="plot of chunk unnamed-chunk-20" width="900px" />
 
 Expectation Maximization
 ==========
-EM fits a GMM to the data
 
 ```r
 library(EMCluster)
@@ -506,7 +518,7 @@ dat$class = colors
 ggplot(data = dat, aes(x=x, fill=class)) + geom_histogram(position="dodge")
 ```
 
-<img src="Clustering-figure/unnamed-chunk-19-1.png" title="plot of chunk unnamed-chunk-19" alt="plot of chunk unnamed-chunk-19" width="900px" />
+<img src="Clustering-figure/unnamed-chunk-21-1.png" title="plot of chunk unnamed-chunk-21" alt="plot of chunk unnamed-chunk-21" width="900px" />
 
 Expectation Maximization
 ==========
@@ -517,10 +529,10 @@ em$Mu
 ```
 
 ```
-            [,1]
-[1,]  -0.9011189
-[2,] -15.0891657
-[3,]  20.2240093
+           [,1]
+[1,] -14.239072
+[2,]   2.473917
+[3,]  20.068395
 ```
 
 ```r
@@ -607,7 +619,7 @@ eps = 20
 abline(h=eps, col = "red", lty=2)
 ```
 
-<img src="Clustering-figure/unnamed-chunk-22-1.png" title="plot of chunk unnamed-chunk-22" alt="plot of chunk unnamed-chunk-22" width="900px" />
+<img src="Clustering-figure/unnamed-chunk-24-1.png" title="plot of chunk unnamed-chunk-24" alt="plot of chunk unnamed-chunk-24" width="900px" />
 
 ```r
 res <- dbscan(USArrests, eps = eps, minPts = 3)
@@ -635,55 +647,14 @@ arrests[arrests$cluster ==1,]
 ```
 
 ```
-               Murder Assault UrbanPop Rape cluster
-Alabama          13.2     236       58 21.2       1
-Alaska           10.0     263       48 44.5       1
-Arizona           8.1     294       80 31.0       1
-Arkansas          8.8     190       50 19.5       1
-California        9.0     276       91 40.6       1
-Colorado          7.9     204       78 38.7       1
-Connecticut       3.3     110       77 11.1       1
-Delaware          5.9     238       72 15.8       1
-Georgia          17.4     211       60 25.8       1
-Hawaii            5.3      46       83 20.2       1
-Idaho             2.6     120       54 14.2       1
-Illinois         10.4     249       83 24.0       1
-Indiana           7.2     113       65 21.0       1
-Iowa              2.2      56       57 11.3       1
-Kansas            6.0     115       66 18.0       1
-Kentucky          9.7     109       52 16.3       1
-Louisiana        15.4     249       66 22.2       1
-Maine             2.1      83       51  7.8       1
-Maryland         11.3     300       67 27.8       1
-Massachusetts     4.4     149       85 16.3       1
-Michigan         12.1     255       74 35.1       1
-Minnesota         2.7      72       66 14.9       1
-Mississippi      16.1     259       44 17.1       1
-Missouri          9.0     178       70 28.2       1
-Montana           6.0     109       53 16.4       1
-Nebraska          4.3     102       62 16.5       1
-Nevada           12.2     252       81 46.0       1
-New Hampshire     2.1      57       56  9.5       1
-New Jersey        7.4     159       89 18.8       1
-New Mexico       11.4     285       70 32.1       1
-New York         11.1     254       86 26.1       1
-North Dakota      0.8      45       44  7.3       1
-Ohio              7.3     120       75 21.4       1
-Oklahoma          6.6     151       68 20.0       1
-Oregon            4.9     159       67 29.3       1
-Pennsylvania      6.3     106       72 14.9       1
-Rhode Island      3.4     174       87  8.3       1
-South Carolina   14.4     279       48 22.5       1
-South Dakota      3.8      86       45 12.8       1
-Tennessee        13.2     188       59 26.9       1
-Texas            12.7     201       80 25.5       1
-Utah              3.2     120       80 22.9       1
-Vermont           2.2      48       32 11.2       1
-Virginia          8.5     156       63 20.7       1
-Washington        4.0     145       73 26.2       1
-West Virginia     5.7      81       39  9.3       1
-Wisconsin         2.6      53       66 10.8       1
-Wyoming           6.8     161       60 15.6       1
+          Murder Assault UrbanPop Rape cluster
+Alabama     13.2     236       58 21.2       1
+Delaware     5.9     238       72 15.8       1
+Illinois    10.4     249       83 24.0       1
+Louisiana   15.4     249       66 22.2       1
+Michigan    12.1     255       74 35.1       1
+Nevada      12.2     252       81 46.0       1
+New York    11.1     254       86 26.1       1
 ```
 
 ```r
@@ -691,8 +662,10 @@ arrests[arrests$cluster ==2,]
 ```
 
 ```
-[1] Murder   Assault  UrbanPop Rape     cluster 
-<0 rows> (or 0-length row.names)
+           Murder Assault UrbanPop Rape cluster
+Arizona       8.1     294       80 31.0       2
+Maryland     11.3     300       67 27.8       2
+New Mexico   11.4     285       70 32.1       2
 ```
 
 ```r
@@ -700,8 +673,17 @@ arrests[arrests$cluster ==3,]
 ```
 
 ```
-[1] Murder   Assault  UrbanPop Rape     cluster 
-<0 rows> (or 0-length row.names)
+             Murder Assault UrbanPop Rape cluster
+Connecticut     3.3     110       77 11.1       3
+Idaho           2.6     120       54 14.2       3
+Indiana         7.2     113       65 21.0       3
+Kansas          6.0     115       66 18.0       3
+Kentucky        9.7     109       52 16.3       3
+Montana         6.0     109       53 16.4       3
+Nebraska        4.3     102       62 16.5       3
+Ohio            7.3     120       75 21.4       3
+Pennsylvania    6.3     106       72 14.9       3
+Utah            3.2     120       80 22.9       3
 ```
 
 DBScan
@@ -713,7 +695,7 @@ arrests$cluster = factor(res$cluster)
 ggpairs(arrests, mapping=ggplot2::aes(fill=cluster,color=cluster))
 ```
 
-<img src="Clustering-figure/unnamed-chunk-24-1.png" title="plot of chunk unnamed-chunk-24" alt="plot of chunk unnamed-chunk-24" width="900px" />
+<img src="Clustering-figure/unnamed-chunk-26-1.png" title="plot of chunk unnamed-chunk-26" alt="plot of chunk unnamed-chunk-26" width="900px" />
 
 DBScan
 ==========
@@ -744,7 +726,7 @@ arrests$cluster = factor(res$cluster)
 ggpairs(arrests, mapping=ggplot2::aes(fill=cluster,color=cluster))
 ```
 
-<img src="Clustering-figure/unnamed-chunk-26-1.png" title="plot of chunk unnamed-chunk-26" alt="plot of chunk unnamed-chunk-26" width="900px" />
+<img src="Clustering-figure/unnamed-chunk-28-1.png" title="plot of chunk unnamed-chunk-28" alt="plot of chunk unnamed-chunk-28" width="900px" />
 
 DBScan
 ===========
@@ -752,7 +734,7 @@ DBScan
 Strengths:
 - Does not require cluster count parameter
 - Finds arbitrary shapes with consistent density
-  - Avoid thin line effect of hierarchical clustering
+  - Avoid "thin line" effect of hierarchical clustering
 - Excludes outliers from clusters (i.e. can eliminate noise)
 - Requires two parameters
 - (Mostly) invariant to ordering
@@ -816,7 +798,7 @@ HCS
 plot(coex)
 ```
 
-<img src="Clustering-figure/unnamed-chunk-28-1.png" title="plot of chunk unnamed-chunk-28" alt="plot of chunk unnamed-chunk-28" width="900px" />
+<img src="Clustering-figure/unnamed-chunk-30-1.png" title="plot of chunk unnamed-chunk-30" alt="plot of chunk unnamed-chunk-30" width="900px" />
 
 
 HCS
@@ -826,7 +808,7 @@ HCS
 plot(coex)
 ```
 
-<img src="Clustering-figure/unnamed-chunk-29-1.png" title="plot of chunk unnamed-chunk-29" alt="plot of chunk unnamed-chunk-29" width="900px" />
+<img src="Clustering-figure/unnamed-chunk-31-1.png" title="plot of chunk unnamed-chunk-31" alt="plot of chunk unnamed-chunk-31" width="900px" />
 ***
 
 ```r
@@ -871,7 +853,7 @@ gu<-graph.adjacency(adjacency, mode="undirected")
 plot(gu)
 ```
 
-<img src="Clustering-figure/unnamed-chunk-31-1.png" title="plot of chunk unnamed-chunk-31" alt="plot of chunk unnamed-chunk-31" width="900px" />
+<img src="Clustering-figure/unnamed-chunk-33-1.png" title="plot of chunk unnamed-chunk-33" alt="plot of chunk unnamed-chunk-33" width="900px" />
 
 MCL
 ===
@@ -914,7 +896,429 @@ We can use igraph to plot the network with our clusters
 plot(graph.adjacency(adjacency), vertex.color = res$Cluster)
 ```
 
-<img src="Clustering-figure/unnamed-chunk-33-1.png" title="plot of chunk unnamed-chunk-33" alt="plot of chunk unnamed-chunk-33" width="900px" />
+<img src="Clustering-figure/unnamed-chunk-35-1.png" title="plot of chunk unnamed-chunk-35" alt="plot of chunk unnamed-chunk-35" width="900px" />
+
+Clustering Technique Recap
+=====
+- In general, learn as much as possible about the data before trying to cluster.
+  - Do you know the expected number of clusters?
+  - Do you know anything about the distribution?
+  - Do you know if the data is graph-like?
+- Simplify structure when/where appropriate (sparsification, network pruningu
+- Consider combining clustering with dimensionality reduction (coming soon!)
+
+Clustering Deep Dive
+====
+imdb top 5000 movies
+![imdb 5000](img/imdb5000.jpg)
+
+
+imdb
+====
+
+```r
+dat = read.csv("movie_metadata.csv")
+str(dat)
+```
+
+```
+'data.frame':	5043 obs. of  28 variables:
+ $ color                    : chr  "Color" "Color" "Color" "Color" ...
+ $ director_name            : chr  "James Cameron" "Gore Verbinski" "Sam Mendes" "Christopher Nolan" ...
+ $ num_critic_for_reviews   : int  723 302 602 813 NA 462 392 324 635 375 ...
+ $ duration                 : int  178 169 148 164 NA 132 156 100 141 153 ...
+ $ director_facebook_likes  : int  0 563 0 22000 131 475 0 15 0 282 ...
+ $ actor_3_facebook_likes   : int  855 1000 161 23000 NA 530 4000 284 19000 10000 ...
+ $ actor_2_name             : chr  "Joel David Moore" "Orlando Bloom" "Rory Kinnear" "Christian Bale" ...
+ $ actor_1_facebook_likes   : int  1000 40000 11000 27000 131 640 24000 799 26000 25000 ...
+ $ gross                    : int  760505847 309404152 200074175 448130642 NA 73058679 336530303 200807262 458991599 301956980 ...
+ $ genres                   : chr  "Action|Adventure|Fantasy|Sci-Fi" "Action|Adventure|Fantasy" "Action|Adventure|Thriller" "Action|Thriller" ...
+ $ actor_1_name             : chr  "CCH Pounder" "Johnny Depp" "Christoph Waltz" "Tom Hardy" ...
+ $ movie_title              : chr  "Avatar " "Pirates of the Caribbean: At World's End " "Spectre " "The Dark Knight Rises " ...
+ $ num_voted_users          : int  886204 471220 275868 1144337 8 212204 383056 294810 462669 321795 ...
+ $ cast_total_facebook_likes: int  4834 48350 11700 106759 143 1873 46055 2036 92000 58753 ...
+ $ actor_3_name             : chr  "Wes Studi" "Jack Davenport" "Stephanie Sigman" "Joseph Gordon-Levitt" ...
+ $ facenumber_in_poster     : int  0 0 1 0 0 1 0 1 4 3 ...
+ $ plot_keywords            : chr  "avatar|future|marine|native|paraplegic" "goddess|marriage ceremony|marriage proposal|pirate|singapore" "bomb|espionage|sequel|spy|terrorist" "deception|imprisonment|lawlessness|police officer|terrorist plot" ...
+ $ movie_imdb_link          : chr  "http://www.imdb.com/title/tt0499549/?ref_=fn_tt_tt_1" "http://www.imdb.com/title/tt0449088/?ref_=fn_tt_tt_1" "http://www.imdb.com/title/tt2379713/?ref_=fn_tt_tt_1" "http://www.imdb.com/title/tt1345836/?ref_=fn_tt_tt_1" ...
+ $ num_user_for_reviews     : int  3054 1238 994 2701 NA 738 1902 387 1117 973 ...
+ $ language                 : chr  "English" "English" "English" "English" ...
+ $ country                  : chr  "USA" "USA" "UK" "USA" ...
+ $ content_rating           : chr  "PG-13" "PG-13" "PG-13" "PG-13" ...
+ $ budget                   : num  2.37e+08 3.00e+08 2.45e+08 2.50e+08 NA ...
+ $ title_year               : int  2009 2007 2015 2012 NA 2012 2007 2010 2015 2009 ...
+ $ actor_2_facebook_likes   : int  936 5000 393 23000 12 632 11000 553 21000 11000 ...
+ $ imdb_score               : num  7.9 7.1 6.8 8.5 7.1 6.6 6.2 7.8 7.5 7.5 ...
+ $ aspect_ratio             : num  1.78 2.35 2.35 2.35 NA 2.35 2.35 1.85 2.35 2.35 ...
+ $ movie_facebook_likes     : int  33000 0 85000 164000 0 24000 0 29000 118000 10000 ...
+```
+
+imdb
+====
+
+```r
+sapply(dat, is.numeric)
+```
+
+```
+                    color             director_name 
+                    FALSE                     FALSE 
+   num_critic_for_reviews                  duration 
+                     TRUE                      TRUE 
+  director_facebook_likes    actor_3_facebook_likes 
+                     TRUE                      TRUE 
+             actor_2_name    actor_1_facebook_likes 
+                    FALSE                      TRUE 
+                    gross                    genres 
+                     TRUE                     FALSE 
+             actor_1_name               movie_title 
+                    FALSE                     FALSE 
+          num_voted_users cast_total_facebook_likes 
+                     TRUE                      TRUE 
+             actor_3_name      facenumber_in_poster 
+                    FALSE                      TRUE 
+            plot_keywords           movie_imdb_link 
+                    FALSE                     FALSE 
+     num_user_for_reviews                  language 
+                     TRUE                     FALSE 
+                  country            content_rating 
+                    FALSE                     FALSE 
+                   budget                title_year 
+                     TRUE                      TRUE 
+   actor_2_facebook_likes                imdb_score 
+                     TRUE                      TRUE 
+             aspect_ratio      movie_facebook_likes 
+                     TRUE                      TRUE 
+```
+
+imdb
+====
+
+```r
+dat_nums = dat[,sapply(dat, is.numeric)]
+str(dat_nums)
+```
+
+```
+'data.frame':	5043 obs. of  16 variables:
+ $ num_critic_for_reviews   : int  723 302 602 813 NA 462 392 324 635 375 ...
+ $ duration                 : int  178 169 148 164 NA 132 156 100 141 153 ...
+ $ director_facebook_likes  : int  0 563 0 22000 131 475 0 15 0 282 ...
+ $ actor_3_facebook_likes   : int  855 1000 161 23000 NA 530 4000 284 19000 10000 ...
+ $ actor_1_facebook_likes   : int  1000 40000 11000 27000 131 640 24000 799 26000 25000 ...
+ $ gross                    : int  760505847 309404152 200074175 448130642 NA 73058679 336530303 200807262 458991599 301956980 ...
+ $ num_voted_users          : int  886204 471220 275868 1144337 8 212204 383056 294810 462669 321795 ...
+ $ cast_total_facebook_likes: int  4834 48350 11700 106759 143 1873 46055 2036 92000 58753 ...
+ $ facenumber_in_poster     : int  0 0 1 0 0 1 0 1 4 3 ...
+ $ num_user_for_reviews     : int  3054 1238 994 2701 NA 738 1902 387 1117 973 ...
+ $ budget                   : num  2.37e+08 3.00e+08 2.45e+08 2.50e+08 NA ...
+ $ title_year               : int  2009 2007 2015 2012 NA 2012 2007 2010 2015 2009 ...
+ $ actor_2_facebook_likes   : int  936 5000 393 23000 12 632 11000 553 21000 11000 ...
+ $ imdb_score               : num  7.9 7.1 6.8 8.5 7.1 6.6 6.2 7.8 7.5 7.5 ...
+ $ aspect_ratio             : num  1.78 2.35 2.35 2.35 NA 2.35 2.35 1.85 2.35 2.35 ...
+ $ movie_facebook_likes     : int  33000 0 85000 164000 0 24000 0 29000 118000 10000 ...
+```
+
+imdb
+===
+
+```r
+mdat = melt(dat_nums, id.vars=c("imdb_score"))
+ggplot(mdat, aes(fill=factor(as.integer(imdb_score)), x=value)) + 
+  geom_histogram() + 
+  facet_wrap(~variable, scales="free")  
+```
+
+<img src="Clustering-figure/unnamed-chunk-39-1.png" title="plot of chunk unnamed-chunk-39" alt="plot of chunk unnamed-chunk-39" width="900px" />
+
+imdb
+===
+It can help to scale
+
+```r
+mdat = melt(dat_nums, id.vars=c("imdb_score"))
+ggplot(mdat, aes(fill=factor(as.integer(imdb_score)), x=value)) + 
+  geom_histogram() + 
+  scale_x_log10() + 
+  facet_wrap(~variable, scales="free")  
+```
+
+<img src="Clustering-figure/unnamed-chunk-40-1.png" title="plot of chunk unnamed-chunk-40" alt="plot of chunk unnamed-chunk-40" width="900px" />
+
+imdb
+===
+
+```r
+mdat = melt(dat_nums, id.vars=c("imdb_score"))
+ggplot(mdat, aes(factor(as.integer(imdb_score)), value)) + 
+  geom_boxplot(outlier.shape=NA) + 
+  facet_wrap(~variable, scales="free_y")  
+```
+
+<img src="Clustering-figure/unnamed-chunk-41-1.png" title="plot of chunk unnamed-chunk-41" alt="plot of chunk unnamed-chunk-41" width="900px" />
+
+imdb
+===
+It can help to scale
+
+```r
+mdat = melt(dat_nums, id.vars=c("imdb_score"))
+ggplot(mdat, aes(factor(as.integer(imdb_score)), value)) + 
+  geom_boxplot(outlier.shape=NA) + 
+  scale_y_log10() + 
+  facet_wrap(~variable, scales="free_y")  
+```
+
+<img src="Clustering-figure/unnamed-chunk-42-1.png" title="plot of chunk unnamed-chunk-42" alt="plot of chunk unnamed-chunk-42" width="900px" />
+
+imdb
+===
+Impute the means
+
+```r
+dat_num_imp = sapply(dat_nums, function(x) {x[is.na(x)]<-mean(x,na.rm=T); x})
+any(is.na(dat_num_imp))
+```
+
+```
+[1] FALSE
+```
+
+
+imdb
+===
+Using raw data produces  very uneven clusters:
+
+```r
+kdat = kmeans(dat_num_imp, 3)
+dat$cluster = kdat$cluster
+ggplot(dat, aes(x=cluster,fill=factor(cluster))) + geom_histogram(stat="count")
+```
+
+<img src="Clustering-figure/unnamed-chunk-44-1.png" title="plot of chunk unnamed-chunk-44" alt="plot of chunk unnamed-chunk-44" width="900px" />
+
+imdb
+===
+Scaling issues in fields (budget) are dominating cluster categories:
+
+```r
+t = table(dat$cluster)
+t
+```
+
+```
+
+   1    2    3    4    5 
+   4 4114  160    1  764 
+```
+
+```r
+small = names(t)[which.min(t)]
+dat[dat$cluster == as.integer(small),c("movie_title", "language", "budget", "cluster")]
+```
+
+```
+     movie_title language      budget cluster
+2989   The Host    Korean 12215500000       4
+```
+
+```r
+median(dat$budget,na.rm=T)
+```
+
+```
+[1] 2e+07
+```
 
 
 
+imdb
+===
+We can scale the data so it has the same column-wise mean/variance:
+
+```r
+dat_scaled = as.data.frame(scale(dat_num_imp))
+kdat = kmeans(dat_scaled, 3)
+table(kdat$cluster)
+```
+
+```
+
+   1    2    3 
+4164  114  765 
+```
+
+```r
+ds = dat_scaled
+ds$cluster = kdat$cluster
+dat$cluster = kdat$cluster
+mdat = melt(ds, id.vars=c("cluster"))
+```
+ 
+
+
+imdb
+===
+
+```r
+ggplot(mdat, aes(fill=factor(cluster), x=value)) + 
+  geom_histogram() + scale_x_log10()  + 
+  facet_wrap(~variable, scales="free")  
+```
+
+<img src="Clustering-figure/unnamed-chunk-47-1.png" title="plot of chunk unnamed-chunk-47" alt="plot of chunk unnamed-chunk-47" width="900px" />
+
+imdb
+===
+
+```r
+ggplot(mdat, aes(factor(cluster), value)) + 
+  geom_boxplot(outlier.shape=NA) + scale_y_log10() + 
+  facet_wrap(~variable, scales="free_y")  
+```
+
+<img src="Clustering-figure/unnamed-chunk-48-1.png" title="plot of chunk unnamed-chunk-48" alt="plot of chunk unnamed-chunk-48" width="900px" />
+
+imdb
+====
+
+```r
+library(FNN)
+closest = function(k){
+  ds = dat_scaled[kdat$cluster ==k,]
+  idx = get.knnx(ds, query = t(kdat$center[k,]))$nn.index[1]
+  idx
+  str(dat[kdat$cluster==k,][idx,])
+}
+```
+
+imdb
+====
+
+```r
+closest(1)
+```
+
+```
+'data.frame':	1 obs. of  29 variables:
+ $ color                    : chr "Color"
+ $ director_name            : chr "Andrzej Bartkowiak"
+ $ num_critic_for_reviews   : int 109
+ $ duration                 : int 101
+ $ director_facebook_likes  : int 43
+ $ actor_3_facebook_likes   : int 432
+ $ actor_2_name             : chr "Tom Arnold"
+ $ actor_1_facebook_likes   : int 5000
+ $ gross                    : int 34604054
+ $ genres                   : chr "Action|Crime|Drama|Thriller"
+ $ actor_1_name             : chr "Jet Li"
+ $ movie_title              : chr "Cradle 2 the Grave "
+ $ num_voted_users          : int 34942
+ $ cast_total_facebook_likes: int 6867
+ $ actor_3_name             : chr "DMX"
+ $ facenumber_in_poster     : int 2
+ $ plot_keywords            : chr "camera shot from inside human body|diamond|evil man|heist|terrorism"
+ $ movie_imdb_link          : chr "http://www.imdb.com/title/tt0306685/?ref_=fn_tt_tt_1"
+ $ num_user_for_reviews     : int 185
+ $ language                 : chr "English"
+ $ country                  : chr "USA"
+ $ content_rating           : chr "R"
+ $ budget                   : num 3e+07
+ $ title_year               : int 2003
+ $ actor_2_facebook_likes   : int 618
+ $ imdb_score               : num 5.8
+ $ aspect_ratio             : num 2.35
+ $ movie_facebook_likes     : int 1000
+ $ cluster                  : int 1
+```
+
+imdb
+====
+
+```r
+closest(2)
+```
+
+```
+'data.frame':	1 obs. of  29 variables:
+ $ color                    : chr "Color"
+ $ director_name            : chr "Rupert Sanders"
+ $ num_critic_for_reviews   : int 416
+ $ duration                 : int 132
+ $ director_facebook_likes  : int 274
+ $ actor_3_facebook_likes   : int 11000
+ $ actor_2_name             : chr "Kristen Stewart"
+ $ actor_1_facebook_likes   : int 26000
+ $ gross                    : int 155111815
+ $ genres                   : chr "Action|Adventure|Drama|Fantasy"
+ $ actor_1_name             : chr "Chris Hemsworth"
+ $ movie_title              : chr "Snow White and the Huntsman "
+ $ num_voted_users          : int 228554
+ $ cast_total_facebook_likes: int 72881
+ $ actor_3_name             : chr "Sam Claflin"
+ $ facenumber_in_poster     : int 0
+ $ plot_keywords            : chr "evil queen|fairy tale|magic|queen|snow white"
+ $ movie_imdb_link          : chr "http://www.imdb.com/title/tt1735898/?ref_=fn_tt_tt_1"
+ $ num_user_for_reviews     : int 710
+ $ language                 : chr "English"
+ $ country                  : chr "USA"
+ $ content_rating           : chr "PG-13"
+ $ budget                   : num 1.7e+08
+ $ title_year               : int 2012
+ $ actor_2_facebook_likes   : int 17000
+ $ imdb_score               : num 6.1
+ $ aspect_ratio             : num 2.35
+ $ movie_facebook_likes     : int 53000
+ $ cluster                  : int 2
+```
+
+imdb
+====
+
+```r
+closest(3)
+```
+
+```
+'data.frame':	1 obs. of  29 variables:
+ $ color                    : chr "Color"
+ $ director_name            : chr "Gabriele Muccino"
+ $ num_critic_for_reviews   : int 202
+ $ duration                 : int 123
+ $ director_facebook_likes  : int 125
+ $ actor_3_facebook_likes   : int 835
+ $ actor_2_name             : chr "Rosario Dawson"
+ $ actor_1_facebook_likes   : int 10000
+ $ gross                    : int 69951824
+ $ genres                   : chr "Drama|Romance"
+ $ actor_1_name             : chr "Will Smith"
+ $ movie_title              : chr "Seven Pounds "
+ $ num_voted_users          : int 232710
+ $ cast_total_facebook_likes: int 14727
+ $ actor_3_name             : chr "Madison Pettis"
+ $ facenumber_in_poster     : int 1
+ $ plot_keywords            : chr "boyfriend girlfriend relationship|heart|main character dies|organ donor|redemption"
+ $ movie_imdb_link          : chr "http://www.imdb.com/title/tt0814314/?ref_=fn_tt_tt_1"
+ $ num_user_for_reviews     : int 599
+ $ language                 : chr "English"
+ $ country                  : chr "USA"
+ $ content_rating           : chr "PG-13"
+ $ budget                   : num 5.5e+07
+ $ title_year               : int 2008
+ $ actor_2_facebook_likes   : int 3000
+ $ imdb_score               : num 7.7
+ $ aspect_ratio             : num 2.35
+ $ movie_facebook_likes     : int 26000
+ $ cluster                  : int 3
+```
+
+imdb
+====
+
+ <a title="By Booyabazooka on English Wikipedia, he:משתמש:נעמה מ on Hebrew Wikipedia, edited by The Anome to remove background ellipse and balance positions of images within frame [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3AComedy_and_tragedy_masks_without_background.svg"><img width="256" alt="Comedy and tragedy masks without background" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Comedy_and_tragedy_masks_without_background.svg/256px-Comedy_and_tragedy_masks_without_background.svg.png"/></a>
+***
+
+Possible cluster labels?
+- Critically Acclaimed (higher imdb score and number of raters)
+- Popular with the Masses (higher fb likes, crowd pleaser)
+- Mediocre/mixed popularity

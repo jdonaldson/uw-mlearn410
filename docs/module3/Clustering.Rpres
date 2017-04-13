@@ -34,7 +34,7 @@ relatives-in-law were or tended to be inherently connected."
 Clustering Needs
 ========================================================
 ![clustering needs](img/cluster_desire.png)
-“Data Clustering: 50 Years Beyond K-Means”, A.K. Jain (2008
+“Data Clustering: 50 Years Beyond K-Means”, A.K. Jain (2008)
 
 Overview
 ========================================================
@@ -250,6 +250,14 @@ require(EMCluster)
 - based on probability distributions
 - no hard assignment of points to clusters, instead use probabilities
 - underlying distributions can be anything, gaussians are common 
+
+Expectation Maximization
+==========
+```{r}
+require(EMCluster)
+```
+<a title="By 3mta3 (talk) 16:55, 23 March 2009 (UTC) (Own work) [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0) or GFDL (http://www.gnu.org/copyleft/fdl.html)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3AEm_old_faithful.gif"><img width="512" alt="Em old faithful" src="https://upload.wikimedia.org/wikipedia/commons/a/a7/Em_old_faithful.gif"/></a>
+***
 -  Calculate expected value of log likelihood function:
 $$
 Q(\boldsymbol\theta|\boldsymbol\theta^{(t)}) = \operatorname{E}_{\mathbf{Z}|\mathbf{X},\boldsymbol\theta^{(t)}}\left[ \log L (\boldsymbol\theta;\mathbf{X},\mathbf{Z})  \right]
@@ -277,7 +285,7 @@ Expectation Maximization
 ==========
 EM works well when you have a good idea of the underlying distribution of the data.
 In this case, normal deviates
-```{r}
+```{r, eval=F}
 means = c(0,20,-15)
 x = rnorm(300, means[1], 10)
 y = rnorm(100, means[2], 1)
@@ -288,7 +296,19 @@ ggplot(data = dat,aes(x=x)) + geom_histogram()
 
 Expectation Maximization
 ==========
-EM fits a GMM to the data
+EM works well when you have a good idea of the underlying distribution of the data.
+In this case, normal deviates
+```{r, echo=F}
+means = c(0,20,-15)
+x = rnorm(300, means[1], 10)
+y = rnorm(100, means[2], 1)
+z = rnorm(100, means[3], 1)
+dat = data.frame(x=c(x,y,z))
+ggplot(data = dat,aes(x=x)) + geom_histogram()
+```
+
+Expectation Maximization
+==========
 ```{r}
 library(EMCluster)
 sem = shortemcluster(dat, simple.init(dat, nclass = 3))
@@ -409,7 +429,7 @@ DBScan
 Strengths:
 - Does not require cluster count parameter
 - Finds arbitrary shapes with consistent density
-  - Avoid thin line effect of hierarchical clustering
+  - Avoid "thin line" effect of hierarchical clustering
 - Excludes outliers from clusters (i.e. can eliminate noise)
 - Requires two parameters
 - (Mostly) invariant to ordering
@@ -521,5 +541,182 @@ We can use igraph to plot the network with our clusters
 plot(graph.adjacency(adjacency), vertex.color = res$Cluster)
 ```
 
+Clustering Technique Recap
+=====
+- In general, learn as much as possible about the data before trying to cluster.
+  - Do you know the expected number of clusters?
+  - Do you know anything about the distribution?
+  - Do you know if the data is graph-like?
+- Simplify structure when/where appropriate (sparsification, network pruningu
+- Consider combining clustering with dimensionality reduction (coming soon!)
+
+Clustering Deep Dive
+====
+imdb top 5000 movies
+![imdb 5000](img/imdb5000.jpg)
 
 
+imdb
+====
+```{r}
+dat = read.csv("movie_metadata.csv")
+str(dat)
+```
+
+imdb
+====
+```{r}
+sapply(dat, is.numeric)
+```
+
+imdb
+====
+```{r}
+dat_nums = dat[,sapply(dat, is.numeric)]
+str(dat_nums)
+```
+
+imdb
+===
+```{r}
+mdat = melt(dat_nums, id.vars=c("imdb_score"))
+ggplot(mdat, aes(fill=factor(as.integer(imdb_score)), x=value)) + 
+  geom_histogram() + 
+  facet_wrap(~variable, scales="free")  
+```
+
+imdb
+===
+It can help to scale
+```{r}
+mdat = melt(dat_nums, id.vars=c("imdb_score"))
+ggplot(mdat, aes(fill=factor(as.integer(imdb_score)), x=value)) + 
+  geom_histogram() + 
+  scale_x_log10() + 
+  facet_wrap(~variable, scales="free")  
+```
+
+imdb
+===
+```{r}
+mdat = melt(dat_nums, id.vars=c("imdb_score"))
+ggplot(mdat, aes(factor(as.integer(imdb_score)), value)) + 
+  geom_boxplot(outlier.shape=NA) + 
+  facet_wrap(~variable, scales="free_y")  
+```
+
+imdb
+===
+It can help to scale
+```{r}
+mdat = melt(dat_nums, id.vars=c("imdb_score"))
+ggplot(mdat, aes(factor(as.integer(imdb_score)), value)) + 
+  geom_boxplot(outlier.shape=NA) + 
+  scale_y_log10() + 
+  facet_wrap(~variable, scales="free_y")  
+```
+
+imdb
+===
+Impute the means
+```{r}
+dat_num_imp = sapply(dat_nums, function(x) {x[is.na(x)]<-mean(x,na.rm=T); x})
+any(is.na(dat_num_imp))
+```
+
+
+imdb
+===
+Using raw data produces  very uneven clusters:
+```{r}
+kdat = kmeans(dat_num_imp, 3)
+dat$cluster = kdat$cluster
+ggplot(dat, aes(x=cluster,fill=factor(cluster))) + geom_histogram(stat="count")
+```
+
+imdb
+===
+Scaling issues in fields (budget) are dominating cluster categories:
+```{r}
+t = table(dat$cluster)
+t
+small = names(t)[which.min(t)]
+dat[dat$cluster == as.integer(small),c("movie_title", "language", "budget", "cluster")]
+median(dat$budget,na.rm=T)
+```
+
+
+
+imdb
+===
+We can scale the data so it has the same column-wise mean/variance:
+```{r}
+dat_scaled = as.data.frame(scale(dat_num_imp))
+kdat = kmeans(dat_scaled, 3)
+table(kdat$cluster)
+ds = dat_scaled
+ds$cluster = kdat$cluster
+dat$cluster = kdat$cluster
+mdat = melt(ds, id.vars=c("cluster"))
+
+```
+ 
+
+
+imdb
+===
+```{r}
+ggplot(mdat, aes(fill=factor(cluster), x=value)) + 
+  geom_histogram() + scale_x_log10()  + 
+  facet_wrap(~variable, scales="free")  
+```
+
+imdb
+===
+```{r}
+ggplot(mdat, aes(factor(cluster), value)) + 
+  geom_boxplot(outlier.shape=NA) + scale_y_log10() + 
+  facet_wrap(~variable, scales="free_y")  
+```
+
+imdb
+====
+```{r}
+library(FNN)
+closest = function(k){
+  ds = dat_scaled[kdat$cluster ==k,]
+  idx = get.knnx(ds, query = t(kdat$center[k,]))$nn.index[1]
+  idx
+  str(dat[kdat$cluster==k,][idx,])
+}
+
+```
+
+imdb
+====
+```{r}
+closest(1)
+```
+
+imdb
+====
+```{r}
+closest(2)
+```
+
+imdb
+====
+```{r}
+closest(3)
+```
+
+imdb
+====
+
+ <a title="By Booyabazooka on English Wikipedia, he:משתמש:נעמה מ on Hebrew Wikipedia, edited by The Anome to remove background ellipse and balance positions of images within frame [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3AComedy_and_tragedy_masks_without_background.svg"><img width="256" alt="Comedy and tragedy masks without background" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Comedy_and_tragedy_masks_without_background.svg/256px-Comedy_and_tragedy_masks_without_background.svg.png"/></a>
+***
+
+Possible cluster labels?
+- Critically Acclaimed (higher imdb score and number of raters)
+- Popular with the Masses (higher fb likes, crowd pleaser)
+- Mediocre/mixed popularity
