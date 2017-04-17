@@ -28,6 +28,7 @@ wordcloud(corp, colors=pal, max.words=100, min.freq=5,ordered.colors=F)
 + Module 1 - [Generalized Linear Models](https://jdonaldson.github.io/uw-mlearn410/module1/linearModels.html) 
 + Module 2 - [Trees and Forests](https://jdonaldson.github.io/uw-mlearn410/module2/Trees.html) 
 + Module 3 - [Clustering](https://jdonaldson.github.io/uw-mlearn410/module3/Clustering.html) 
++ Module 4 - [Dimensionality Reduction](https://jdonaldson.github.io/uw-mlearn410/module4/DimensionalityReduction2017-03-20.pptx) 
 + Module 6 - [Recommender Systems](https://jdonaldson.github.io/uw-mlearn410/module6/RecSys.html)
 
 ## Homework : 
