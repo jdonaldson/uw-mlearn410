@@ -53,6 +53,10 @@
 .small-equation .MathJax_Display{
   font-size : 50%;
 }
+
+.small-code .reveal .slideContent pre code {
+  font-size : 75%;
+}
 .reveal strong {
     color: #4b2e83;
 }
