@@ -5,12 +5,16 @@ author: Justin Donaldson
 date: `r format(Sys.Date(), format="%B-%d-%Y")`
 autosize: true
 
-Recommender Systems Arrive on the Scene
+Applied Machine Learning 410
+---------------------------------
+(AKA: People who liked <this> also liked <that>)
+
+Recommender Systems Arrive
 ======
 Anybody remember this contest? (2009)
 ![netflix prixe](img/netflix-prize.png)
 
-Recommender Systems Arrive on the Scene
+Recommender Systems Arrive
 ======
 ![netflix prixe](img/netflix-prize.png)
 ***
@@ -18,3 +22,66 @@ Recommender Systems Arrive on the Scene
 - Contestants from all over the world
 - No holds barred, any technique was considered
 - Winner gets a million bucks!
+
+Old and Blockbusted
+======
+<a title="By Tracy the astonishing (The video store on Flickr) [CC BY-SA 2.0 (http://creativecommons.org/licenses/by-sa/2.0)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3AVideo_shop.jpg"><img width="512" alt="Video shop" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Video_shop.jpg/512px-Video_shop.jpg"/></a>
+***
+- Previously, each copy of a movie took up space... somewhere.
+- Impossible to stock *every* movie that *everyone* wants in a physical store
+- Movies/Content catered towards *satisficing* broader demographics.
+  - Sacrifice smaller fringe titles, stock more crowd pleasers
+
+Overview
+===
+type : sub-section
+- Content-based recommendation
+- Item-based recommendation
+- User-based recommendation
+- Hybrids and New Techniques
+
+
+Content-based recommendation
+====
+What constitutes *content*? 
+
+![moana](img/moana.jpg)
+***
+- Simple measures/categories (themes, genres, abstract qualities)
+- E.g. Moana is a [family] [musical] featuring [cg animation]
+- May be automatically extracted
+- Relies on a *profile* of the individual content, and *profile* of user preference
+
+IMDB part deux
+====
+type : small-code
+```{r}
+dat = read.csv("../module3/movie_metadata.csv")
+str(dat)
+```
+
+IMDB part deux
+====
+```{r}
+library(stringr)
+library(coop)
+dat = dat[dat$plot_keywords != '', ]
+dat = dat[1:1000,]
+keywords = str_split(dat$plot_keywords, "\\s*\\|\\s*")
+all_keywords = sort(unique(unlist(keywords)))
+keywords = sapply(keywords, function(x) {
+  y = rep(0, length(all_keywords)); 
+  names(y)<- all_keywords; 
+  y[unlist(x)] = 1; 
+  y
+})
+colnames(keywords)<- dat$movie_title
+sims = cosine(keywords)
+diag(sims) = 0
+as.matrix(apply(sims,2,function(x) names(x)[which.max(x)]))
+```
+
+
+
+User-based recommendation
+====
