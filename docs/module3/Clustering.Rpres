@@ -307,6 +307,7 @@ Expectation Maximization
 EM works well when you have a good idea of the underlying distribution of the data.
 In this case, normal deviates
 ```{r, echo=F}
+library(ggplot2)
 means = c(0,20,-15)
 x = rnorm(300, means[1], 10)
 y = rnorm(100, means[2], 1)
@@ -318,6 +319,7 @@ ggplot(data = dat,aes(x=x)) + geom_histogram()
 Expectation Maximization
 ==========
 ```{r}
+
 library(EMCluster)
 sem = shortemcluster(dat, simple.init(dat, nclass = 3))
 em = emcluster(dat, sem, assign.class=T)
