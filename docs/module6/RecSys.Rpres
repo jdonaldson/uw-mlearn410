@@ -68,6 +68,7 @@ library(coop)
 dat = dat[dat$plot_keywords != '', ]
 dat = dat[1:1000,]
 keywords = str_split(dat$plot_keywords, "\\s*\\|\\s*")
+keywords = lapply(keywords, str_trim)
 all_keywords = sort(unique(unlist(keywords)))
 keywords = sapply(keywords, function(x) {
   y = rep(0, length(all_keywords)); 
@@ -75,7 +76,7 @@ keywords = sapply(keywords, function(x) {
   y[unlist(x)] = 1; 
   y
 })
-colnames(keywords)<- dat$movie_title
+colnames(keywords)<- str_trim(dat$movie_title)
 sims = cosine(keywords)
 diag(sims) = 0
 as.matrix(apply(sims,2,function(x) names(x)[which.max(x)]))
