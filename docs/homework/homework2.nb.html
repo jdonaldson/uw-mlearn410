@@ -176,24 +176,63 @@ $(document).ready(function () {
 <h1>Unsupervised Learning</h1>
 <div id="find-model-parameters-using-em" class="section level3">
 <h3>Find model parameters using EM</h3>
-<p>The dataset below contains a model generated from a number of gaussians. Use EM to find the model parameters</p>
+<p>The dataset below contains eruption data from old faithful.<br />
+Analysts note that old faithful erupts in certain patterns: Sometimes there are long eruptions, sometimes there are short. The eruptions are also followed by a delay that can vary accordingly.</p>
+<p>Read in the data to get started.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-<div id="find-cluster-topics-using-k-means" class="section level3">
-<h3>Find cluster topics using k means</h3>
-<p>The dataset below contains documents taken from several different topical areas. Use nlp techniques to extract the words into vectors and weight them. Use your choice of clustering technique to group the documents into clusters</p>
+<div id="q1-how-many-clusters-do-you-believe-exist" class="section level2">
+<h2>Q1: How many clusters do you believe exist?</h2>
+</div>
+<div id="q2-how-did-you-arrive-at-your-conclusion" class="section level2">
+<h2>Q2: How did you arrive at your conclusion?</h2>
+</div>
+<div id="q3-use-expectation-maximization-clustering" class="section level2">
+<h2>Q3 : Use Expectation Maximization clustering</h2>
+<p>Extract cluster parameters using your chosen<code>k</code> cluster count and report them below</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShFTUNsdXN0ZXIpXG4jIHNob3J0ZW1jbHVzdGVyKGZhaXRoZnVsLCBzaW1wbGUuaW5pdChmYWl0aGZ1bCwgbmNsYXNzID0gaykpXG5gYGAifQ== -->
+<pre class="r"><code>library(EMCluster)
+# shortemcluster(faithful, simple.init(faithful, nclass = k))</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
+<div id="q4-use-dbscan-to-perform-clustering." class="section level2">
+<h2>Q4: Use dbscan to perform clustering.</h2>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShkYnNjYW4pXG4jIGRic2NhbihmYWl0aGZ1bCwgbWluUHRzLCBlcHMpXG5cbmBgYCJ9 -->
+<pre class="r"><code>library(dbscan)
+# dbscan(faithful, minPts, eps)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Report the settings you chose for minPts and epsilon, and how you arrived at them (hint: histograms and distances)</p>
+</div>
+<div id="q5-use-kmeans-to-perform-clustering" class="section level2">
+<h2>Q5: Use kmeans to perform clustering</h2>
+<p>Use the k you chose before</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBrbWVhbnMoZmFpdGhmdWwsIGspIHNob3VsZCBhbHJlYWR5IGJlIGF2YWlsYWJsZSBpbiB5b3VyIFIgZW52aXJvbm1lbnRcbmBgYCJ9 -->
+<pre class="r"><code># kmeans(faithful, k) should already be available in your R environment</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="q6-which-clustering-technique-works-the-best-here" class="section level2">
+<h2>Q6 : Which clustering technique works the best here?</h2>
 <!-- rnb-text-end -->
 </div>
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiSG9tZXdvcmsgMiIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKIyBVbnN1cGVydmlzZWQgTGVhcm5pbmcKCiMjIyBGaW5kIG1vZGVsIHBhcmFtZXRlcnMgdXNpbmcgRU0gClRoZSBkYXRhc2V0IGJlbG93IGNvbnRhaW5zIGEgbW9kZWwgZ2VuZXJhdGVkIGZyb20gYSBudW1iZXIgb2YgZ2F1c3NpYW5zLiAgVXNlIEVNIHRvIGZpbmQgdGhlIG1vZGVsIHBhcmFtZXRlcnMKYGBge3J9CmRhdCA9IHJlYWQuY3N2KCJ0YmQuY3N2IikKIyBlLmcuCiMgY2x1c3RlcnMgPSBzb21lX2VtX2FsZ29yaXRobShkYXQsLi4uKQpgYGAKCiMjIyBGaW5kIGNsdXN0ZXIgdG9waWNzIHVzaW5nIGsgbWVhbnMKVGhlIGRhdGFzZXQgYmVsb3cgY29udGFpbnMgZG9jdW1lbnRzIHRha2VuIGZyb20gc2V2ZXJhbCBkaWZmZXJlbnQgdG9waWNhbCBhcmVhcy4gIFVzZSBubHAgdGVjaG5pcXVlcyB0byBleHRyYWN0IHRoZSB3b3JkcyBpbnRvIHZlY3RvcnMgYW5kIHdlaWdodCB0aGVtLgpVc2UgeW91ciBjaG9pY2Ugb2YgY2x1c3RlcmluZyB0ZWNobmlxdWUgdG8gZ3JvdXAgdGhlIGRvY3VtZW50cyBpbnRvIGNsdXN0ZXJzCmBgYHtyfQpkYXQgPSByZWFkLmNzdigidGJkLmNzdiIpCmBgYAoK</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiSG9tZXdvcmsgMiIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKIyBVbnN1cGVydmlzZWQgTGVhcm5pbmcKCiMjIyBGaW5kIG1vZGVsIHBhcmFtZXRlcnMgdXNpbmcgRU0gClRoZSBkYXRhc2V0IGJlbG93IGNvbnRhaW5zIGVydXB0aW9uIGRhdGEgZnJvbSBvbGQgZmFpdGhmdWwuICAKQW5hbHlzdHMgbm90ZSB0aGF0IG9sZCBmYWl0aGZ1bCBlcnVwdHMgaW4gY2VydGFpbiBwYXR0ZXJuczogU29tZXRpbWVzIHRoZXJlIGFyZSBsb25nIGVydXB0aW9ucywgc29tZXRpbWVzIHRoZXJlIGFyZSBzaG9ydC4KVGhlIGVydXB0aW9ucyBhcmUgYWxzbyBmb2xsb3dlZCBieSBhIGRlbGF5IHRoYXQgY2FuIHZhcnkgYWNjb3JkaW5nbHkuCgpSZWFkIGluIHRoZSBkYXRhIHRvIGdldCBzdGFydGVkLgoKCmBgYHtyfQpkYXRhKGZhaXRoZnVsKQojIGludmVzdGlnYXRlIHRoZSBvbGQgZmFpdGhmdWwgZXJ1cHRpb24gcGF0dGVybnMgdXNpbmcgc2NhdHRlciBwbG90cywgZXRjLiAgCmBgYAoKIyMgUTE6IEhvdyBtYW55IGNsdXN0ZXJzIGRvIHlvdSBiZWxpZXZlIGV4aXN0PwoKIyMgUTI6IEhvdyBkaWQgeW91IGFycml2ZSBhdCB5b3VyIGNvbmNsdXNpb24/CgojIyBRMyA6IFVzZSBFeHBlY3RhdGlvbiBNYXhpbWl6YXRpb24gY2x1c3RlcmluZyAKRXh0cmFjdCBjbHVzdGVyIHBhcmFtZXRlcnMgdXNpbmcgeW91ciBjaG9zZW5gYGtgYCBjbHVzdGVyIGNvdW50ICBhbmQgcmVwb3J0IHRoZW0gYmVsb3cKYGBge3J9CmxpYnJhcnkoRU1DbHVzdGVyKQojIHNob3J0ZW1jbHVzdGVyKGZhaXRoZnVsLCBzaW1wbGUuaW5pdChmYWl0aGZ1bCwgbmNsYXNzID0gaykpCmBgYAoKCiMjIFE0OiBVc2UgZGJzY2FuIHRvIHBlcmZvcm0gY2x1c3RlcmluZy4gIAoKYGBge3J9CmxpYnJhcnkoZGJzY2FuKQojIGRic2NhbihmYWl0aGZ1bCwgbWluUHRzLCBlcHMpCgpgYGAKUmVwb3J0IHRoZSBzZXR0aW5ncyB5b3UgY2hvc2UgZm9yIG1pblB0cyBhbmQgZXBzaWxvbiwgYW5kIGhvdyB5b3UgYXJyaXZlZCBhdCB0aGVtIChoaW50OiBoaXN0b2dyYW1zIGFuZCBkaXN0YW5jZXMpCgojIyBRNTogVXNlIGttZWFucyB0byBwZXJmb3JtIGNsdXN0ZXJpbmcKVXNlIHRoZSBrIHlvdSBjaG9zZSBiZWZvcmUKCmBgYHtyfQojIGttZWFucyhmYWl0aGZ1bCwgaykgc2hvdWxkIGFscmVhZHkgYmUgYXZhaWxhYmxlIGluIHlvdXIgUiBlbnZpcm9ubWVudApgYGAKCiMjIFE2IDogV2hpY2ggY2x1c3RlcmluZyB0ZWNobmlxdWUgd29ya3MgdGhlIGJlc3QgaGVyZT8gIAo=</div>
 
 
 
