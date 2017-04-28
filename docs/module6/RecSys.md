@@ -7,7 +7,7 @@ autosize: true
 
 Applied Machine Learning 410
 ---------------------------------
-(AKA: People who liked <this> also liked <that>)
+(AKA: If you like that, your gonna love this)
 
 Recommender Systems Arrive
 ======
@@ -95,6 +95,7 @@ str(dat)
 
 IMDB part deux
 ====
+type : small-code 
 
 ```r
 library(stringr)
@@ -111,6 +112,29 @@ keywords = sapply(keywords, function(x) {
   y
 })
 colnames(keywords)<- str_trim(dat$movie_title)
+
+t(keywords[40:43,1:5])
+```
+
+```
+                                         acorn act of kindness
+Avatar                                       0               0
+Pirates of the Caribbean: At World's End     0               0
+Spectre                                      0               0
+The Dark Knight Rises                        0               0
+John Carter                                  0               0
+                                         action figure action hero
+Avatar                                               0           0
+Pirates of the Caribbean: At World's End             0           0
+Spectre                                              0           0
+The Dark Knight Rises                                0           0
+John Carter                                          0           0
+```
+
+IMDB part deux
+====
+
+```r
 sims = cosine(keywords)
 diag(sims) = 0
 as.matrix(apply(sims,2,function(x) names(x)[which.max(x)]))
