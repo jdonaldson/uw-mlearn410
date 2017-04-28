@@ -9,8 +9,9 @@ Applied Machine Learning 410
 ---------------------------------
 (AKA: Birds of a feather)
 ```{r setup, echo=FALSE}
-require(GGally)
-require(RColorBrewer)
+library(GGally)
+library(RColorBrewer)
+library(reshape2)
 opts_chunk$set(out.width='900px', dpi=200,cache=TRUE, fig.width=9, fig.height=5 )
 local({r <- getOption("repos")
        r["CRAN"] <- "http://cran.r-project.org" 

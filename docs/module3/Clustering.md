@@ -2,7 +2,7 @@ Clustering
 ========================================================
 css: ../../assets/style/uw.css
 author: Justin Donaldson
-date: April-20-2017
+date: April-27-2017
 autosize: true
 
 Applied Machine Learning 410
@@ -1031,34 +1031,303 @@ str(dat_nums)
 imdb
 ===
 
+```r
+mdat = melt(dat_nums, id.vars=c("imdb_score"))
+ggplot(mdat, aes(fill=factor(as.integer(imdb_score)), x=value)) + 
+  geom_histogram() + 
+  facet_wrap(~variable, scales="free")  
+```
 
+<img src="Clustering-figure/unnamed-chunk-40-1.png" title="plot of chunk unnamed-chunk-40" alt="plot of chunk unnamed-chunk-40" width="900px" />
 
+imdb
+===
+It can help to scale
 
+```r
+mdat = melt(dat_nums, id.vars=c("imdb_score"))
+ggplot(mdat, aes(fill=factor(as.integer(imdb_score)), x=value)) + 
+  geom_histogram() + 
+  scale_x_log10() + 
+  facet_wrap(~variable, scales="free")  
+```
 
+<img src="Clustering-figure/unnamed-chunk-41-1.png" title="plot of chunk unnamed-chunk-41" alt="plot of chunk unnamed-chunk-41" width="900px" />
 
+imdb
+===
 
+```r
+mdat = melt(dat_nums, id.vars=c("imdb_score"))
+ggplot(mdat, aes(factor(as.integer(imdb_score)), value)) + 
+  geom_boxplot(outlier.shape=NA) + 
+  facet_wrap(~variable, scales="free_y")  
+```
 
+<img src="Clustering-figure/unnamed-chunk-42-1.png" title="plot of chunk unnamed-chunk-42" alt="plot of chunk unnamed-chunk-42" width="900px" />
 
+imdb
+===
+It can help to scale
 
+```r
+mdat = melt(dat_nums, id.vars=c("imdb_score"))
+ggplot(mdat, aes(factor(as.integer(imdb_score)), value)) + 
+  geom_boxplot(outlier.shape=NA) + 
+  scale_y_log10() + 
+  facet_wrap(~variable, scales="free_y")  
+```
 
+<img src="Clustering-figure/unnamed-chunk-43-1.png" title="plot of chunk unnamed-chunk-43" alt="plot of chunk unnamed-chunk-43" width="900px" />
 
+imdb
+===
+Impute the means
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+```r
+dat_num_imp = sapply(dat_nums, function(x) {x[is.na(x)]<-mean(x,na.rm=T); x})
+any(is.na(dat_num_imp))
+```
 
 ```
-Error in eval(expr, envir, enclos) : could not find function "melt"
+[1] FALSE
 ```
+
+
+imdb
+===
+Using raw data produces  very uneven clusters:
+
+```r
+kdat = kmeans(dat_num_imp, 3)
+dat$cluster = kdat$cluster
+ggplot(dat, aes(x=cluster,fill=factor(cluster))) + geom_histogram(stat="count")
+```
+
+<img src="Clustering-figure/unnamed-chunk-45-1.png" title="plot of chunk unnamed-chunk-45" alt="plot of chunk unnamed-chunk-45" width="900px" />
+
+imdb
+===
+Scaling issues in fields (budget) are dominating cluster categories:
+
+```r
+t = table(dat$cluster)
+t
+```
+
+```
+
+   1    2    3 
+   1 4678  364 
+```
+
+```r
+small = names(t)[which.min(t)]
+dat[dat$cluster == as.integer(small),c("movie_title", "language", "budget", "cluster")]
+```
+
+```
+     movie_title language      budget cluster
+2989   The Host    Korean 12215500000       1
+```
+
+```r
+median(dat$budget,na.rm=T)
+```
+
+```
+[1] 2e+07
+```
+
+
+
+imdb
+===
+We can scale the data so it has the same column-wise mean/variance:
+
+```r
+dat_scaled = as.data.frame(scale(dat_num_imp))
+kdat = kmeans(dat_scaled, 3)
+table(kdat$cluster)
+```
+
+```
+
+   1    2    3 
+4164  765  114 
+```
+
+```r
+ds = dat_scaled
+ds$cluster = kdat$cluster
+dat$cluster = kdat$cluster
+mdat = melt(ds, id.vars=c("cluster"))
+```
+ 
+
+
+imdb
+===
+
+```r
+ggplot(mdat, aes(fill=factor(cluster), x=value)) + 
+  geom_histogram() + scale_x_log10()  + 
+  facet_wrap(~variable, scales="free")  
+```
+
+<img src="Clustering-figure/unnamed-chunk-48-1.png" title="plot of chunk unnamed-chunk-48" alt="plot of chunk unnamed-chunk-48" width="900px" />
+
+imdb
+===
+
+```r
+ggplot(mdat, aes(factor(cluster), value)) + 
+  geom_boxplot(outlier.shape=NA) + scale_y_log10() + 
+  facet_wrap(~variable, scales="free_y")  
+```
+
+<img src="Clustering-figure/unnamed-chunk-49-1.png" title="plot of chunk unnamed-chunk-49" alt="plot of chunk unnamed-chunk-49" width="900px" />
+
+imdb
+====
+
+```r
+library(FNN)
+closest = function(k){
+  ds = dat_scaled[kdat$cluster ==k,]
+  idx = get.knnx(ds, query = t(kdat$center[k,]))$nn.index[1]
+  idx
+  str(dat[kdat$cluster==k,][idx,])
+}
+```
+
+imdb
+====
+
+```r
+closest(1)
+```
+
+```
+'data.frame':	1 obs. of  29 variables:
+ $ color                    : chr "Color"
+ $ director_name            : chr "Andrzej Bartkowiak"
+ $ num_critic_for_reviews   : int 109
+ $ duration                 : int 101
+ $ director_facebook_likes  : int 43
+ $ actor_3_facebook_likes   : int 432
+ $ actor_2_name             : chr "Tom Arnold"
+ $ actor_1_facebook_likes   : int 5000
+ $ gross                    : int 34604054
+ $ genres                   : chr "Action|Crime|Drama|Thriller"
+ $ actor_1_name             : chr "Jet Li"
+ $ movie_title              : chr "Cradle 2 the Grave "
+ $ num_voted_users          : int 34942
+ $ cast_total_facebook_likes: int 6867
+ $ actor_3_name             : chr "DMX"
+ $ facenumber_in_poster     : int 2
+ $ plot_keywords            : chr "camera shot from inside human body|diamond|evil man|heist|terrorism"
+ $ movie_imdb_link          : chr "http://www.imdb.com/title/tt0306685/?ref_=fn_tt_tt_1"
+ $ num_user_for_reviews     : int 185
+ $ language                 : chr "English"
+ $ country                  : chr "USA"
+ $ content_rating           : chr "R"
+ $ budget                   : num 3e+07
+ $ title_year               : int 2003
+ $ actor_2_facebook_likes   : int 618
+ $ imdb_score               : num 5.8
+ $ aspect_ratio             : num 2.35
+ $ movie_facebook_likes     : int 1000
+ $ cluster                  : int 1
+```
+
+imdb
+====
+
+```r
+closest(2)
+```
+
+```
+'data.frame':	1 obs. of  29 variables:
+ $ color                    : chr "Color"
+ $ director_name            : chr "Gabriele Muccino"
+ $ num_critic_for_reviews   : int 202
+ $ duration                 : int 123
+ $ director_facebook_likes  : int 125
+ $ actor_3_facebook_likes   : int 835
+ $ actor_2_name             : chr "Rosario Dawson"
+ $ actor_1_facebook_likes   : int 10000
+ $ gross                    : int 69951824
+ $ genres                   : chr "Drama|Romance"
+ $ actor_1_name             : chr "Will Smith"
+ $ movie_title              : chr "Seven Pounds "
+ $ num_voted_users          : int 232710
+ $ cast_total_facebook_likes: int 14727
+ $ actor_3_name             : chr "Madison Pettis"
+ $ facenumber_in_poster     : int 1
+ $ plot_keywords            : chr "boyfriend girlfriend relationship|heart|main character dies|organ donor|redemption"
+ $ movie_imdb_link          : chr "http://www.imdb.com/title/tt0814314/?ref_=fn_tt_tt_1"
+ $ num_user_for_reviews     : int 599
+ $ language                 : chr "English"
+ $ country                  : chr "USA"
+ $ content_rating           : chr "PG-13"
+ $ budget                   : num 5.5e+07
+ $ title_year               : int 2008
+ $ actor_2_facebook_likes   : int 3000
+ $ imdb_score               : num 7.7
+ $ aspect_ratio             : num 2.35
+ $ movie_facebook_likes     : int 26000
+ $ cluster                  : int 2
+```
+
+imdb
+====
+
+```r
+closest(3)
+```
+
+```
+'data.frame':	1 obs. of  29 variables:
+ $ color                    : chr "Color"
+ $ director_name            : chr "Rupert Sanders"
+ $ num_critic_for_reviews   : int 416
+ $ duration                 : int 132
+ $ director_facebook_likes  : int 274
+ $ actor_3_facebook_likes   : int 11000
+ $ actor_2_name             : chr "Kristen Stewart"
+ $ actor_1_facebook_likes   : int 26000
+ $ gross                    : int 155111815
+ $ genres                   : chr "Action|Adventure|Drama|Fantasy"
+ $ actor_1_name             : chr "Chris Hemsworth"
+ $ movie_title              : chr "Snow White and the Huntsman "
+ $ num_voted_users          : int 228554
+ $ cast_total_facebook_likes: int 72881
+ $ actor_3_name             : chr "Sam Claflin"
+ $ facenumber_in_poster     : int 0
+ $ plot_keywords            : chr "evil queen|fairy tale|magic|queen|snow white"
+ $ movie_imdb_link          : chr "http://www.imdb.com/title/tt1735898/?ref_=fn_tt_tt_1"
+ $ num_user_for_reviews     : int 710
+ $ language                 : chr "English"
+ $ country                  : chr "USA"
+ $ content_rating           : chr "PG-13"
+ $ budget                   : num 1.7e+08
+ $ title_year               : int 2012
+ $ actor_2_facebook_likes   : int 17000
+ $ imdb_score               : num 6.1
+ $ aspect_ratio             : num 2.35
+ $ movie_facebook_likes     : int 53000
+ $ cluster                  : int 3
+```
+
+imdb
+====
+
+ <a title="By Booyabazooka on English Wikipedia, he:משתמש:נעמה מ on Hebrew Wikipedia, edited by The Anome to remove background ellipse and balance positions of images within frame [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3AComedy_and_tragedy_masks_without_background.svg"><img width="256" alt="Comedy and tragedy masks without background" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Comedy_and_tragedy_masks_without_background.svg/256px-Comedy_and_tragedy_masks_without_background.svg.png"/></a>
+***
+
+Possible cluster labels?
+- Critically Acclaimed (higher imdb score and number of raters)
+- Popular with the Masses (higher fb likes, crowd pleaser)
+- Mediocre/mixed popularity
