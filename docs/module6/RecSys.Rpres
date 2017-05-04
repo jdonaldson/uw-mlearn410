@@ -92,6 +92,92 @@ as.matrix(apply(sims,2,function(x) names(x)[which.max(x)]))
 ```
 
 
+User-based recommendation
+====
+User based recommendation considers user-based signals, such as ratings, listens, likes, etc.  
+
+Using these signals can model recommended content 
+without knowing anything about the content at all! 
+***
+<a title="By Enoc vt (Own work) [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3ABot%C3%B3n_Me_gusta.svg"><img width="256" alt="Botón Me gusta" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Bot%C3%B3n_Me_gusta.svg/256px-Bot%C3%B3n_Me_gusta.svg.png"/></a>
+
+
+Collaborative Filtering
+====
+```{r}
+library(recommenderlab)
+library(plyr)
+library(ggplot2)
+ratings = read.csv("ml-latest-small/ratings.csv")
+head(ratings)
+```
 
 User-based recommendation
 ====
+```{r}
+ggplot(ratings, aes(x=rating)) + 
+  geom_histogram() + 
+  labs(title="Histogram of Rating values")
+```
+
+User-based recommendation
+====
+```{r}
+user_counts = as.data.frame(table(ratings$userId))
+ggplot(user_counts, aes(x=Freq)) + 
+  geom_histogram() + 
+  scale_x_log10() + 
+  labs(title="Histogram of User Rating Counts")
+```
+
+User-based recommendation
+====
+```{r}
+movie_counts = as.data.frame(table(ratings$movieId))
+ggplot(movie_counts, aes(x=Freq)) + 
+  geom_histogram() + 
+  scale_x_log10() + 
+  labs(title="Histogram of Movie Rating Counts")
+```
+
+
+User-based recommendation
+====
+```{r}
+mean.ratings = ddply(ratings, .(userId), function(x) mean(x$rating, na.rm=T))
+ggplot(mean.ratings,aes(x=V1)) + 
+  geom_histogram() + 
+  labs(title="Histogram of Average Ratings by User")
+```
+
+User-based recommendation
+====
+Important questions:
+- Are there users that are biasing the rankings?
+- Is there enough coverage of movies to make recommendations?
+
+
+User-based recommendation
+====
+```{r}
+mratings = daply(ratings, .(userId, movieId), function(x) x$rating)
+mratings[1:10,1:10]
+```
+
+User-based recommendation
+====
+```{r}
+rrm <- as(mratings, "realRatingMatrix")
+rrm
+getRatingMatrix(rrm)
+```
+
+User-based recommendation
+====
+```{r}
+rrm <- as(mratings, "realRatingMatrix")
+rrm
+getRatingMatrix(rrm)
+```
+
+
