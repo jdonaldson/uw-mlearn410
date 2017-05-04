@@ -6,17 +6,44 @@ output: html_notebook
 # Unsupervised Learning
 
 ### Find model parameters using EM 
-The dataset below contains a model generated from a number of gaussians.  Use EM to find the model parameters
+The dataset below contains eruption data from old faithful.  
+Analysts note that old faithful erupts in certain patterns: Sometimes there are long eruptions, sometimes there are short.
+The eruptions are also followed by a delay that can vary accordingly.
+
+Read in the data to get started.
+
+
 ```{r}
-dat = read.csv("tbd.csv")
-# e.g.
-# clusters = some_em_algorithm(dat,...)
+data(faithful)
+# investigate the old faithful eruption patterns using scatter plots, etc.  
 ```
 
-### Find cluster topics using k means
-The dataset below contains documents taken from several different topical areas.  Use nlp techniques to extract the words into vectors and weight them.
-Use your choice of clustering technique to group the documents into clusters
+## Q1: How many clusters do you believe exist?
+
+## Q2: How did you arrive at your conclusion?
+
+## Q3 : Use Expectation Maximization clustering 
+Extract cluster parameters using your chosen``k`` cluster count  and report them below
 ```{r}
-dat = read.csv("tbd.csv")
+library(EMCluster)
+# shortemcluster(faithful, simple.init(faithful, nclass = k))
 ```
 
+
+## Q4: Use dbscan to perform clustering.  
+
+```{r}
+library(dbscan)
+# dbscan(faithful, minPts, eps)
+
+```
+Report the settings you chose for minPts and epsilon, and how you arrived at them (hint: histograms and distances)
+
+## Q5: Use kmeans to perform clustering
+Use the k you chose before
+
+```{r}
+# kmeans(faithful, k) should already be available in your R environment
+```
+
+## Q6 : Which clustering technique works the best here?  

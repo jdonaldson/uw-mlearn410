@@ -7,7 +7,7 @@ autosize: true
 
 Applied Machine Learning 410
 ---------------------------------
-(AKA: People who liked <this> also liked <that>)
+(AKA: If you like that, your gonna love this)
 
 Recommender Systems Arrive
 ======
@@ -62,12 +62,14 @@ str(dat)
 
 IMDB part deux
 ====
+type : small-code 
 ```{r}
 library(stringr)
 library(coop)
 dat = dat[dat$plot_keywords != '', ]
 dat = dat[1:1000,]
 keywords = str_split(dat$plot_keywords, "\\s*\\|\\s*")
+keywords = lapply(keywords, str_trim)
 all_keywords = sort(unique(unlist(keywords)))
 keywords = sapply(keywords, function(x) {
   y = rep(0, length(all_keywords)); 
@@ -75,7 +77,15 @@ keywords = sapply(keywords, function(x) {
   y[unlist(x)] = 1; 
   y
 })
-colnames(keywords)<- dat$movie_title
+colnames(keywords)<- str_trim(dat$movie_title)
+
+t(keywords[40:43,1:5])
+
+```
+
+IMDB part deux
+====
+```{r}
 sims = cosine(keywords)
 diag(sims) = 0
 as.matrix(apply(sims,2,function(x) names(x)[which.max(x)]))
