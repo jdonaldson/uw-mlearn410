@@ -1,0 +1,217 @@
+User-based recommendation
+====
+User based recommendation considers user-based signals, such as ratings, listens, likes, etc.  
+
+Using these signals can model recommended content 
+without knowing anything about the content at all! 
+***
+<a title="By Enoc vt (Own work) [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3ABot%C3%B3n_Me_gusta.svg"><img width="256" alt="Botón Me gusta" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Bot%C3%B3n_Me_gusta.svg/256px-Bot%C3%B3n_Me_gusta.svg.png"/></a>
+
+
+Collaborative Filtering
+====
+```{r}
+library(plyr)
+library(ggplot2)
+ratings = read.csv("ml-latest-small/ratings.csv", nrows=2000)
+head(ratings)
+```
+
+User-based recommendation
+====
+- Collect ratings from users and items
+- Find similar users to use as "peers"
+- Use means/medians of scores from peer ratings
+- Find high predicted scores on missing items to use as recommendations 
+
+***
+<a title="By Moshanin (Own work) [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0) or GFDL (http://www.gnu.org/copyleft/fdl.html)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3ACollaborative_filtering.gif"><img width="256" alt="Collaborative filtering" src="https://upload.wikimedia.org/wikipedia/commons/5/52/Collaborative_filtering.gif"/></a>
+
+User-based recommendation
+====
+```{r}
+ggplot(ratings, aes(x=rating)) + 
+  geom_histogram() + 
+  labs(title="Histogram of Rating values")
+```
+
+User-based recommendation
+===
+```{r}
+user_counts = as.data.frame(table(ratings$userId))
+ggplot(user_counts, aes(x=Freq)) + 
+  geom_histogram() + 
+  scale_x_log10() + 
+  labs(title="Histogram of User Rating Counts")
+```
+
+User-based recommendation
+====
+```{r}
+movie_counts = as.data.frame(table(ratings$movieId))
+ggplot(movie_counts, aes(x=Freq)) + 
+  geom_histogram() + 
+  scale_x_log10() + 
+  labs(title="Histogram of Movie Rating Counts")
+```
+
+
+User-based recommendation
+====
+```{r}
+mean.ratings = ddply(ratings, .(userId), function(x) mean(x$rating, na.rm=T))
+ggplot(mean.ratings,aes(x=V1)) + 
+  geom_histogram() + 
+  labs(title="Histogram of Average Ratings by User")
+```
+
+
+User-based recommendation
+====
+The recommenderlab package is *recommended* as a platform for recommender system analysis
+- User based CF
+- Item based CF
+- SVD based CF
+- Popularity Recommender
+- Random Recommender
+```{r}
+library(recommenderlab)
+```
+
+User-based recommendation
+====
+We need to transform the ratings information into a special matrix form
+```{r}
+mratings = daply(ratings, .(userId, movieId), function(x) x$rating)
+mratings[1:10,1:10]
+```
+
+User-based recommendation
+====
+```{r}
+rrm <- as(mratings, "realRatingMatrix")
+rrm
+getRatingMatrix(rrm)
+```
+
+
+
+User-based recommendation
+====
+Important questions:
+- Are there users that are biasing the rankings?
+- Is there enough coverage of movies to make recommendations?
+
+User-based recommendation
+====
+```{r}
+ubcf <- Recommender(rrm, method = "UBCF")
+getModel(ubcf)
+```
+
+
+User-based recommendation
+====
+We can predict the missing values in the matrix of user/movie rankings (NAs are placeholders for original ratings)
+```{r}
+recom = predict(ubcf, rrm, n=5, type="ratings")
+as(recom, "matrix")[1:8,1:4]
+```
+
+Item-based recommendation
+====
+User-based collaborative filtering had problems:
+- Systems with many items/few ratings performed poorly
+- Calculating all pairs of users expensive
+- Users change quickly, system needs to be recomputed
+
+
+Item-based recommendation
+====
+Item-based collaborative filtering use rating distributions *per-item* rather than *per-user*.  Because of this:
+- Rating is more stable (but less specific to user)
+- Item recommendations can be pre-computed
+- Recommendations can still be driven from items the user rates.
+
+
+Item-based recommendation
+====
+Item-based collaboratrve steps:
+- Find similarity between all pairs of items (e.g. correlation)
+- Find items rated highly by the user
+- Recommend items correlated with highly rated items
+
+Item-based recommendation
+====
+Using recommenderlab, once more
+```{r}
+ibcf <- Recommender(rrm, method = "IBCF")
+getModel(ibcf)
+```
+
+Hybrid recommendation
+====
+What do we mean by hybrid?
+- Weighted : The scores are averaged between recommender systems
+- Switched : The technique used changes based on context 
+- Mixed : Recommendations from several systems shown at once
+- etc, etc, etc
+
+
+Hybrid recommendation
+====
+Recommenderlab has you covered for hybrid weighted systems
+```{r}
+recom <- HybridRecommender(
+  Recommender(rrm, method = "POPULAR"),
+  Recommender(rrm, method = "RANDOM"),
+  Recommender(rrm, method = "UBCF"),
+  weights = c(.6, .1, .3)
+  )
+recom
+
+```
+
+Hybrid recommendation
+====
+Recommenderlab has you covered for hybrid weighted systems
+```{r}
+getModel(recom)
+```
+
+Evaluation
+====
+Recommenderlab has a nice method for comparing recommender system results
+```{r}
+scheme <- evaluationScheme(rrm, method="cross", k=4, given=3,  goodRating=4)
+scheme
+```
+
+Evaluation
+====
+Recommenderlab has a nice method for comparing recommender system results
+```{r}
+
+algorithms <- list(
+ "random items" = list(name="RANDOM", param=NULL),
+ "popular items" = list(name="POPULAR", param=NULL),
+ "user-based CF" = list(name="UBCF", param=list(nn=50)),
+ "item-based CF" = list(name="IBCF", param=list(k=50)),
+ "SVD approximation" = list(name="SVD", param=list(k = 50))
+ )
+```
+
+Evaluation
+====
+```{r}
+results <- evaluate(scheme, algorithms, type = "topNList", n=c(1, 3, 5, 10, 15, 20))
+```
+
+Evaluation
+=====
+```{r}
+plot(results)
+```
+
+
+
