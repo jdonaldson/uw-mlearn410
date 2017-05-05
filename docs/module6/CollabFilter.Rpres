@@ -1,3 +1,9 @@
+Collaborative Filtering (CF)
+====
+type : sub-section
+- User ratings/observations drive item relationships
+- Rather than study the *thing*, study *how people like the thing*
+
 User-based recommendation
 ====
 User based recommendation considers user-based signals, such as ratings, listens, likes, etc.  
@@ -13,7 +19,7 @@ Collaborative Filtering
 ```{r}
 library(plyr)
 library(ggplot2)
-ratings = read.csv("ml-latest-small/ratings.csv", nrows=2000)
+ratings = read.csv("ml-latest-small/ratings.csv", nrows=1000)
 head(ratings)
 ```
 
@@ -74,6 +80,8 @@ The recommenderlab package is *recommended* as a platform for recommender system
 - SVD based CF
 - Popularity Recommender
 - Random Recommender
+
+***
 ```{r}
 library(recommenderlab)
 ```
@@ -118,13 +126,25 @@ recom = predict(ubcf, rrm, n=5, type="ratings")
 as(recom, "matrix")[1:8,1:4]
 ```
 
+User-based recommendation Strengths
+=====
+- Free-form : can handle niches that cross genres/taxnomies
+- Naive : Domain knowledge not required 
+- Adaptive : Quality improves over time with more data
+- Implicit : Doesn't require explicit ratings (although can use them)
+
+User-based recommendation Weaknesses
+=====
+- Cold Start : Problems for users *and* items
+- Stability : User ratings can change numerous recommendations
+- Costly to Update : Recommendations are specific to user and can be unstable
+
 Item-based recommendation
 ====
 User-based collaborative filtering had problems:
 - Systems with many items/few ratings performed poorly
 - Calculating all pairs of users expensive
 - Users change quickly, system needs to be recomputed
-
 
 Item-based recommendation
 ====
@@ -133,13 +153,16 @@ Item-based collaborative filtering use rating distributions *per-item* rather th
 - Item recommendations can be pre-computed
 - Recommendations can still be driven from items the user rates.
 
-
 Item-based recommendation
 ====
+![amazon patent](img/amazon_patent.png)
+Amazon patent on Item-based CF from 1998!
+***
 Item-based collaboratrve steps:
 - Find similarity between all pairs of items (e.g. correlation)
 - Find items rated highly by the user
 - Recommend items correlated with highly rated items
+
 
 Item-based recommendation
 ====
@@ -148,6 +171,27 @@ Using recommenderlab, once more
 ibcf <- Recommender(rrm, method = "IBCF")
 getModel(ibcf)
 ```
+
+Item-based recommendation Strengths
+=====
+- Free-form : can handle niches that cross genres/taxnomies
+- Naive : Domain knowledge not required 
+- Adaptive : Quality improves over time with more data
+- Implicit : Doesn't require explicit ratings (although can use them)
+
+Item-based recommendation Weaknesses
+=====
+- Cold Start : Problems for users *and* items
+- Limited Personalization : Recommendations are driven from item rating aggregates, rather than like minded groups
+- Bandwagon Effect : Highly/Widely rated items tend to get recommended more
+
+Item-based vs. User based CF
+====
+One last comparison : 
+![ib vs. ub cf](img/ib_vs_ub_cf.jpg)
+(taken from [http://www.salemmarafi.com](http://www.salemmarafi.com/code/collaborative-filtering-with-python/))
+
+
 
 Hybrid recommendation
 ====
@@ -190,14 +234,15 @@ scheme
 Evaluation
 ====
 Recommenderlab has a nice method for comparing recommender system results
+type : small-text
 ```{r}
 
 algorithms <- list(
- "random items" = list(name="RANDOM", param=NULL),
- "popular items" = list(name="POPULAR", param=NULL),
- "user-based CF" = list(name="UBCF", param=list(nn=50)),
- "item-based CF" = list(name="IBCF", param=list(k=50)),
- "SVD approximation" = list(name="SVD", param=list(k = 50))
+ "random items"      = list(name="RANDOM" , param=NULL),
+ "popular items"     = list(name="POPULAR", param=NULL),
+ "user-based CF"     = list(name="UBCF"   , param=list(nn=50)),
+ "item-based CF"     = list(name="IBCF"   , param=list(k=50)),
+ "SVD approximation" = list(name="SVD"    , param=list(k = 50))
  )
 ```
 

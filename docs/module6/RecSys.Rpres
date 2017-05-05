@@ -5,6 +5,10 @@ author: Justin Donaldson
 date: `r format(Sys.Date(), format="%B-%d-%Y")`
 autosize: true
 
+```{r setup, include=FALSE}
+opts_chunk$set(cache=TRUE)
+```
+
 Applied Machine Learning 410
 ---------------------------------
 (AKA: If you like that, your gonna love this)
@@ -88,11 +92,50 @@ IMDB part deux
 ```{r}
 sims = cosine(keywords)
 diag(sims) = 0
-as.matrix(apply(sims,2,function(x) names(x)[which.max(x)]))[1:100,]
+x = apply(sims,2,function(x) names(x)[which.max(x)])
+x = x[1:25]
+data.frame(x)
 ```
 
-#```{r child="CollabFilter.Rpres"}
+Content Based Filtering Strengths
+=====
+- Naive : Domain knowledge not required
+- Adaptive : quality improves over time and with more data
+- Implicit : system can be trained by observing, rather than through scoring
 
-# ```
+Content Based Filtering Weaknesses
+=====
+- Cold Start : New User problem
+- Data Hungry : Need lots of data to drive relationships
+- Unstable : Adding new information can greatly change relationships (for better or worse) 
+
+
+```{r child="CollabFilter.Rpres"}
+```
+
+Recommender Systems and Bias
+====
+![facebook bias](img/facebook_bias.png)
+***
+- Lack of diversity can cause problems! (Bubble Effect)
+- Where else can a "perfect" recommender be harmful?
+- What are some techniques to mitigate these effects? 
+
+Conclusions
+====
+type : sub-section
+- RecSys can provide useful info without being able to describe what to look for
+- RecSys can leverage a wide array of data, but typically needs lots of it
+- RecSys can be slow, but methods exist to mitigate this (with drawbacks) 
+- RecSys has been a valuable technique for dealing with information overload
+  - But... it can lead to many types of bias
+  - Popularity Bias/Bandwagon
+  - Bubble Effect
+  
+Thanks for Sticking Around!
+====
+![tesla](img/tesla.jpg)
+Taken from [http://www.physicsschool.co.uk](http://www.physicsschool.co.uk/nikola-tesla-inventions-and-principles.php)
+  
 
 
