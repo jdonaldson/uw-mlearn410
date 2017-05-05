@@ -36,8 +36,8 @@ Overview
 ===
 type : sub-section
 - Content-based recommendation
-- Item-based recommendation
 - User-based recommendation
+- Item-based recommendation
 - Hybrids and New Techniques
 
 
@@ -88,10 +88,11 @@ IMDB part deux
 ```{r}
 sims = cosine(keywords)
 diag(sims) = 0
-as.matrix(apply(sims,2,function(x) names(x)[which.max(x)]))
+as.matrix(apply(sims,2,function(x) names(x)[which.max(x)]))[1:100,]
 ```
 
+#```{r child="CollabFilter.Rpres"}
+
+# ```
 
 
-User-based recommendation
-====
