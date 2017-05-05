@@ -238,14 +238,33 @@ dtm <- dtm[idx, ]
 
 ```
 
+```{r}
+dim(dtm)
+```
+
 
 ### SVD
 
 Now, let's perform the singular-value decomposition. In order to save computation time, we can pass the target rank as an argument to `svd`.
 
 ```{r}
-
+n_topics <- 9
+svd_fit <- svd(dtm, nu = n_topics, nv = n_topics)
 ```
+
+```{r}
+names(svd_fit)
+```
+```{r}
+dim(svd_fit$u)
+```
+```{r}
+dim(t(svd_fit$v))
+```
+```{r}
+head(svd_fit$d, 9)
+```
+
 
 
 #### Exercises: 
