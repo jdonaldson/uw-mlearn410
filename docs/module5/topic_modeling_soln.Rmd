@@ -1,0 +1,792 @@
+---
+title: Topic Modeling
+output: html_document
+---
+
+```{r, include=F}
+require(tm)
+require(pander)
+require(dplyr)
+require(tidyr)
+require(ggplot2)
+require(NMF)
+require(topicmodels)
+require(ROCR)
+require(GGally)
+```
+
+
+Topic modeling is an unsupervised approach for learning the structure of a text corpus. You can think of it as a 'soft clustering'. While generally associated with text, topic modeling is really just a specific (often interpretable) type of dimensionality reduction.
+
+
+## A Contrived Example
+
+Let's start with a very simple example to illustrate the basic idea of topic modeling. Suppose our corpus consists of the following six documents. We will build a topic model step-by-step.
+
+```{r}
+txt <- list(
+  A = "I love the rain, I love the sun, I love the snow. I can find the joy in any type of weather.",
+  B = "What is the weather going to be tomorrow? Is it going to rain?",
+  C = "I'm tired of rain, when will we have some sun?",
+  D = "Who won the game yesterday? I heard Lebron played the game of his life.",
+  E = "I can't wait to play baseball this afternoon. I hope we win our game.",
+  F = "My basketball game is at noon tomorrow. I'm going to play point guard for this one."
+)
+```
+
+
+#### 1. Load the corpus using the `tm` package
+
+`tm` is a standard package to use for text mining in R. We use it to create a corpus object, which simplifies the standard text processing pipeling:
+
+- remove whitespace
+- remove punctuation
+- convert to lowercase
+- remove stopwords
+- stemming
+
+```{r}
+corp <- SimpleCorpus(VectorSource(txt)) %>%
+  tm_map(stripWhitespace) %>%
+  tm_map(removePunctuation) %>%
+  tm_map(content_transformer(tolower)) %>%
+  tm_map(removeWords, stopwords('english')) %>%
+  tm_map(stemDocument)
+```
+
+
+#### 2. Convert to a term-document matrix
+
+Once we have finished our processing, we are ready to output a document/term matrix. There are a ton of options here, for now, our matrix will include raw counts of terms that occur in at least two documents.
+
+```{r}
+dtm <- DocumentTermMatrix(corp, control = list(bounds = list(global = c(2, Inf))))
+dtm_mat <- as.matrix(dtm)
+pander(dtm_mat)
+```
+
+
+#### 3. Singular Value Decomposition
+
+For this model, we will use a technique called singular value decomposition (SVD). SVD is a common, extremely well studied, technique for computing with large matrices. When SVD is used for topic modeling, it is often called Latent Semantic Indexing (LSI).
+
+SVD is one of the most general and fundamental forms of matrix factorization. Every matrix has a *unique* decomposition in the following form:
+
+$\underset{m \times n}M = 
+    \underset{m \times r}U \times
+    \underset{r \times r}\Sigma \times
+    \underset{r \times n}V^T$
+
+where
+
+- $U$ is column orthogonal: $U^T U = I$
+- $V$ is column orthogonal: $V^T V = I$
+- $\Sigma$ is a diagonal matrix of positive values, where the diagonal is ordered in decreasing order.
+
+We can think of these matrices as follows:
+
+- $U$ maps each document to _latent topic_ space
+- $\Sigma$ gives the relative strengh of each topic in the data
+- $V^T$ maps from latent topic space to term space.
+
+Let's see how it works.
+
+```{r}
+decomp <- svd(dtm_mat)
+```
+
+
+##### a. Inspect the elements
+
+```{r}
+U <- data.frame(decomp$u, row.names = names(txt))
+sigma <- data.frame(diag(decomp$d))
+VT <- t(data.frame(decomp$v, row.names = dtm$dimnames$Terms))
+```
+
+```{r}
+pander(round(U, 2))
+```
+
+```{r}
+pander(round(sigma, 2))
+```
+
+```{r}
+pander(round(VT, 2))
+```
+
+
+
+
+##### b. Put it back together
+
+```{r}
+round(decomp$u %*% diag(decomp$d) %*% t(decomp$v), 2) %>% pander()
+```
+
+
+##### c. Power analysis
+
+```{r}
+power <- cumsum(decomp$d^2) / sum(decomp$d^2)
+power
+```
+
+Two components account for about 85% of the power in the term-document matrix
+
+##### d. Reduced-rank reconstruction
+
+```{r}
+U <- U[,1:2]
+colnames(U) <- c('Sports', 'Weather')
+VT <- VT[1:2,]
+rownames(VT) <- c('Sports', 'Weather')
+sigma <- diag(decomp$d[1:2])
+pander(round(U, 2))
+pander(sigma)
+pander(round(VT, 2))
+```
+
+
+Reconstruction
+
+```{r}
+reconstructed = round(as.matrix(U) %*% as.matrix(sigma) %*% as.matrix(VT), 2)
+pander(round(reconstructed, 1))
+```
+
+
+#### 4. Observations
+
+- SVD can be used to extract two 'topics' from the corpus
+- remaining topics are difficult to interpret
+
+
+
+## New York Times
+
+Now that we have a sense for how topic modeling works, let's try to apply it to a more realistic dataset.
+
+```{r}
+articles <- read.csv('times_articles.csv', stringsAsFactors = F)
+```
+
+- How many articles are in this dataset?
+
+```{r}
+nrow(articles)
+```
+
+- How many articles are there from each section?
+
+```{r}
+table(articles$section_name)
+```
+
+Topic modeling is an usupervised approach to learning. We won't use the section names in the modeling process, but we will use them to inspect the results and validate our intuition about what the topic model is learning.
+
+
+#### Exercise: Load the corpus object
+
+Use `tm` to load the article contents into a corpus and do any necessary processing.
+
+```{r}
+# Load a corpus object
+corp <- SimpleCorpus(VectorSource(articles$content)) %>%
+  tm_map(stripWhitespace) %>%
+  tm_map(removePunctuation) %>%
+  tm_map(content_transformer(tolower)) %>%
+  tm_map(removeWords, stopwords('english')) %>%
+  tm_map(stemDocument)
+```
+
+
+#### Exercise: Output a term-document matrix
+
+- Only include terms that occur in at least 20 documents, but no more than 100 documents.
+- Instead of using raw term counts, use TFIDF weighting for the columns. (Hint: Add a `weight` item to the control list in `DocumentTermMatrix`)
+- It's possible (however improbable) that some of the documents in the corpus will not contain _any_ of the terms chosen above. These documents should be removed from both the corpus and the term-document matrix.
+- How many documents are you left with? How many terms?
+
+```{r}
+# Doc-term matrix. Aim for about 1000 columns
+dtm <- DocumentTermMatrix(corp, control = list(weight = 'weightTfidf',
+                                               bounds = list(global = c(20, 100))))
+
+# Remove documents that don't contain any of these words.
+idx <- apply(dtm, 1, sum) >= 1
+articles <- articles[idx, ]
+dtm <- dtm[idx, ]
+```
+
+
+### SVD
+
+Now, let's perform the singular-value decomposition. In order to save computation time, we can pass the target rank as an argument to `svd`.
+
+```{r}
+n_topics <- 9
+svd_fit <- svd(dtm, nu = n_topics, nv = n_topics)
+```
+
+
+#### Exercises: 
+
+##### 1) Plot the power as a function of the number of components. How many dimensions are required to explain 90% of the variance in the data?
+
+```{r}
+pwr <- data.frame(k = 1:length(svd_fit$d), power = cumsum(svd_fit$d^2) / sum(svd_fit$d^2))
+p <- ggplot(pwr, aes(x=k, y=power)) +
+  geom_line() +
+  geom_hline(aes(yintercept=.9), color='red', linetype='dashed')
+print(p)
+```
+
+It looks like we would need about 250 latent topics to explain 90% of the variance in the data. This makes sense, you would expect New York Times articles to be fairly high dimensional. Luckily, the components are in order, we can take a look at the first few:
+
+##### 2) Make some scatterplots of one topic versus another. Color each point by the section of the newspaper it originally belonged in. Try X1 vs X2 and X2 vs X3. What do you notice? 
+
+
+```{r}
+pltdf <- data.frame(section = articles$section_name, svd_fit$u)
+p <- ggplot(pltdf, aes(x=X1, y=X2, color=section)) +
+  geom_point() +
+  theme_bw()
+print(p)
+```
+
+
+```{r}
+p <- ggplot(pltdf, aes(x=X2, y=X3, color=section)) +
+  geom_point() +
+  theme_bw()
+print(p)
+```
+
+
+```{r, warning=F, message=F, fig.width=14, fig.height=10}
+library(GGally)
+pltdf %>%
+  select(X1, X2, X3, X4, X5, section) %>%
+  ggpairs(aes(color=section))
+```
+
+
+##### 3) List the words associated with each topic (both positive and negative)
+
+Write a function that takes as input the term loading matrix, and the list of unique terms, and returns a data frame with three columns:
+
+1. The topic index
+2. The five words that are most positively associated with that topic
+3. The five words that most negatively associated with that topic
+
+```{r}
+topic_words <- function(term_mat, terms){
+  # Your code goes here
+  data.frame(t(term_mat)) %>%
+    mutate(term = terms) %>%
+    gather(topic, val, -term) %>%
+    group_by(topic) %>%
+    arrange(-val) %>%
+    summarise(most_positive = paste(head(term), collapse = ', '),
+              least_negative = paste(tail(term), collapse = ', '),
+              topic_name = paste(head(term, 3), collapse='_'))
+}
+
+term_mat <- t(svd_fit$v)
+terms <- Terms(dtm)
+topic_words(term_mat, terms) %>% 
+  pander(justify = 'left')
+```
+
+##### 4) List the articles associated with each topic
+
+Write a function that takes as input the document loading matrix, and the list of article titles, and returns a data frame with three columns:
+
+1. The topic index
+2. The two articles that are most positively associated with that topic
+3. The two articles that most negatively associated with that topic
+```{r}
+topic_articles <- function(doc_mat, headlines){
+  agg <- data.frame(doc_mat) %>%
+    mutate(headline = headlines) %>%
+    gather(topic, val, -headline) %>%
+    group_by(topic) %>%
+    arrange(-val) %>%
+    summarise(most_positive = paste(head(headline, 2), collapse=' | '),
+              least_positive = paste(tail(headline, 2), collapse=' | '))
+  
+}
+agg <- topic_articles(svd_fit$u, articles$headline)
+pander(agg, split.table=Inf, justify='left')
+```
+
+
+#### Topic Distributions
+
+Distribution of each topic over the whole dataset
+
+```{r}
+pltdf <- data.frame(svd_fit$u) %>%
+  gather(topic, val)
+p <- ggplot(pltdf, aes(x=val)) +
+  geom_histogram(bins=100) +
+  theme_bw() +
+  facet_wrap(~topic)
+print(p)
+```
+
+
+#### Individual article topic loadings
+
+```{r, fig.width=12, fig.height=16}
+set.seed(0)
+ndocs <- 5
+pltdf <- data.frame(svd_fit$u, headline=articles$headline) %>%
+  sample_n(ndocs) %>%
+  gather(topic, val, -headline)
+
+p <- ggplot(pltdf, aes(x=topic, y=val, fill=headline)) +
+  coord_flip() +
+  geom_bar(stat='identity', position='dodge') +
+  scale_fill_brewer(palette='Set1') +
+  theme_bw() +
+  facet_grid(headline ~.) +
+  xlab('') + ylab('')
+print(p)
+
+```
+
+
+#### Observations:
+
+1. The first topic just points to the center of the data.
+2. SVD topics are bi-directional, which makes them hard to intepret
+3. The topic loading distribution is smooth.
+
+### Now try with NMF
+
+```{r, cache=T}
+dmat <- as.matrix(dtm)
+
+nmf_model <- nmf(dmat, method = 'snmf/l', seed = 'nndsvd', rank = n_topics)
+W <- basis(nmf_model)
+H <- coef(nmf_model)
+dim(W)
+dim(H)
+```
+
+
+#### Exercises: 
+
+##### 1) Visualizing NMF
+
+- Make scatterplots of the topics against each other (colored by section name)
+- Plot the distributions of the topic loadings
+- What do you notice is different about these topics from those generated by SVD?
+
+
+Scatterplots:
+
+```{r}
+pltdf <- data.frame(section = articles$section_name, W)
+p <- ggplot(pltdf, aes(x=X1, y=X2, color=section)) +
+  geom_point() +
+  theme_bw()
+print(p)
+```
+
+```{r}
+p <- ggplot(pltdf, aes(x=X2, y=X3, color=section)) +
+  geom_point() +
+  theme_bw()
+print(p)
+```
+
+```{r, warning=F, message=F, fig.width=14, fig.height=10}
+library(GGally)
+pltdf %>%
+  select(X1, X2, X3, X4, X5, section) %>%
+  ggpairs(aes(color=section))
+```
+
+
+Topic Distributions:
+
+```{r}
+pltdf <- data.frame(W) %>%
+  gather(topic, val)
+p <- ggplot(pltdf, aes(x=val)) +
+  geom_histogram(bins=100) +
+  theme_bw() +
+  facet_wrap(~topic)
+print(p)
+```
+
+Histogram of number of zero loadings per document:
+
+```{r}
+zero_counts <- apply(W, 1, FUN = function(row) sum(row==0))
+hist(zero_counts, 9)
+```
+
+
+##### 2) Describe the topics
+
+NMF produces uni-directional topics. This means we don't have to worry about positively/negatively associated words and articles. Write a function that outputs a data frame with three columns:
+
+1. Index of topic
+2. Top five terms associated with that topic
+3. Top two articles associated with that topic.
+4. Make sure you re-use the two functions you wrote above.
+
+```{r}
+topic_descriptions <- function(term_mat, doc_mat, terms, headlines){
+  # Your code goes here
+  term_df <- topic_words(term_mat, terms)
+  doc_df <- topic_articles(doc_mat, headlines)
+  merge(term_df, doc_df, by='topic', suffixes = c('_terms', '_articles')) %>% select(topic, starts_with('most'), topic_name)
+}
+topics_df <- topic_descriptions(H, W, Terms(dtm), articles$headline)
+pander(topics_df, split.table=Inf)
+```
+
+
+##### 3) Visualize topic loadings of individual articles.
+
+Start by building the following data frame:
+
+- Each row is a document from the corpus
+- There is one column for the headline of the article, the rest of the columns are the topic loadings
+- Each topic loading is named according to the three most popular terms for that topic.
+
+```{r}
+pltdf <- data.frame(W) %>%
+  setNames(topics_df$topic_name) %>%
+  mutate(headline = articles$headline)
+```
+
+Now pick five articles at random and make a visualization to see the loading, across all 9 topics, of each of the articles.
+
+```{r, fig.width=12, fig.height=16}
+set.seed(0)
+ndocs <- 5
+pltdf <- pltdf %>%
+  sample_n(ndocs) %>%
+  gather(topic, val, -headline)
+
+p <- ggplot(pltdf, aes(x=topic, y=val, fill=headline)) +
+  coord_flip() +
+  geom_bar(stat='identity', position='dodge') +
+  scale_fill_brewer(palette='Set1') +
+  theme_bw() +
+  facet_grid(headline ~.) +
+  xlab('') + ylab('')
+print(p)
+```
+
+
+
+
+
+
+
+### And finally, LDA
+
+```{r, cache=T}
+dtm <- DocumentTermMatrix(corp, control = list(bounds = list(global = c(20, 100))))
+lda_out <- LDA(dtm, k=9)
+```
+
+
+
+
+##### 1) Visualizing LDA
+
+- Make scatterplots of the topics against each other (colored by section name)
+- Plot the distributions of the topic loadings
+- What do you notice is different about these topics from those generated by SVD?
+
+
+Scatterplots:
+
+```{r}
+pltdf <- data.frame(section = articles$section_name, lda_out@gamma)
+p <- ggplot(pltdf, aes(x=X1, y=X2, color=section)) +
+  geom_point() +
+  theme_bw()
+print(p)
+```
+
+```{r}
+p <- ggplot(pltdf, aes(x=X2, y=X3, color=section)) +
+  geom_point() +
+  theme_bw()
+print(p)
+```
+
+```{r, warning=F, message=F, fig.width=14, fig.height=10}
+library(GGally)
+pltdf %>%
+  select(X1, X2, X3, X4, X5, section) %>%
+  ggpairs(aes(color=section))
+```
+
+
+Topic Distributions:
+
+```{r}
+pltdf <- data.frame(lda_out@gamma) %>%
+  gather(topic, val)
+p <- ggplot(pltdf, aes(x=val)) +
+  geom_histogram(bins=100) +
+  theme_bw() +
+  scale_x_log10() +
+  facet_wrap(~topic)
+print(p)
+```
+
+Histogram of number of zero loadings per document:
+
+```{r}
+zero_counts <- apply(lda_out@gamma, 1, FUN = function(row) sum(row < .01))
+hist(zero_counts, 9)
+```
+
+
+##### 2) Describe the topics
+
+NMF produces uni-directional topics. This means we don't have to worry about positively/negatively associated words and articles. Write a function that outputs a data frame with three columns:
+
+1. Index of topic
+2. Top five terms associated with that topic
+3. Top two articles associated with that topic.
+4. Make sure you re-use the two functions you wrote above.
+
+```{r}
+topic_descriptions <- function(term_mat, doc_mat, terms, headlines){
+  # Your code goes here
+  term_df <- topic_words(term_mat, terms)
+  doc_df <- topic_articles(doc_mat, headlines)
+  merge(term_df, doc_df, by='topic', suffixes = c('_terms', '_articles')) %>% select(topic, starts_with('most'), topic_name)
+}
+topics_df <- topic_descriptions(lda_out@beta, lda_out@gamma, Terms(dtm), articles$headline)
+pander(topics_df, split.table=Inf)
+```
+
+
+##### 3) Visualize topic loadings of individual articles.
+
+Start by building the following data frame:
+
+- Each row is a document from the corpus
+- There is one column for the headline of the article, the rest of the columns are the topic loadings
+- Each topic loading is named according to the three most popular terms for that topic.
+
+```{r}
+pltdf <- data.frame(lda_out@gamma) %>%
+  setNames(topics_df$topic_name) %>%
+  mutate(headline = articles$headline)
+```
+
+Now pick five articles at random and make a visualization to see the loading, across all 9 topics, of each of the articles.
+
+```{r, fig.width=12, fig.height=16}
+set.seed(0)
+ndocs <- 5
+pltdf <- pltdf %>%
+  sample_n(ndocs) %>%
+  gather(topic, val, -headline)
+
+p <- ggplot(pltdf, aes(x=topic, y=val, fill=headline)) +
+  coord_flip() +
+  geom_bar(stat='identity', position='dodge') +
+  scale_fill_brewer(palette='Set1') +
+  theme_bw() +
+  facet_grid(headline ~.) +
+  xlab('') + ylab('')
+print(p)
+```
+
+
+
+
+## Task-based Topic Modeling
+
+Now that we have seen a handful of topic models, a common question is which one is best? Often, this is answered just by looking at the topics extracted and seeing if they are satisfying. Sometimes, topic modeling is the first step in a larger data modeling operation. In that case, we grade topic models based on how well they get the job done.
+
+### Exercise: Evaluate topic models based on an evaluation task
+
+For this exercise, the setup is that we have a large corpus of documents and only a handful of them are labeled. For now, let's stick with a binary label---we will classify whether an article should be classified in the 'World' section of the NY Times.
+
+We will assume that at test time we can
+
+1. Build a topic model for _all_ the data
+2. Use the learned topics as features for classifying the unlabeled articles.
+
+##### 1) Keep track of train/test indices
+
+Don't segment the data yet, just pick a set of indices that correspond to 'train' and one that corresponds to 'test'
+
+```{r}
+set.seed(0)
+train_frac <- .7
+train_idx <- sample(nrow(articles), size = round(.7 * nrow(articles)), replace=F)
+test_idx <- setdiff(1:nrow(articles), train_idx)
+```
+
+
+##### 2) Build Topic Models
+
+Build a topic model---using all the articles---using each of the three methodologies above.
+
+```{r}
+corp <- SimpleCorpus(VectorSource(articles$content)) %>%
+  tm_map(stripWhitespace) %>%
+  tm_map(removePunctuation) %>%
+  tm_map(content_transformer(tolower)) %>%
+  tm_map(removeWords, stopwords('english')) %>%
+  tm_map(stemDocument)
+
+dtm <- DocumentTermMatrix(corp, control = list(bounds = list(global = c(20, 100))))
+dtm_tfidf <- DocumentTermMatrix(corp, control = list(bounds = list(global = c(20, 100)),
+                                                     weight = 'weightTfidf'))
+set.seed(1)
+lda_out <- LDA(dtm, k=9)
+nmf_out <- nmf(as.matrix(dtm_tfidf), method = 'snmf/l', seed = 'nndsvd', rank = 9)
+svd_out <- svd(dtm_tfidf, nu=9, nv=9)
+```
+
+##### 3) Modeling Data Frames
+
+Now construct some data frames you will use for modeling. Each data frame should have one column indicating whether or not that article appeared in the 'World' section of the NY Times. The remaining columns should correspond to topics, and they should be named according to the top 3 terms in that topic.
+
+```{r}
+top_terms <- function(term_mat, terms){
+  data.frame(t(term_mat)) %>%
+    mutate(term = terms) %>%
+    gather(topic, val, -term) %>%
+    group_by(topic) %>%
+    arrange(-val) %>%
+    summarise(most_associated = paste(head(term), collapse = ', '),
+              topic_name = paste(head(term, 3), collapse='_'))
+}
+lda_names <- top_terms(lda_out@beta, Terms(dtm))$topic_name
+nmf_names <- top_terms(coef(nmf_out), Terms(dtm_tfidf))$topic_name
+svd_names <- top_terms(t(svd_out$v), Terms(dtm_tfidf))$topic_name
+
+lda_df <- data.frame(section = articles$section_name == 'World', lda_out@gamma) %>%
+  setNames(c('section', lda_names))
+nmf_df <- data.frame(section = articles$section_name == 'World', basis(nmf_out)) %>%
+  setNames(c('section', nmf_names))
+svd_df <- data.frame(section = articles$section_name == 'World', svd_out$u) %>%
+  setNames(c('section', svd_names))
+```
+
+
+
+##### 4) Logistic Regression
+
+Build a logistic regression model for each of your modeling data frames. Be sure to use the Train/Test split that you defined above.
+
+For each model, you may want to try the following process:
+
+1. Build a logistic regression model using all the topics.
+2. Examine your model using summary()
+3. Decide if there is an optimal (in the sense of both modeling accuracy and interpretation) set of 2-4 topics you can use to build the final model.
+
+```{r}
+# LDA
+lda_lr = glm(section ~ ., lda_df[train_idx,], family='binomial')
+# summary(lda_lr)
+# lda_lr = glm(section ~ syria_weapon_diplomat + parti_european_polit + polic_kill_shoot,
+#              lda_df[train_idx,], family='binomial')
+lda_predictions <- predict(lda_lr, newdata = lda_df[test_idx,], type='response')
+
+# SVD
+# svd_lr = glm(section ~ ., svd_df[train_idx,], family='binomial')
+# summary(svd_lr)
+svd_lr <- glm(section ~ syria_weapon_chemic + plant_market_industri + familiar_distinct_quiet,
+              svd_df[train_idx,], family='binomial')
+svd_predictions <- predict(svd_lr, newdata = svd_df[test_idx,], type='response')
+
+
+# NMF
+# nmf_lr = glm(section ~ ., nmf_df[train_idx,], family='binomial')
+# summary(nmf_lr)
+nmf_lr <- glm(section ~ syria_weapon_chemic + hous_republican_obama + parti_democrat_germani,
+              nmf_df[train_idx,], family='binomial')
+nmf_predictions <- predict(nmf_lr, newdata = nmf_df[test_idx,], type='response')
+```
+
+##### 5) Model Comparison
+
+Use the following function to help you evaluate your models. Which model do you like the best? There is no 'right' answer to this question, different models may be appealing for different reasons.
+
+```{r}
+roc <- function(predicted, actual, key='None'){
+  # Prediction object
+  pred = prediction(predicted, actual)
+
+  # ROC Curve
+  perf <- performance(pred, measure = 'tpr', x.measure = 'fpr')
+  roc <- data.frame(perf@alpha.values,
+                    perf@x.values,
+                    perf@y.values)
+  colnames(roc) <- c('Threshold', 'FPR', 'TPR')
+  roc$key <- key
+
+  # Area under the curve
+  perf <- performance(pred, measure = 'auc')
+  auc <- perf@y.values
+
+  list(roc=roc, auc=auc)
+}
+```
+
+```{r}
+lda_perf <- roc(lda_predictions, lda_df[test_idx, 'section'], 'LDA')
+nmf_perf <- roc(nmf_predictions, nmf_df[test_idx, 'section'], 'NMF')
+svd_perf <- roc(svd_predictions, svd_df[test_idx, 'section'], 'SVD')
+
+# AUC Scores
+pander(list(
+  LDA = lda_perf$auc,
+  NMF = nmf_perf$auc,
+  SVD = svd_perf$auc
+))
+```
+
+```{r}
+pltdf <- bind_rows(lda_perf$roc, nmf_perf$roc, svd_perf$roc)
+p <- ggplot(pltdf, aes(x=FPR, y=TPR, color=key)) +
+  geom_line() +
+  scale_color_brewer(palette='Set1') +
+  theme_bw()
+print(p)
+```
+
+```{r}
+pander(list(
+  LDA = coef(lda_lr),
+  NMF = coef(nmf_lr),
+  SVD = coef(svd_lr)
+), split.table=Inf)
+```
+
+
+### Exercise (HW)
+
+In the example above, we made an unrealistic assumption that you can build the topic model using both train and test sets. In reality, one probably needs to build the topic model, set it aside, and be prepared to apply it to new data.
+
+A proper train/test methodology applied to topic models:
+
+1. Split data into train/test
+2. Learn a topic model on the training data only.
+3. Learn a logistic regression model from the topics on the training data.
+4. _Apply_ your topic model to the test data.
+5. _Apply_ your logistic regression model to the topics in the test data.
+6. Evaluate the performance of your classifier.
+
+Use this methodology to evaluate the performance of each of the three topic models.
