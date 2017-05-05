@@ -336,6 +336,16 @@ topic_words(term_mat, terms) %>%
   pander(justify = 'left')
 ```
 
+```{r}
+dim(svd_fit$v)
+d <- data.frame(svd_fit$v, row.names=Terms(dtm))
+View(d)
+
+colnames(d) <- Terms(dtm)
+View(d)
+```
+
+
 ##### 4) List the articles associated with each topic
 
 Write a function that takes as input the document loading matrix, and the list of article titles, and returns a data frame with three columns:
@@ -404,7 +414,23 @@ print(p)
 ### Now try with NMF
 
 ```{r, cache=T}
+dmat <- as.matrix(dtm)
 
+nmf_model <- nmf(dmat, method = 'snmf/l', seed = 'nndsvd', rank = n_topics)
+W <- basis(nmf_model)
+H <- coef(nmf_model)
+dim(W)
+dim(H)
+```
+```{r}
+dim(W)
+```
+```{r}
+head(W)
+```
+
+```{r}
+dim(H)
 ```
 
 
