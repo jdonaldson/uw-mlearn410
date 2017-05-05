@@ -46,7 +46,16 @@ txt <- list(
 - stemming
 
 ```{r}
+corp <- SimpleCorpus(VectorSource(txt)) %>%
+  tm_map(stripWhitespace) %>%
+  tm_map(removePunctuation) %>%
+  tm_map(content_transformer(tolower)) %>%
+  tm_map(removeWords, stopwords('english')) %>%
+  tm_map(stemDocument)
+```
 
+```{r}
+as.list(corp)
 ```
 
 
@@ -55,7 +64,11 @@ txt <- list(
 Once we have finished our processing, we are ready to output a document/term matrix. There are a ton of options here, for now, our matrix will include raw counts of terms that occur in at least two documents.
 
 ```{r}
+dtm <- DocumentTermMatrix(corp, control = list(bounds = list(global = c(2, Inf))))
+```
 
+```{r}
+as.matrix(dtm)
 ```
 
 
@@ -85,13 +98,32 @@ We can think of these matrices as follows:
 Let's see how it works.
 
 ```{r}
+svd_fit <- svd(dtm)
+```
+
+```{r}
+svd_fit
 ```
 
 
 ##### a. Inspect the elements
 
 ```{r}
+U <- data.frame(svd_fit$u, row.names = names(txt))
+sigma <- data.frame(diag(svd_fit$d))
+VT <- t(data.frame(svd_fit$v, row.names = dtm$dimnames$Terms))
+```
 
+```{r}
+pander(U)
+```
+
+```{r}
+pander(VT)
+```
+
+```{r}
+pander(sigma)
 ```
 
 
@@ -100,13 +132,15 @@ Let's see how it works.
 ##### b. Put it back together
 
 ```{r}
+reconstructed <- as.matrix(U) %*% as.matrix(sigma) %*% as.matrix(VT)
+round(reconstructed, 2)
 ```
 
 
 ##### c. Power analysis
 
 ```{r}
-
+cumsum(svd_fit$d^2) / sum(svd_fit$d^2)
 ```
 
 Two components account for about 85% of the power in the term-document matrix
@@ -114,14 +148,29 @@ Two components account for about 85% of the power in the term-document matrix
 ##### d. Reduced-rank reconstruction
 
 ```{r}
-
+U <- U[,1:2]
+colnames(U) <- c('Sports', 'Weather')
+VT <- VT[1:2,]
+row.names(VT) <- c('Sports', 'Weather')
+sigma <- sigma[1:2, 1:2]
 ```
 
+```{r}
+U
+```
+```{r}
+VT
+```
+
+```{r}
+sigma
+```
 
 Reconstruction
 
 ```{r}
-
+recon <- as.matrix(U) %*% as.matrix(sigma) %*% as.matrix(VT)
+round(recon, 2)
 ```
 
 
@@ -143,11 +192,13 @@ articles <- read.csv('times_articles.csv', stringsAsFactors = F)
 - How many articles are in this dataset?
 
 ```{r}
+nrow(articles)
 ```
 
 - How many articles are there from each section?
 
 ```{r}
+table(articles$section_name)
 ```
 
 Topic modeling is an usupervised approach to learning. We won't use the section names in the modeling process, but we will use them to inspect the results and validate our intuition about what the topic model is learning.
@@ -159,7 +210,12 @@ Use `tm` to load the article contents into a corpus and do any necessary process
 
 ```{r}
 # Load a corpus object
-
+corp <- SimpleCorpus(VectorSource(articles$content)) %>%
+  tm_map(stripWhitespace) %>%
+  tm_map(removePunctuation) %>%
+  tm_map(content_transformer(tolower)) %>%
+  tm_map(removeWords, stopwords('english')) %>%
+  tm_map(stemDocument)
 ```
 
 
@@ -172,9 +228,13 @@ Use `tm` to load the article contents into a corpus and do any necessary process
 
 ```{r}
 # Doc-term matrix. Aim for about 1000 columns
+dtm <- DocumentTermMatrix(corp, control = list(weight = 'weightTfidf',
+                                               bounds = list(global = c(20, 100))))
 
-
-# Remove documents that don't contain any of these words. (from the doc-term matrix and the original dataset)
+# Remove documents that don't contain any of these words.
+idx <- apply(dtm, 1, sum) >= 1
+articles <- articles[idx, ]
+dtm <- dtm[idx, ]
 
 ```
 
@@ -485,7 +545,7 @@ roc <- function(predicted, actual, key='None'){
 
 
 
-### Exercise (HW)
+### Exercise
 
 In the example above, we made an unrealistic assumption that you can build the topic model using both train and test sets. In reality, one probably needs to build the topic model, set it aside, and be prepared to apply it to new data.
 
