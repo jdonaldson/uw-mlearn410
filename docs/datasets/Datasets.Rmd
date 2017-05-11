@@ -1,0 +1,29 @@
+---
+title: "Datasets"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Check out these datasets!
+
+## Instacart dataset
+[![](img/instacart.png)](https://tech.instacart.com/3-million-instacart-orders-open-sourced-d40d29ead6f2)
+(Food recommender system?  Predict when next given item is eaten?)
+
+## Seattle Police Department 
+[![](img/seapd.png)](https://www.seattle.gov/police/information-and-data)
+(Minority Report?  Predict Crime Level Trends for Neighborhood? )
+
+
+## Seattle Dept. of Trans. 
+### Fremont Bridge Bike Traffic
+[![](img/seadtp.png)](http://www.seattle.gov/transportation/bikecounter_fremont.htm)
+(Seems like a simple linear model with seasonal bias... what about holidays?)
+
+## Million Song Dataset
+[![](img/million.png)](https://labrosa.ee.columbia.edu/millionsong/)
+(Recommender System, Predict Genre Class)
+
