@@ -26,10 +26,13 @@ wordcloud(corp, colors=pal, max.words=100, min.freq=5,ordered.colors=F)
 
 ## Module Overview:
 + Module 1 - [Generalized Linear Models](https://jdonaldson.github.io/uw-mlearn410/module1/linearModels.html) 
+    + Appendix [Presentation](https://jdonaldson.github.io/uw-mlearn410/module1/Presentation1.pdf)
+    + Appendix [Communities Notebook](https://jdonaldson.github.io/uw-mlearn410/module1/communities.nb.html)
 + Module 2 - [Trees and Forests](https://jdonaldson.github.io/uw-mlearn410/module2/Trees.html) 
 + Module 3 - [Clustering](https://jdonaldson.github.io/uw-mlearn410/module3/Clustering.html) 
 + Module 4 - [Dimensionality Reduction](https://jdonaldson.github.io/uw-mlearn410/module4/DimensionalityReduction2017-03-29.pptx) [(pdf)](https://jdonaldson.github.io/uw-mlearn410/module4/DimensionalityReduction2017-03-29.pdf) 
 + Module 5 - [Topic Models](https://jdonaldson.github.io/uw-mlearn410/module5/topic_models.pptx) [(pdf)](https://jdonaldson.github.io/uw-mlearn410/module5/topic_models.pdf)
+    + Appendix [Topic Modelling Notebook](https://jdonaldson.github.io/uw-mlearn410/module5/topic_modeling.html)
 + Module 6 - [Recommender Systems](https://jdonaldson.github.io/uw-mlearn410/module6/RecSys.html)
 
 ## Homework : 
