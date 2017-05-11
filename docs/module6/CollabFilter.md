@@ -1,3 +1,9 @@
+Collaborative Filtering (CF)
+====
+type : sub-section
+- User ratings/observations drive item relationships
+- Rather than study the *thing*, study *how people like the thing*
+
 User-based recommendation
 ====
 User based recommendation considers user-based signals, such as ratings, listens, likes, etc.  
@@ -8,15 +14,13 @@ without knowing anything about the content at all!
 <a title="By Enoc vt (Own work) [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3ABot%C3%B3n_Me_gusta.svg"><img width="256" alt="Botón Me gusta" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Bot%C3%B3n_Me_gusta.svg/256px-Bot%C3%B3n_Me_gusta.svg.png"/></a>
 
 
-
-
 Collaborative Filtering
 ====
 
 ```r
 library(plyr)
 library(ggplot2)
-ratings = read.csv("ml-latest-small/ratings.csv", nrows=1000)
+ratings = read.csv("ml-latest-small/ratings.csv")
 head(ratings)
 ```
 
@@ -35,7 +39,7 @@ User-based recommendation
 - Collect ratings from users and items
 - Find similar users to use as "peers"
 - Use means/medians of scores from peer ratings
-- Find high predicted scores on missing items to use as recommendations 
+- Find *high predicted scores* on *missing* items to use as recommendations 
 
 ***
 <a title="By Moshanin (Own work) [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0) or GFDL (http://www.gnu.org/copyleft/fdl.html)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3ACollaborative_filtering.gif"><img width="256" alt="Collaborative filtering" src="https://upload.wikimedia.org/wikipedia/commons/5/52/Collaborative_filtering.gif"/></a>
@@ -100,6 +104,8 @@ The recommenderlab package is *recommended* as a platform for recommender system
 - Popularity Recommender
 - Random Recommender
 
+***
+
 ```r
 library(recommenderlab)
 ```
@@ -109,6 +115,7 @@ User-based recommendation
 We need to transform the ratings information into a special matrix form
 
 ```r
+ratings = ratings[1:1000,] # subset for the sake of quick illustration
 mratings = daply(ratings, .(userId, movieId), function(x) x$rating)
 mratings[1:10,1:10]
 ```
@@ -593,6 +600,19 @@ as(recom, "matrix")[1:8,1:4]
 7       NA       NA       NA       NA
 8       NA       NA       NA       NA
 ```
+
+User-based recommendation Strengths
+=====
+- Free-form : can handle niches that cross genres/taxonomies
+- Naive : Domain knowledge not required 
+- Adaptive : Quality improves over time with more data
+- Implicit : Doesn't require explicit ratings (although can use them)
+
+User-based recommendation Weaknesses
+=====
+- Cold Start : Problems for users *and* items
+- Stability : User ratings can change numerous recommendations
+- Costly to Update : Recommendations are specific to user and can be unstable
 
 Item-based recommendation
 ====
@@ -4010,6 +4030,27 @@ $verbose
 [1] FALSE
 ```
 
+Item-based recommendation Strengths
+=====
+- Free-form : can handle niches that cross genres/taxnomies
+- Naive : Domain knowledge not required 
+- Adaptive : Quality improves over time with more data
+- Implicit : Doesn't require explicit ratings (although can use them)
+
+Item-based recommendation Weaknesses
+=====
+- Cold Start : Problems for users *and* items
+- Limited Personalization : Recommendations are driven from item rating aggregates, rather than like minded groups
+- Bandwagon Effect : Highly/Widely rated items tend to get recommended more
+
+Item-based vs. User based CF
+====
+One last comparison : 
+![ib vs. ub cf](img/ib_vs_ub_cf.jpg)
+(taken from [http://www.salemmarafi.com](http://www.salemmarafi.com/code/collaborative-filtering-with-python/))
+
+
+
 Hybrid recommendation
 ====
 What do we mean by hybrid?
@@ -4105,27 +4146,27 @@ results <- evaluate(scheme, algorithms, type = "topNList", n=c(1, 3, 5, 10, 15, 
 
 ```
 RANDOM run fold/sample [model time/prediction time]
-	 1  [0.001sec/0.01sec] 
-	 2  [0.001sec/0.007sec] 
-	 3  [0sec/0.01sec] 
-	 4  [0.001sec/0.007sec] 
+	 1  [0.001sec/0.008sec] 
+	 2  [0.002sec/0.008sec] 
+	 3  [0.001sec/0.008sec] 
+	 4  [0.001sec/0.01sec] 
 POPULAR run fold/sample [model time/prediction time]
-	 1  [0.003sec/0.013sec] 
-	 2  [0.002sec/0.01sec] 
-	 3  [0.003sec/0.014sec] 
-	 4  [0.003sec/0.014sec] 
+	 1  [0.002sec/0.014sec] 
+	 2  [0.003sec/0.01sec] 
+	 3  [0.003sec/0.012sec] 
+	 4  [0.003sec/0.013sec] 
 UBCF run fold/sample [model time/prediction time]
-	 1  [0.001sec/0.01sec] 
-	 2  [0.001sec/0.009sec] 
-	 3  [0.001sec/0.009sec] 
-	 4  [0.001sec/0.011sec] 
+	 1  [0.001sec/0.011sec] 
+	 2  [0.001sec/0.013sec] 
+	 3  [0.002sec/0.009sec] 
+	 4  [0.001sec/0.009sec] 
 IBCF run fold/sample [model time/prediction time]
-	 1  [5.249sec/0.02sec] 
-	 2  [5.304sec/0.007sec] 
-	 3  [1.966sec/0.008sec] 
-	 4  [1.699sec/0.007sec] 
+	 1  [4.061sec/0.015sec] 
+	 2  [4.158sec/0.008sec] 
+	 3  [2.232sec/0.006sec] 
+	 4  [2.472sec/0.006sec] 
 SVD run fold/sample [model time/prediction time]
-	 1  Timing stopped at: 0.002 0 0.002 
+	 1  Timing stopped at: 0.003 0 0.005 
 ```
 
 Evaluation

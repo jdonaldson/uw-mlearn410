@@ -6,7 +6,7 @@ date: `r format(Sys.Date(), format="%B-%d-%Y")`
 autosize: true
 
 ```{r setup, include=FALSE}
-opts_chunk$set(cache=TRUE)
+ opts_chunk$set(cache=TRUE)
 ```
 
 Applied Machine Learning 410
@@ -112,6 +112,17 @@ Content Based Filtering Weaknesses
 
 ```{r child="CollabFilter.Rpres"}
 ```
+
+Recommender Systems and the Future
+====
+Hierarchical organization no longer cuts it
+![dmoz](img/dmoz.jpg)
+
+(DMOZ homepage)
+
+***
+- More personalization
+- "Weaker" search with less specificity
 
 Recommender Systems and Bias
 ====

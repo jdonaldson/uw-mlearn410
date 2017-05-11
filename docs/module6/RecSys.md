@@ -2,7 +2,7 @@ Recommender Systems
 ========================================================
 css: ../../assets/style/uw.css
 author: Justin Donaldson
-date: May-05-2017
+date: May-11-2017
 autosize: true
 
 
@@ -209,7 +209,7 @@ Collaborative Filtering
 ```r
 library(plyr)
 library(ggplot2)
-ratings = read.csv("ml-latest-small/ratings.csv", nrows=1000)
+ratings = read.csv("ml-latest-small/ratings.csv")
 head(ratings)
 ```
 
@@ -228,7 +228,7 @@ User-based recommendation
 - Collect ratings from users and items
 - Find similar users to use as "peers"
 - Use means/medians of scores from peer ratings
-- Find high predicted scores on missing items to use as recommendations 
+- Find *high predicted scores* on *missing* items to use as recommendations 
 
 ***
 <a title="By Moshanin (Own work) [CC BY-SA 3.0 (http://creativecommons.org/licenses/by-sa/3.0) or GFDL (http://www.gnu.org/copyleft/fdl.html)], via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File%3ACollaborative_filtering.gif"><img width="256" alt="Collaborative filtering" src="https://upload.wikimedia.org/wikipedia/commons/5/52/Collaborative_filtering.gif"/></a>
@@ -304,6 +304,7 @@ User-based recommendation
 We need to transform the ratings information into a special matrix form
 
 ```r
+ratings = ratings[1:1000,] # subset for the sake of quick illustration
 mratings = daply(ratings, .(userId, movieId), function(x) x$rating)
 mratings[1:10,1:10]
 ```
@@ -791,7 +792,7 @@ as(recom, "matrix")[1:8,1:4]
 
 User-based recommendation Strengths
 =====
-- Free-form : can handle niches that cross genres/taxnomies
+- Free-form : can handle niches that cross genres/taxonomies
 - Naive : Domain knowledge not required 
 - Adaptive : Quality improves over time with more data
 - Implicit : Doesn't require explicit ratings (although can use them)
@@ -4359,6 +4360,7 @@ SVD run fold/sample [model time/prediction time]
 
 Evaluation
 =====
+Take with a huge grain of salt!  This is a "toy" dataset meant to illustrate the methods.
 
 ```r
 plot(results)
@@ -4368,6 +4370,17 @@ plot(results)
 
 
 
+
+Recommender Systems and the Future
+====
+Hierarchical organization no longer cuts it
+![dmoz](img/dmoz.jpg)
+
+(DMOZ homepage)
+
+***
+- More personalization
+- "Weaker" search with less specificity
 
 Recommender Systems and Bias
 ====
