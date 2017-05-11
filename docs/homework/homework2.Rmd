@@ -5,7 +5,7 @@ output: html_notebook
 
 # Unsupervised Learning
 
-### Find model parameters using EM 
+## Find model parameters using EM 
 The dataset below contains eruption data from old faithful.  
 Analysts note that old faithful erupts in certain patterns: Sometimes there are long eruptions, sometimes there are short.
 The eruptions are also followed by a delay that can vary accordingly.
@@ -18,11 +18,11 @@ data(faithful)
 # investigate the old faithful eruption patterns using scatter plots, etc.  
 ```
 
-## Q1: How many clusters do you believe exist?
+### Q1: How many clusters do you believe exist?
 
-## Q2: How did you arrive at your conclusion?
+### Q2: How did you arrive at your conclusion?
 
-## Q3 : Use Expectation Maximization clustering 
+### Q3 : Use Expectation Maximization clustering 
 Extract cluster parameters using your chosen``k`` cluster count  and report them below
 ```{r}
 library(EMCluster)
@@ -30,7 +30,7 @@ library(EMCluster)
 ```
 
 
-## Q4: Use dbscan to perform clustering.  
+### Q4: Use dbscan to perform clustering.  
 
 ```{r}
 library(dbscan)
@@ -39,11 +39,84 @@ library(dbscan)
 ```
 Report the settings you chose for minPts and epsilon, and how you arrived at them (hint: histograms and distances)
 
-## Q5: Use kmeans to perform clustering
+### Q5: Use kmeans to perform clustering
 Use the k you chose before
 
 ```{r}
 # kmeans(faithful, k) should already be available in your R environment
 ```
 
-## Q6 : Which clustering technique works the best here?  
+### Q6 : Which clustering technique works the best here?  
+
+
+## Topic Modeling
+
+In this problem, you will use a topic model as part of a supervised learning pipeline. We will use the New York Times articles that we looked at in class.
+
+```{r}
+articles <- read.csv('../datasets/nyt_articles.csv', stringsAsFactors = F)
+```
+
+### Q7: Define a target. For this problem, let's try to predict whether or not an article appears in the "Sports" section.
+
+```{r}
+
+```
+
+
+### Q8: Split your data into three segments: Train_1, Train_2, Test
+
+```{r}
+
+```
+
+
+### Q9: Use the train_1 dataset to build an LDA topic model of the article content.
+
+You get to decide how many topics to find, and what other parameters you would like to play with. You may want to use some of the functions we defined during class for examining topics.
+
+```{r}
+
+```
+
+### Q10: _Apply_ your topic model to the Train_2 datset. You may have to play around with the documentation to figure out how to do this. Hint: You want to calculate posterior probabilities for a new set of documents...
+
+```{r}
+
+```
+
+### Q11: Train a logistic regression model on the topics extracted from the Train_2. That is, you are trying to model the probability that a given article is from the sports section, given the loadings on the topics you found in Q10.
+
+```{r}
+
+```
+
+
+### Q12: Test the performance of your model on the Test set. You will have to apply the topic model before you can apply the logistic regression model. You can use the following function to help you evaluate the results.
+
+
+```{r}
+require(ROCR)
+roc <- function(predicted, actual, key='None'){
+  # Prediction object
+  pred = prediction(predicted, actual)
+
+  # ROC Curve
+  perf <- performance(pred, measure = 'tpr', x.measure = 'fpr')
+  roc <- data.frame(perf@alpha.values,
+                    perf@x.values,
+                    perf@y.values)
+  colnames(roc) <- c('Threshold', 'FPR', 'TPR')
+  roc$key <- key
+
+  # Area under the curve
+  perf <- performance(pred, measure = 'auc')
+  auc <- perf@y.values
+
+  list(roc=roc, auc=auc)
+}
+```
+
+
+### Q13: What are your observations?
+
