@@ -174,65 +174,157 @@ $(document).ready(function () {
 <!-- rnb-text-begin -->
 <div id="unsupervised-learning" class="section level1">
 <h1>Unsupervised Learning</h1>
-<div id="find-model-parameters-using-em" class="section level3">
-<h3>Find model parameters using EM</h3>
+<div id="find-model-parameters-using-em" class="section level2">
+<h2>Find model parameters using EM</h2>
 <p>The dataset below contains eruption data from old faithful.<br />
 Analysts note that old faithful erupts in certain patterns: Sometimes there are long eruptions, sometimes there are short. The eruptions are also followed by a delay that can vary accordingly.</p>
 <p>Read in the data to get started.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YShmYWl0aGZ1bClcbiMgaW52ZXN0aWdhdGUgdGhlIG9sZCBmYWl0aGZ1bCBlcnVwdGlvbiBwYXR0ZXJucyB1c2luZyBzY2F0dGVyIHBsb3RzLCBldGMuICBcbmBgYCJ9 -->
+<pre class="r"><code>data(faithful)
+# investigate the old faithful eruption patterns using scatter plots, etc.  </code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+<div id="q1-how-many-clusters-do-you-believe-exist" class="section level3">
+<h3>Q1: How many clusters do you believe exist?</h3>
 </div>
-<div id="q1-how-many-clusters-do-you-believe-exist" class="section level2">
-<h2>Q1: How many clusters do you believe exist?</h2>
+<div id="q2-how-did-you-arrive-at-your-conclusion" class="section level3">
+<h3>Q2: How did you arrive at your conclusion?</h3>
 </div>
-<div id="q2-how-did-you-arrive-at-your-conclusion" class="section level2">
-<h2>Q2: How did you arrive at your conclusion?</h2>
-</div>
-<div id="q3-use-expectation-maximization-clustering" class="section level2">
-<h2>Q3 : Use Expectation Maximization clustering</h2>
+<div id="q3-use-expectation-maximization-clustering" class="section level3">
+<h3>Q3 : Use Expectation Maximization clustering</h3>
 <p>Extract cluster parameters using your chosen<code>k</code> cluster count and report them below</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShFTUNsdXN0ZXIpXG4jIHNob3J0ZW1jbHVzdGVyKGZhaXRoZnVsLCBzaW1wbGUuaW5pdChmYWl0aGZ1bCwgbmNsYXNzID0gaykpXG5gYGAifQ== -->
-<pre class="r"><code>library(EMCluster)
-# shortemcluster(faithful, simple.init(faithful, nclass = k))</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubGlicmFyeShFTUNsdXN0ZXIpXG4jIHNob3J0ZW1jbHVzdGVyKGZhaXRoZnVsLCBzaW1wbGUuaW5pdChmYWl0aGZ1bCwgbmNsYXNzID0gaykpXG5gYGBcbmBgYCJ9 -->
+<p><code>r</code>r library(EMCluster) # shortemcluster(faithful, simple.init(faithful, nclass = k))</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-<div id="q4-use-dbscan-to-perform-clustering." class="section level2">
-<h2>Q4: Use dbscan to perform clustering.</h2>
+<div id="q4-use-dbscan-to-perform-clustering." class="section level3">
+<h3>Q4: Use dbscan to perform clustering.</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShkYnNjYW4pXG4jIGRic2NhbihmYWl0aGZ1bCwgbWluUHRzLCBlcHMpXG5cbmBgYCJ9 -->
-<pre class="r"><code>library(dbscan)
-# dbscan(faithful, minPts, eps)
-</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubGlicmFyeShkYnNjYW4pXG4jIGRic2NhbihmYWl0aGZ1bCwgbWluUHRzLCBlcHMpXG5cbmBgYFxuYGBgIn0= -->
+<p><code>r</code>r library(dbscan) # dbscan(faithful, minPts, eps)</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Report the settings you chose for minPts and epsilon, and how you arrived at them (hint: histograms and distances)</p>
 </div>
-<div id="q5-use-kmeans-to-perform-clustering" class="section level2">
-<h2>Q5: Use kmeans to perform clustering</h2>
+<div id="q5-use-kmeans-to-perform-clustering" class="section level3">
+<h3>Q5: Use kmeans to perform clustering</h3>
 <p>Use the k you chose before</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBrbWVhbnMoZmFpdGhmdWwsIGspIHNob3VsZCBhbHJlYWR5IGJlIGF2YWlsYWJsZSBpbiB5b3VyIFIgZW52aXJvbm1lbnRcbmBgYCJ9 -->
-<pre class="r"><code># kmeans(faithful, k) should already be available in your R environment</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyBrbWVhbnMoZmFpdGhmdWwsIGspIHNob3VsZCBhbHJlYWR5IGJlIGF2YWlsYWJsZSBpbiB5b3VyIFIgZW52aXJvbm1lbnRcbmBgYFxuYGBgIn0= -->
+<p><code>r</code>r # kmeans(faithful, k) should already be available in your R environment</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-<div id="q6-which-clustering-technique-works-the-best-here" class="section level2">
-<h2>Q6 : Which clustering technique works the best here?</h2>
+<div id="q6-which-clustering-technique-works-the-best-here" class="section level3">
+<h3>Q6 : Which clustering technique works the best here?</h3>
+</div>
+</div>
+<div id="topic-modeling" class="section level2">
+<h2>Topic Modeling</h2>
+<p>In this problem, you will use a topic model as part of a supervised learning pipeline. We will use the New York Times articles that we looked at in class.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXJ0aWNsZXMgPC0gcmVhZC5jc3YoJy4uL2RhdGFzZXRzL255dF9hcnRpY2xlcy5jc3YnLCBzdHJpbmdzQXNGYWN0b3JzID0gRilcbmBgYCJ9 -->
+<pre class="r"><code>articles &lt;- read.csv('../datasets/nyt_articles.csv', stringsAsFactors = F)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<div id="q7-define-a-target.-for-this-problem-lets-try-to-predict-whether-or-not-an-article-appears-in-the-sports-section." class="section level3">
+<h3>Q7: Define a target. For this problem, let’s try to predict whether or not an article appears in the “Sports” section.</h3>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="q8-split-your-data-into-three-segments-train_1-train_2-test" class="section level3">
+<h3>Q8: Split your data into three segments: Train_1, Train_2, Test</h3>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="q9-use-the-train_1-dataset-to-build-an-lda-topic-model-of-the-article-content." class="section level3">
+<h3>Q9: Use the train_1 dataset to build an LDA topic model of the article content.</h3>
+<p>You get to decide how many topics to find, and what other parameters you would like to play with. You may want to use some of the functions we defined during class for examining topics.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="q10-apply-your-topic-model-to-the-train_2-datset.-you-may-have-to-play-around-with-the-documentation-to-figure-out-how-to-do-this.-hint-you-want-to-calculate-posterior-probabilities-for-a-new-set-of-documents" class="section level3">
+<h3>Q10: <em>Apply</em> your topic model to the Train_2 datset. You may have to play around with the documentation to figure out how to do this. Hint: You want to calculate posterior probabilities for a new set of documents…</h3>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="q11-train-a-logistic-regression-model-on-the-topics-extracted-from-the-train_2.-that-is-you-are-trying-to-model-the-probability-that-a-given-article-is-from-the-sports-section-given-the-loadings-on-the-topics-you-found-in-q10." class="section level3">
+<h3>Q11: Train a logistic regression model on the topics extracted from the Train_2. That is, you are trying to model the probability that a given article is from the sports section, given the loadings on the topics you found in Q10.</h3>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="q12-test-the-performance-of-your-model-on-the-test-set.-you-will-have-to-apply-the-topic-model-before-you-can-apply-the-logistic-regression-model.-you-can-use-the-following-function-to-help-you-evaluate-the-results." class="section level3">
+<h3>Q12: Test the performance of your model on the Test set. You will have to apply the topic model before you can apply the logistic regression model. You can use the following function to help you evaluate the results.</h3>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVxdWlyZShST0NSKVxucm9jIDwtIGZ1bmN0aW9uKHByZWRpY3RlZCwgYWN0dWFsLCBrZXk9J05vbmUnKXtcbiAgIyBQcmVkaWN0aW9uIG9iamVjdFxuICBwcmVkID0gcHJlZGljdGlvbihwcmVkaWN0ZWQsIGFjdHVhbClcblxuICAjIFJPQyBDdXJ2ZVxuICBwZXJmIDwtIHBlcmZvcm1hbmNlKHByZWQsIG1lYXN1cmUgPSAndHByJywgeC5tZWFzdXJlID0gJ2ZwcicpXG4gIHJvYyA8LSBkYXRhLmZyYW1lKHBlcmZAYWxwaGEudmFsdWVzLFxuICAgICAgICAgICAgICAgICAgICBwZXJmQHgudmFsdWVzLFxuICAgICAgICAgICAgICAgICAgICBwZXJmQHkudmFsdWVzKVxuICBjb2xuYW1lcyhyb2MpIDwtIGMoJ1RocmVzaG9sZCcsICdGUFInLCAnVFBSJylcbiAgcm9jJGtleSA8LSBrZXlcblxuICAjIEFyZWEgdW5kZXIgdGhlIGN1cnZlXG4gIHBlcmYgPC0gcGVyZm9ybWFuY2UocHJlZCwgbWVhc3VyZSA9ICdhdWMnKVxuICBhdWMgPC0gcGVyZkB5LnZhbHVlc1xuXG4gIGxpc3Qocm9jPXJvYywgYXVjPWF1Yylcbn1cbmBgYCJ9 -->
+<pre class="r"><code>require(ROCR)
+roc &lt;- function(predicted, actual, key='None'){
+  # Prediction object
+  pred = prediction(predicted, actual)
+
+  # ROC Curve
+  perf &lt;- performance(pred, measure = 'tpr', x.measure = 'fpr')
+  roc &lt;- data.frame(perf@alpha.values,
+                    perf@x.values,
+                    perf@y.values)
+  colnames(roc) &lt;- c('Threshold', 'FPR', 'TPR')
+  roc$key &lt;- key
+
+  # Area under the curve
+  perf &lt;- performance(pred, measure = 'auc')
+  auc &lt;- perf@y.values
+
+  list(roc=roc, auc=auc)
+}</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="q13-what-are-your-observations" class="section level3">
+<h3>Q13: What are your observations?</h3>
+</div>
+<div id="q14-final-project-time" class="section level3">
+<h3>Q14 : Final Project Time!</h3>
+<p>Write up a paragraph or two on what your final project will be. Answer these questions:</p>
+<ol style="list-style-type: decimal">
+<li>What data are you using?</li>
+<li>What techniques are you using?</li>
+<li>Do you plan on doing any data cleaning/preparation? (If so, what?)</li>
+<li>Are you going to perform supervised or unsupervised learning? (And which technique(s)?)</li>
+</ol>
 <!-- rnb-text-end -->
 </div>
 </div>
+</div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiSG9tZXdvcmsgMiIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKIyBVbnN1cGVydmlzZWQgTGVhcm5pbmcKCiMjIyBGaW5kIG1vZGVsIHBhcmFtZXRlcnMgdXNpbmcgRU0gClRoZSBkYXRhc2V0IGJlbG93IGNvbnRhaW5zIGVydXB0aW9uIGRhdGEgZnJvbSBvbGQgZmFpdGhmdWwuICAKQW5hbHlzdHMgbm90ZSB0aGF0IG9sZCBmYWl0aGZ1bCBlcnVwdHMgaW4gY2VydGFpbiBwYXR0ZXJuczogU29tZXRpbWVzIHRoZXJlIGFyZSBsb25nIGVydXB0aW9ucywgc29tZXRpbWVzIHRoZXJlIGFyZSBzaG9ydC4KVGhlIGVydXB0aW9ucyBhcmUgYWxzbyBmb2xsb3dlZCBieSBhIGRlbGF5IHRoYXQgY2FuIHZhcnkgYWNjb3JkaW5nbHkuCgpSZWFkIGluIHRoZSBkYXRhIHRvIGdldCBzdGFydGVkLgoKCmBgYHtyfQpkYXRhKGZhaXRoZnVsKQojIGludmVzdGlnYXRlIHRoZSBvbGQgZmFpdGhmdWwgZXJ1cHRpb24gcGF0dGVybnMgdXNpbmcgc2NhdHRlciBwbG90cywgZXRjLiAgCmBgYAoKIyMgUTE6IEhvdyBtYW55IGNsdXN0ZXJzIGRvIHlvdSBiZWxpZXZlIGV4aXN0PwoKIyMgUTI6IEhvdyBkaWQgeW91IGFycml2ZSBhdCB5b3VyIGNvbmNsdXNpb24/CgojIyBRMyA6IFVzZSBFeHBlY3RhdGlvbiBNYXhpbWl6YXRpb24gY2x1c3RlcmluZyAKRXh0cmFjdCBjbHVzdGVyIHBhcmFtZXRlcnMgdXNpbmcgeW91ciBjaG9zZW5gYGtgYCBjbHVzdGVyIGNvdW50ICBhbmQgcmVwb3J0IHRoZW0gYmVsb3cKYGBge3J9CmxpYnJhcnkoRU1DbHVzdGVyKQojIHNob3J0ZW1jbHVzdGVyKGZhaXRoZnVsLCBzaW1wbGUuaW5pdChmYWl0aGZ1bCwgbmNsYXNzID0gaykpCmBgYAoKCiMjIFE0OiBVc2UgZGJzY2FuIHRvIHBlcmZvcm0gY2x1c3RlcmluZy4gIAoKYGBge3J9CmxpYnJhcnkoZGJzY2FuKQojIGRic2NhbihmYWl0aGZ1bCwgbWluUHRzLCBlcHMpCgpgYGAKUmVwb3J0IHRoZSBzZXR0aW5ncyB5b3UgY2hvc2UgZm9yIG1pblB0cyBhbmQgZXBzaWxvbiwgYW5kIGhvdyB5b3UgYXJyaXZlZCBhdCB0aGVtIChoaW50OiBoaXN0b2dyYW1zIGFuZCBkaXN0YW5jZXMpCgojIyBRNTogVXNlIGttZWFucyB0byBwZXJmb3JtIGNsdXN0ZXJpbmcKVXNlIHRoZSBrIHlvdSBjaG9zZSBiZWZvcmUKCmBgYHtyfQojIGttZWFucyhmYWl0aGZ1bCwgaykgc2hvdWxkIGFscmVhZHkgYmUgYXZhaWxhYmxlIGluIHlvdXIgUiBlbnZpcm9ubWVudApgYGAKCiMjIFE2IDogV2hpY2ggY2x1c3RlcmluZyB0ZWNobmlxdWUgd29ya3MgdGhlIGJlc3QgaGVyZT8gIAo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiSG9tZXdvcmsgMiIKb3V0cHV0OgogIGh0bWxfZG9jdW1lbnQ6IGRlZmF1bHQKICBodG1sX25vdGVib29rOiBkZWZhdWx0Ci0tLQoKIyBVbnN1cGVydmlzZWQgTGVhcm5pbmcKCiMjIEZpbmQgbW9kZWwgcGFyYW1ldGVycyB1c2luZyBFTSAKVGhlIGRhdGFzZXQgYmVsb3cgY29udGFpbnMgZXJ1cHRpb24gZGF0YSBmcm9tIG9sZCBmYWl0aGZ1bC4gIApBbmFseXN0cyBub3RlIHRoYXQgb2xkIGZhaXRoZnVsIGVydXB0cyBpbiBjZXJ0YWluIHBhdHRlcm5zOiBTb21ldGltZXMgdGhlcmUgYXJlIGxvbmcgZXJ1cHRpb25zLCBzb21ldGltZXMgdGhlcmUgYXJlIHNob3J0LgpUaGUgZXJ1cHRpb25zIGFyZSBhbHNvIGZvbGxvd2VkIGJ5IGEgZGVsYXkgdGhhdCBjYW4gdmFyeSBhY2NvcmRpbmdseS4KClJlYWQgaW4gdGhlIGRhdGEgdG8gZ2V0IHN0YXJ0ZWQuCgoKYGBge3J9CmRhdGEoZmFpdGhmdWwpCiMgaW52ZXN0aWdhdGUgdGhlIG9sZCBmYWl0aGZ1bCBlcnVwdGlvbiBwYXR0ZXJucyB1c2luZyBzY2F0dGVyIHBsb3RzLCBldGMuICAKYGBgCgojIyMgUTE6IEhvdyBtYW55IGNsdXN0ZXJzIGRvIHlvdSBiZWxpZXZlIGV4aXN0PwoKIyMjIFEyOiBIb3cgZGlkIHlvdSBhcnJpdmUgYXQgeW91ciBjb25jbHVzaW9uPwoKIyMjIFEzIDogVXNlIEV4cGVjdGF0aW9uIE1heGltaXphdGlvbiBjbHVzdGVyaW5nIApFeHRyYWN0IGNsdXN0ZXIgcGFyYW1ldGVycyB1c2luZyB5b3VyIGNob3NlbmBga2BgIGNsdXN0ZXIgY291bnQgIGFuZCByZXBvcnQgdGhlbSBiZWxvdwpgYGB7cn0KbGlicmFyeShFTUNsdXN0ZXIpCiMgc2hvcnRlbWNsdXN0ZXIoZmFpdGhmdWwsIHNpbXBsZS5pbml0KGZhaXRoZnVsLCBuY2xhc3MgPSBrKSkKYGBgCgoKIyMjIFE0OiBVc2UgZGJzY2FuIHRvIHBlcmZvcm0gY2x1c3RlcmluZy4gIAoKYGBge3J9CmxpYnJhcnkoZGJzY2FuKQojIGRic2NhbihmYWl0aGZ1bCwgbWluUHRzLCBlcHMpCgpgYGAKUmVwb3J0IHRoZSBzZXR0aW5ncyB5b3UgY2hvc2UgZm9yIG1pblB0cyBhbmQgZXBzaWxvbiwgYW5kIGhvdyB5b3UgYXJyaXZlZCBhdCB0aGVtIChoaW50OiBoaXN0b2dyYW1zIGFuZCBkaXN0YW5jZXMpCgojIyMgUTU6IFVzZSBrbWVhbnMgdG8gcGVyZm9ybSBjbHVzdGVyaW5nClVzZSB0aGUgayB5b3UgY2hvc2UgYmVmb3JlCgpgYGB7cn0KIyBrbWVhbnMoZmFpdGhmdWwsIGspIHNob3VsZCBhbHJlYWR5IGJlIGF2YWlsYWJsZSBpbiB5b3VyIFIgZW52aXJvbm1lbnQKYGBgCgojIyMgUTYgOiBXaGljaCBjbHVzdGVyaW5nIHRlY2huaXF1ZSB3b3JrcyB0aGUgYmVzdCBoZXJlPyAgCgoKIyMgVG9waWMgTW9kZWxpbmcKCkluIHRoaXMgcHJvYmxlbSwgeW91IHdpbGwgdXNlIGEgdG9waWMgbW9kZWwgYXMgcGFydCBvZiBhIHN1cGVydmlzZWQgbGVhcm5pbmcgcGlwZWxpbmUuIFdlIHdpbGwgdXNlIHRoZSBOZXcgWW9yayBUaW1lcyBhcnRpY2xlcyB0aGF0IHdlIGxvb2tlZCBhdCBpbiBjbGFzcy4KCmBgYHtyfQphcnRpY2xlcyA8LSByZWFkLmNzdignLi4vZGF0YXNldHMvbnl0X2FydGljbGVzLmNzdicsIHN0cmluZ3NBc0ZhY3RvcnMgPSBGKQpgYGAKCiMjIyBRNzogRGVmaW5lIGEgdGFyZ2V0LiBGb3IgdGhpcyBwcm9ibGVtLCBsZXQncyB0cnkgdG8gcHJlZGljdCB3aGV0aGVyIG9yIG5vdCBhbiBhcnRpY2xlIGFwcGVhcnMgaW4gdGhlICJTcG9ydHMiIHNlY3Rpb24uCgpgYGB7cn0KCmBgYAoKCiMjIyBRODogU3BsaXQgeW91ciBkYXRhIGludG8gdGhyZWUgc2VnbWVudHM6IFRyYWluXzEsIFRyYWluXzIsIFRlc3QKCmBgYHtyfQoKYGBgCgoKIyMjIFE5OiBVc2UgdGhlIHRyYWluXzEgZGF0YXNldCB0byBidWlsZCBhbiBMREEgdG9waWMgbW9kZWwgb2YgdGhlIGFydGljbGUgY29udGVudC4KCllvdSBnZXQgdG8gZGVjaWRlIGhvdyBtYW55IHRvcGljcyB0byBmaW5kLCBhbmQgd2hhdCBvdGhlciBwYXJhbWV0ZXJzIHlvdSB3b3VsZCBsaWtlIHRvIHBsYXkgd2l0aC4gWW91IG1heSB3YW50IHRvIHVzZSBzb21lIG9mIHRoZSBmdW5jdGlvbnMgd2UgZGVmaW5lZCBkdXJpbmcgY2xhc3MgZm9yIGV4YW1pbmluZyB0b3BpY3MuCgpgYGB7cn0KCmBgYAoKIyMjIFExMDogX0FwcGx5XyB5b3VyIHRvcGljIG1vZGVsIHRvIHRoZSBUcmFpbl8yIGRhdHNldC4gWW91IG1heSBoYXZlIHRvIHBsYXkgYXJvdW5kIHdpdGggdGhlIGRvY3VtZW50YXRpb24gdG8gZmlndXJlIG91dCBob3cgdG8gZG8gdGhpcy4gSGludDogWW91IHdhbnQgdG8gY2FsY3VsYXRlIHBvc3RlcmlvciBwcm9iYWJpbGl0aWVzIGZvciBhIG5ldyBzZXQgb2YgZG9jdW1lbnRzLi4uCgpgYGB7cn0KCmBgYAoKIyMjIFExMTogVHJhaW4gYSBsb2dpc3RpYyByZWdyZXNzaW9uIG1vZGVsIG9uIHRoZSB0b3BpY3MgZXh0cmFjdGVkIGZyb20gdGhlIFRyYWluXzIuIFRoYXQgaXMsIHlvdSBhcmUgdHJ5aW5nIHRvIG1vZGVsIHRoZSBwcm9iYWJpbGl0eSB0aGF0IGEgZ2l2ZW4gYXJ0aWNsZSBpcyBmcm9tIHRoZSBzcG9ydHMgc2VjdGlvbiwgZ2l2ZW4gdGhlIGxvYWRpbmdzIG9uIHRoZSB0b3BpY3MgeW91IGZvdW5kIGluIFExMC4KCmBgYHtyfQoKYGBgCgoKIyMjIFExMjogVGVzdCB0aGUgcGVyZm9ybWFuY2Ugb2YgeW91ciBtb2RlbCBvbiB0aGUgVGVzdCBzZXQuIFlvdSB3aWxsIGhhdmUgdG8gYXBwbHkgdGhlIHRvcGljIG1vZGVsIGJlZm9yZSB5b3UgY2FuIGFwcGx5IHRoZSBsb2dpc3RpYyByZWdyZXNzaW9uIG1vZGVsLiBZb3UgY2FuIHVzZSB0aGUgZm9sbG93aW5nIGZ1bmN0aW9uIHRvIGhlbHAgeW91IGV2YWx1YXRlIHRoZSByZXN1bHRzLgoKCmBgYHtyfQpyZXF1aXJlKFJPQ1IpCnJvYyA8LSBmdW5jdGlvbihwcmVkaWN0ZWQsIGFjdHVhbCwga2V5PSdOb25lJyl7CiAgIyBQcmVkaWN0aW9uIG9iamVjdAogIHByZWQgPSBwcmVkaWN0aW9uKHByZWRpY3RlZCwgYWN0dWFsKQoKICAjIFJPQyBDdXJ2ZQogIHBlcmYgPC0gcGVyZm9ybWFuY2UocHJlZCwgbWVhc3VyZSA9ICd0cHInLCB4Lm1lYXN1cmUgPSAnZnByJykKICByb2MgPC0gZGF0YS5mcmFtZShwZXJmQGFscGhhLnZhbHVlcywKICAgICAgICAgICAgICAgICAgICBwZXJmQHgudmFsdWVzLAogICAgICAgICAgICAgICAgICAgIHBlcmZAeS52YWx1ZXMpCiAgY29sbmFtZXMocm9jKSA8LSBjKCdUaHJlc2hvbGQnLCAnRlBSJywgJ1RQUicpCiAgcm9jJGtleSA8LSBrZXkKCiAgIyBBcmVhIHVuZGVyIHRoZSBjdXJ2ZQogIHBlcmYgPC0gcGVyZm9ybWFuY2UocHJlZCwgbWVhc3VyZSA9ICdhdWMnKQogIGF1YyA8LSBwZXJmQHkudmFsdWVzCgogIGxpc3Qocm9jPXJvYywgYXVjPWF1YykKfQpgYGAKCgojIyMgUTEzOiBXaGF0IGFyZSB5b3VyIG9ic2VydmF0aW9ucz8KCiMjIyBRMTQgOiBGaW5hbCBQcm9qZWN0IFRpbWUhCgpXcml0ZSB1cCBhIHBhcmFncmFwaCBvciB0d28gb24gd2hhdCB5b3VyIGZpbmFsIHByb2plY3Qgd2lsbCBiZS4gIEFuc3dlciB0aGVzZSBxdWVzdGlvbnM6CgoxLiBXaGF0IGRhdGEgYXJlIHlvdSB1c2luZz8KMi4gV2hhdCB0ZWNobmlxdWVzIGFyZSB5b3UgdXNpbmc/CjMuIERvIHlvdSBwbGFuIG9uIGRvaW5nIGFueSBkYXRhIGNsZWFuaW5nL3ByZXBhcmF0aW9uPyAoSWYgc28sIHdoYXQ/KQo0LiBBcmUgeW91IGdvaW5nIHRvIHBlcmZvcm0gc3VwZXJ2aXNlZCBvciB1bnN1cGVydmlzZWQgbGVhcm5pbmc/IChBbmQgd2hpY2ggdGVjaG5pcXVlKHMpPykKCgoKCgo=</div>
 
 
 

@@ -1,6 +1,8 @@
 ---
 title: "Homework 2"
-output: html_notebook
+output:
+  html_document: default
+  html_notebook: default
 ---
 
 # Unsupervised Learning
@@ -119,4 +121,17 @@ roc <- function(predicted, actual, key='None'){
 
 
 ### Q13: What are your observations?
+
+### Q14 : Final Project Time!
+
+Write up a paragraph or two on what your final project will be.  Answer these questions:
+
+1. What data are you using?
+2. What techniques are you using?
+3. Do you plan on doing any data cleaning/preparation? (If so, what?)
+4. Are you going to perform supervised or unsupervised learning? (And which technique(s)?)
+
+
+
+
 
