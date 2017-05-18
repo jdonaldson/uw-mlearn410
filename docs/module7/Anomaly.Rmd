@@ -1,0 +1,104 @@
+---
+title: Anomaly Detection
+output: html_document
+---
+
+```{r, include=F}
+require(graphics)
+require(pROC)
+require(robustbase)
+require(e1071)
+```
+
+## Multivariate Normal Approximation
+
+To begin our exploration of anomaly detection, we will look at the following dataset of credit application scoring: https://archive.ics.uci.edu/ml/datasets/Statlog+(German+Credit+Data). The file _german.data_ contains the raw data and te file _german.doc_ contains the field descriptions. The fields are qualitative and numerical fields such as _Status of existing checking account_ (qualitative), _Credit history_ (qualitative), _Credit amount requested_ (numerical), and so on.
+
+The final column of this dataset contains a manually label for creditworthiness, where _1_ is _good_, and _2_ is _bad_. In practice, we may or may not have access to handlabeled training data. Some potential ways to deal with it are:
+
+1. manually label some training data yourselves (or crowdsource it through Mechanical Turk type services),
+2. fully unsupervised approaches.
+
+We will start off assuming we have some labeled samples.
+
+### Exercise
+
+Load in _german.data_ and encode categorical variables with dummy variables. Pull out the last column as a separate variable. How many data points do we have? How many are credit-worthy (inliers)?
+
+
+### Exercise
+
+Assuming we have labeled data, we only train our model on inliers and test on both inliers and outliers. So let us split out inliers ($y==1$) into an $75-25$ train-test split. All outliers will go into the test split.
+
+### Exercise
+
+Let's try the Gaussian density approximation method. Use the methods _colMeans_, and _cov_ to fit the distribution to the training data. Then visualize the distance distribution (using the _mahalanobis_ function) with a histogram. Based on this alone, what distance value might you use as a threshold?
+
+*Note*: You would normally want a train-test-dev split, or cross-validation here so that you can pick the threshold optimally. We are being lazy for the purposes of instruction.
+
+
+### Exercise
+
+##### Calculate distances for the test set, plot another distance of histograms. Do you notice anything different as compared to the previous histogram? Why (or why not) is that occuring?
+
+##### Plot the ROC curve (using _plot.roc_ from the _pROC_ package), and calculate the area under the ROC curve (using _auc_ from the _pROC_ package).
+
+##### What point of the ROC curve would you use to pick the threshold? What are all the considerations that go into making this decision?
+
+We note that the tail of the distribution (values past $~ 150$) is heavier. This is expected because our test set contains the anomalies we are trying to detect, so we would hope they are further away.
+
+We cannot just say we would pick the _knee point_ - we have to ask is it better to make one type of error versus another? i.e. is it better to deny credit to good candidates versus giving credit to bad ones? Typically for credit, the answer is no, but you will need to quantify the cost of these error rates (and it can be hard to do) and decide what the optimal trade-off is. This is a business decision, not just a machine learning one.
+
+## PCA reconstruction method.
+
+### Exercise:
+
+Compute the centered and scaled PCA (using _prcomp_) for the training set. And visualize the plot of variance explained as a function of number of components. Pick the appropriate number of components.
+
+### Exercise
+
+##### Pick a number of components you want to use. It is not straightforward in this case - you would definitely want to use a validation set here when doing it in practice.
+##### Compute reconstruction error for the training set, look at histograms of distances. Be careful about dealing with scaling and cetering your PCA reconstruction (I used the _scale_ function).
+
+```{r, eval=FALSE}
+pc.use <- k # explains ~80% of variance
+
+project_pca <- getS3method("predict", "prcomp")
+
+reconstructed_credit.train <- project_pca(pca.train, encoded_credit.train)[,1:pc.use] %*% t(pca.train$rotation[,1:pc.use])
+
+# and add the center (and re-scale) back to data
+reconstructed_credit.train <- scale(reconstructed_credit.train, center = FALSE , scale=1/pca.train$scale)
+reconstructed_credit.train <- scale(reconstructed_credit.train, center = -1 * pca.train$center, scale=FALSE)
+```
+
+### Exercise
+
+##### Compute reconstruction error for the test set, look at histograms of distances.
+##### Plot the ROC curve and compute the AUC for the test set as in the previous approach.
+
+## Multivariate Covariance Determinant
+
+Consider the scenario where we had some labeled examples of anomalies, but we cannot be sure that all examples of anomalies were labeled. For instance, we may have some examples of credit card fraud, but the remaining transactions may also contain frauduent transactions that we were not able to catch. This is the scenario where we would use multivariate covariance determination (MCD).
+
+### Exercise
+
+##### Redefine the train-test splits to be $75-25$ over *all* points.
+##### Find the MCD estimates of mean and covariance (use the _covMcd_ function with an appropriate setting of _alpha_) on the train set.
+##### You will run into a warning complaining that the covariance matrix is singular. What can you do about this?
+##### Compute the Mahalanobis distances for the test set, plot the ROC curve and compute AUC.
+
+## One Class SVM
+
+Our dataset contains a lot of categorical variables, which become dummy variables with binomail coefficients. All the techniques we have used so far make assumptions of normality. We will try some non-parametric classification-based methods. We will use the train-test splits from the multivariate Guassian and PCA examples.
+
+### Exercise
+
+##### Using the original train-test split, train a one-class SVM model
+##### Print the confusion matrix (SVMs do not produce continuous scores that we can use to compute an AUC).
+
+```{r, eval=FALSE}
+oneclass_svm.model <- svm(encoded_credit.train, y=NULL, type='one-classification', nu=0.10, scale=TRUE, kernel="radial")
+```
+
+Isolation Forests would be another candidate to try on this. However, installing it on all platforms is not easy: https://github.com/Zelazny7/isofor . There is also a Python implementation in scikit-learn also, for people who want to try it.

@@ -1,0 +1,227 @@
+---
+title: Anomaly Detection
+output: html_document
+---
+
+```{r, include=F}
+require(graphics)
+require(pROC)
+require(robustbase)
+require(e1071)
+```
+
+## Multivariate Normal Approximation
+
+To begin our exploration of anomaly detection, we will look at the following dataset of credit application scoring: https://archive.ics.uci.edu/ml/datasets/Statlog+(German+Credit+Data). The file _german.data_ contains the raw data and te file _german.doc_ contains the field descriptions. The fields are qualitative and numerical fields such as _Status of existing checking account_ (qualitative), _Credit history_ (qualitative), _Credit amount requested_ (numerical), and so on.
+
+The final column of this dataset contains a manually label for creditworthiness, where _1_ is _good_, and _2_ is _bad_. In practice, we may or may not have access to handlabeled training data. Some potential ways to deal with it are:
+
+1. manually label some training data yourselves (or crowdsource it through Mechanical Turk type services),
+2. fully unsupervised approaches.
+
+We will start off assuming we have some labeled samples.
+
+### Exercise
+
+Load in _german.data_ and encode categorical variables with dummy variables. Pull out the last column as a separate variable. How many data points do we have? How many are credit-worthy (inliers)?
+
+```{r}
+raw_credit <- read.csv('german.data', header=FALSE, sep="")
+encoded_credit.all <- model.matrix( ~ V1 + V2 + V3 + V4 + V6 + V7 + V8 + V9 + V10 + V11 + V12 + V13 + V14 + V15 + V16 + V17 + V18 + V19 + V20, raw_credit)[,-1]
+y.all <- as.matrix(raw_credit[21])
+```
+
+### Exercise
+
+Assuming we have labeled data, we only train our model on inliers and test on both inliers and outliers. So let us split out inliers ($y==1$) into an $75-25$ train-test split. All outliers will go into the test split.
+
+```{r}
+
+inlier_idx <- which(y.all==1)
+
+# want 75% of the inlier set
+smp_size <- floor(0.75 * length(inlier_idx))
+# set the seed to make your partition reproductible
+set.seed(123)
+train_idx <- inlier_idx[ sample(seq_len(length(inlier_idx)), size = smp_size) ]
+
+encoded_credit.train <- encoded_credit.all[train_idx, ]
+encoded_credit.test <- encoded_credit.all[-train_idx, ]
+
+y.train <- y.all[train_idx]
+y.test <- y.all[-train_idx]
+```
+
+### Exercise
+
+Let's try the Gaussian density approximation method. Use the methods _colMeans_, and _cov_ to fit the distribution to the training data. Then visualize the distance distribution (using the _mahalanobis_ function) with a histogram. Based on this alone, what distance value might you use as a threshold?
+
+*Note*: You would normally want a train-test-dev split, or cross-validation here so that you can pick the threshold optimally. We are being lazy for the purposes of instruction.
+
+```{r}
+mvn.mean <- colMeans(encoded_credit.train)
+mvn.cov <- cov(encoded_credit.train)
+dists.train <- mahalanobis(encoded_credit.train, mvn.mean, mvn.cov)
+hist(dists.train)
+```
+
+### Exercise
+
+##### Calculate distances for the test set, plot another distance of histograms. Do you notice anything different as compared to the previous histogram? Why (or why not) is that occuring?
+
+##### Plot the ROC curve (using _plot.roc_ from the _pROC_ package), and calculate the area under the ROC curve (using _auc_ from the _pROC_ package).
+
+##### What point of the ROC curve would you use to pick the threshold? What are all the considerations that go into making this decision?
+
+```{r}
+# compute and plot the distance histogram
+dists.test <- mahalanobis(encoded_credit.test, mvn.mean, mvn.cov)
+hist(dists.test)
+
+# plot ROC curve
+plot.roc(y.test, dists.test)
+
+# compute the AUC
+auc(y.test, dists.test)
+```
+
+We note that the tail of the distribution (values past $~ 150$) is heavier. This is expected because our test set contains the anomalies we are trying to detect, so we would hope they are further away.
+
+We cannot just say we would pick the _knee point_ - we have to ask is it better to make one type of error versus another? i.e. is it better to deny credit to good candidates versus giving credit to bad ones? Typically for credit, the answer is no, but you will need to quantify the cost of these error rates (and it can be hard to do) and decide what the optimal trade-off is. This is a business decision, not just a machine learning one.
+
+## PCA reconstruction method.
+
+### Exercise:
+
+Compute the centered and scaled PCA (using _prcomp_) for the training set. And visualize the plot of variance explained as a function of number of components. Pick the appropriate number of components.
+
+```{r}
+# compute PCA
+pca.train <- prcomp(encoded_credit.train, center = TRUE, scale. = TRUE)
+
+# plot of variance explained by each component
+plot(pca.train, npcs=47, main="Variance explained by each component")
+
+# make the cumulative plot
+plot(cumsum(pca.train$sdev)/sum(pca.train$sdev), xlab="# components",
+     ylab="variance explained", main="Total Variance explained by top x components")
+```
+
+
+### Exercise
+
+##### Pick a number of components you want to use. It is not straightforward in this case - you would definitely want to use a validation set here when doing it in practice.
+##### Compute reconstruction error for the training set, look at histograms of distances. Be careful about dealing with scaling and cetering your PCA reconstruction (I used the _scale_ function).
+
+```{r}
+pc.use <- 30 # explains ~80% of variance
+
+project_pca <- getS3method("predict", "prcomp")
+
+reconstructed_credit.train <- project_pca(pca.train, encoded_credit.train)[,1:pc.use] %*% t(pca.train$rotation[,1:pc.use])
+
+# and add the center (and re-scale) back to data
+reconstructed_credit.train <- scale(reconstructed_credit.train, center = FALSE , scale=1/pca.train$scale)
+reconstructed_credit.train <- scale(reconstructed_credit.train, center = -1 * pca.train$center, scale=FALSE)
+
+# define an l2 norm distance function
+vecnorm <- function(x) { sqrt(sum(x^2)) }
+
+rec_error.train <- apply(reconstructed_credit.train, 1, vecnorm)
+hist(rec_error.train)
+```
+
+### Exercise
+
+##### Compute reconstruction error for the test set, look at histograms of distances.
+##### Plot the ROC curve and compute the AUC for the test set as in the previous approach.
+
+```{r}
+# project the encoded data into the top principal components
+reconstructed_credit.test <- project_pca(pca.train, encoded_credit.test)[,1:pc.use] %*% t(pca.train$rotation[,1:pc.use])
+
+# and add the center (and re-scale) back to data
+reconstructed_credit.test <- scale(reconstructed_credit.test, center = FALSE , scale=1/pca.train$scale)
+reconstructed_credit.test <- scale(reconstructed_credit.test, center = -1 * pca.train$center, scale=FALSE)
+
+# compute and plot the histogram
+rec_error.test <- apply(reconstructed_credit.test, 1, vecnorm)
+hist(rec_error.test)
+
+# plot ROC curve
+plot.roc(y.test, rec_error.test)
+
+# compute the AUC
+auc(y.test, rec_error.test)
+```
+## Multivariate Covariance Determinant
+
+Consider the scenario where we had some labeled examples of anomalies, but we cannot be sure that all examples of anomalies were labeled. For instance, we may have some examples of credit card fraud, but the remaining transactions may also contain frauduent transactions that we were not able to catch. This is the scenario where we would use multivariate covariance determination (MCD).
+
+### Exercise
+
+##### Redefine the train-test splits to be $75-25$ over *all* points.
+##### Find the MCD estimates of mean and covariance (use the _covMcd_ function with an appropriate setting of _alpha_) on the train set.
+##### You will run into a warning complaining that the covariance matrix is singular. What can you do about this?
+##### Compute the Mahalanobis distances for the test set, plot the ROC curve and compute AUC.
+
+```{r}
+## resample to create new train-test splits 
+smp_size <- floor(0.8 * nrow(encoded_credit.all))
+
+## set the seed to make your partition reproductible
+set.seed(123)
+train_idx <- sample(seq_len(nrow(encoded_credit.all)), size = smp_size)
+
+encoded_credit.train2 <- encoded_credit.all[train_idx, ]
+encoded_credit.test2 <- encoded_credit.all[-train_idx, ]
+
+# add a tiny bit of noise to deal with the problem of singular covariance matrix
+encoded_credit.train2 <- encoded_credit.train2 + matrix(rnorm(length(encoded_credit.train2),0,0.00001), ncol=ncol(encoded_credit.train2))
+
+y.train2 <- y.all[train_idx]
+y.test2 <- y.all[-train_idx]
+
+mcd <- covMcd(encoded_credit.train2)
+
+mcd_dists.test <- mahalanobis(encoded_credit.test2, mcd$center, mcd$cov)
+
+# plot ROC curve
+plot.roc(y.test2, mcd_dists.test)
+
+# compute the AUC
+auc(y.test2, mcd_dists.test)
+```
+## One Class SVM
+
+Our dataset contains a lot of categorical variables, which become dummy variables with binomail coefficients. All the techniques we have used so far make assumptions of normality. We will try some non-parametric classification-based methods. We will use the train-test splits from the multivariate Guassian and PCA examples.
+
+### Exercise
+
+##### Using the original train-test split, train a one-class SVM model
+##### Print the confusion matrix (SVMs do not produce continuous scores that we can use to compute an AUC).
+
+```{r}
+oneclass_svm.model <- svm(encoded_credit.train, y=NULL, type='one-classification', nu=0.10, scale=TRUE, kernel="radial")
+```
+
+```{r}
+oneclass_svm.test <- predict(oneclass_svm.model, encoded_credit.test)
+oneclass_svm.confusionMatrix <- table(Predicted=oneclass_svm.test,Reference=y.test)
+table(Predicted=oneclass_svm.test,Reference=y.test)
+```
+
+Isolation Forests would be a good candidate to try on this as well. However, installing it on all platforms is not easy: https://github.com/Zelazny7/isofor . There is also a Python implementation in scikit-learn also, for people who want to try it.
+
+```{r}
+library(isofor)
+
+iforest.model <- iForest(X=encoded_credit.train, 100, 200)
+iforest.test <- predict(iforest.model, encoded_credit.test)
+
+# plot ROC curve
+plot.roc(y.test, iforest.test)
+
+# compute the AUC
+auc(y.test, iforest.test)
+```
