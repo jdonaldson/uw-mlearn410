@@ -1,0 +1,52 @@
+Go to http://www.gutenberg.org/cache/epub/11/pg11.txt
+
+
+vagrant ssh
+
+In Vagrant
+----------
+vi alice.txt
+i
+<paste>
+Esc
+:q!
+
+hdfs dfs -mkdir wordcount
+cat alice.txt | hdfs dfs -put - wordcount/alice.txt
+
+pyspark
+
+In PySpark
+----------
+text_file = sc.textFile("hdfs:///user/vagrant/wordcount/alice.txt")
+
+counts = text_file.flatMap(lambda line: line.split(" ")) \
+             .map(lambda word: (word, 1)) \
+             .reduceByKey(lambda a, b: a + b)
+
+wordcounts = counts.collect()
+counts.saveAsTextFile("hdfs:///user/vagrant/wordcount/counts")
+
+# pi example
+import random
+def inside(p):
+    x, y = random.random(), random.random()
+    return x*x + y*y < 1
+
+NUM_SAMPLES = 100
+
+count = sc.parallelize(xrange(0, NUM_SAMPLES)) \
+             .filter(inside).count()
+print "Pi is roughly %f" % (4.0 * count / NUM_SAMPLES)
+
+
+http://leon.bottou.org/projects/sgd
+http://jmlr.csail.mit.edu/papers/volume5/lewis04a/lyrl2004_rcv1v2_README.htm
+http://www.zinkov.com/posts/2013-08-13-vowpal-tutorial/
+
+vw rcv1.train.vw.gz --cache_file cache_train -f r_temp
+vw -t --cache_file cache_test -i r_temp -p p_out rcv1.test.vw.gz
+
+cat p_out | awk '{printf "%1.0f\n", $1}' > pred_formatted
+diff pred_formatted labels | grep "\-\-\-" | wc
+cat labels | wc
