@@ -1,0 +1,537 @@
+---
+title: Learning to Rank
+date: June 1, 2017
+output: html_notebook
+---
+
+```{r, include=F}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(pander)
+library(gbm)
+```
+
+# Data
+
+For this project, we will use some real search-log data from Salesforce.
+```{r, cache=T}
+df <- read.csv('ranking_data.csv')
+```
+
+
+# Exploratory Data Analysis (EDA)
+
+EDA is the first step in any data mining project; it is the process of 'getting to know your data'. EDA is very open-ended, but it amounts to answering a series of questions:
+
+- What does the target look like?
+    - Continuous? Discrete?
+    - Normally distributed? Balanced?
+- What kind of features do you have? Numeric? Continuous?
+- How are the features related to each other?
+- How are the features related to the target?
+- Are there missing values?
+- Are there outliers?
+- ...
+
+## Description of the data
+
+### First few rows
+
+```{r, echo=F}
+head(df) %>% pander(split.table=Inf)
+```
+
+Each row is one query/record pair (there are multiple rows for a given query).
+
+- `query_id`: Unique query identifier
+- `record_id`: unique record identifier
+- `fr`: final rank of the record, as shown to the user
+- `Lucene`: Total TFIDF similarity between query and record
+- `lm_raw_score`: Time since record was last modified
+- `pv_s`: Number of times the record has been viewed
+- `pc_s`: Number of inbound links to the record
+- `clicked`: Whether or not this record was clicked for this query
+
+### Number of queries
+
+```{r}
+length(unique(df$query_id))
+```
+
+### Number of records per query
+```{r, echo=F}
+p <- ggplot(df, aes(x=fr)) +
+  geom_histogram(bins=25) +
+  theme_bw()
+print(p)
+```
+
+Most queries have either 5 or 25 results.
+
+### Number of clicks per query
+
+```{r, echo=F}
+df %>%
+  group_by(query_id) %>%
+  summarise(nrecords = n(),
+            nclicks = sum(clicked=='True')) %>%
+  filter(nrecords %in% c(5, 25)) %>%
+  group_by(nrecords, nclicks) %>%
+  summarise(count = n()) %>%
+  spread(nrecords, count) %>%
+  pander()
+```
+
+## Features
+
+```{r}
+summary(df)
+```
+
+### Distribution of Features
+
+```{r}
+pltdf <- df %>%
+  gather(key, val, -c(query_id, record_id, fr, clicked))
+
+p <- ggplot(pltdf, aes(x=val, y=..density.., fill=clicked)) +
+  geom_histogram(bins=50, position='identity', alpha=.7) +
+  facet_wrap(~key, scales='free') +
+  scale_fill_brewer(palette='Set1') +
+  theme_bw()
+print(p)
+```
+
+# Problem Formulation
+
+Our goal for today is to come up with a ranking function `relevance_score = F(Lucene, lm_raw_score, pv_s, pc_s)` that maximizes the Mean Average Precision (MAP) of the (test) data.
+
+### Mean Average Precision
+
+Mean Average Precision (MAP) is a standard metric for evaluating a ranking of documents with binary relevance scores.
+
+### Exercise
+
+Write a function to compute the average precision of a vector.
+
+```{r}
+average_precision <- function(x){
+  
+  # Precision at each position
+  precision_vec <- cumsum(x) / 1:length(x)
+  
+  # Average precision of relevant documents
+  mean(precision_vec[x>0])
+}
+```
+
+Test
+```{r}
+x <- c(1, 1, 0, 0, 1, 0)
+average_precision(x)
+```
+
+### Baseline MAP for the current ranking function.
+
+```{r, cache=T}
+agg <- df %>%
+  group_by(query_id) %>%
+  filter(sum(clicked=='True') >= 1) %>%  # Restrict to queries that have clicks
+  arrange(fr) %>%  # Sort according to final rank
+  summarise(ap = average_precision(clicked=='True'),
+            clicks = paste(fr[clicked=='True'], collapse=', '))
+head(agg, 15)
+map <- mean(agg$ap)
+sprintf('MAP: %0.3f', map)
+```
+
+
+# Data Preparation
+
+Based on our understanding of the problem/data, we would like to do a little bit of prep on the features.
+
+- Replace missing values with 0
+- Log transform of all features besides Lucene
+- Remove queries that do not have any clicks
+
+```{r}
+logtrans <- function(x){
+  log(1 + ifelse(is.na(x), 0, x))
+}
+mod_df <- df %>%
+  filter(fr > 1) %>%
+  mutate(clicked = clicked=='True',
+         pv_s = logtrans(pv_s),
+         pc_s = logtrans(pc_s),
+         pvlm = logtrans(pv_s) * logtrans(lm_raw_score),
+         lm_raw_score = logtrans(lm_raw_score)) %>%
+  group_by(query_id) %>%
+  filter(sum(clicked) > 0) %>%
+  ungroup() 
+
+```
+
+# Modeling
+
+## Data Partition
+
+Split into train/test. It is important to segment based on _queries_, as opposed to rows.
+
+```{r}
+train_queries <- sample(unique(mod_df$query_id), 5000, replace=F)
+train_df <- mod_df %>% filter(query_id %in% train_queries)
+test_df <- mod_df %>% filter(!(query_id %in% train_queries))
+```
+
+### Training MAP
+
+```{r}
+train_df %>% 
+  group_by(query_id) %>%
+  filter(sum(clicked) >=  1) %>%
+  arrange(fr) %>%
+  summarise(ap = average_precision(clicked)) %>%
+  .$ap %>%
+  mean()
+```
+
+### Testing MAP
+
+```{r}
+test_df %>% 
+  group_by(query_id) %>%
+  filter(sum(clicked) >=  1) %>%
+  arrange(fr) %>%
+  summarise(ap = average_precision(clicked)) %>%
+  .$ap %>%
+  mean()
+```
+
+
+## Baseline Model (Logistic Regression)
+
+Our baseline model will be a logistic regression. Specifically, we treat the rows as independent observations and model the probability of a click, conditioned on the features.
+
+```{r}
+logit <- glm(clicked ~ Lucene + pvlm + pc_s + lm_raw_score, data = train_df, family = 'binomial')
+pander(summary(logit))
+```
+
+### Evaluation
+
+The model can be evaluated along several dimensions
+
+#### MAP
+
+```{r}
+# Attach predictions to the test data
+test_df$logit_pred <- predict(logit, newdata=test_df, type='response')
+
+# Calculate MAP for the new ordering
+test_df %>%
+  group_by(query_id) %>%
+  arrange(-logit_pred) %>%
+  summarise(ap = average_precision(clicked)) %>%
+  .[['ap']] %>%
+  mean()
+```
+
+
+#### ROC Curve
+
+```{r, message=F, warning=F}
+library(ROCR)
+roc <- function(predicted, actual, key='None'){
+  # Prediction object
+  pred = prediction(predicted, actual)
+
+  # ROC Curve
+  perf <- performance(pred, measure = 'tpr', x.measure = 'fpr')
+  roc <- data.frame(perf@alpha.values,
+                    perf@x.values,
+                    perf@y.values)
+  colnames(roc) <- c('Threshold', 'FPR', 'TPR')
+  roc$key <- key
+
+  # Area under the curve
+  perf <- performance(pred, measure = 'auc')
+  auc <- perf@y.values[[1]]
+
+  list(roc=roc, auc=auc, key=key)
+}
+
+roc_plot <- function(perf_list){
+  # Plot the curves
+  d <- bind_rows(lapply(perf_list, function(x) x$roc))
+  p <- ggplot(d, aes(x=FPR, y=TPR, color=key)) +
+    geom_line() +
+    scale_color_brewer(palette='Set1') +
+    theme_bw()
+  print(p)
+  
+  # Record the area under the curve
+  scores <- bind_rows(lapply(perf_list, function(x){
+    data.frame(key = x$key, AUC = x$auc, stringsAsFactors = F)
+  }))
+  scores
+}
+logit_perf <- roc(test_df$logit_pred, test_df$clicked, key='logit')
+roc_plot(list(logit_perf))
+```
+
+
+- The roc curve is very good, but we didn't really improve the mean average precision. Why?
+- Let's compare this model to a very simple baseline model.
+
+#### Baseline
+
+A baseline model predicts a click according to the overall click-through-rate at that position.
+
+
+```{r}
+ctr <- train_df %>%
+  group_by(fr) %>%
+  summarise(ctr = mean(clicked))
+test_df <- merge(test_df, ctr, by='fr')
+baseline_perf <- roc(test_df$ctr, test_df$clicked, key='baseline')
+```
+
+```{r}
+roc_plot(list(logit_perf, baseline_perf))
+```
+
+
+So the logistic model does not offer any improvement over predicting clicks based on which position the result was shown in. This is an example of what is called 'positional bias'. Users tend to trust their search engines so, all things being equal, they are more likely to click records that shown higher the search ranking.
+
+The positional bias is most pronounced for position 1. One possible way to mitigate the effect is to remove all all of the rows corresponding to the first result returned for a query. We can think about learning to rank only for positions 2-25 (though the learning should carry over to the first poition).
+
+
+
+## Pairwise logistic regression
+
+Exercise: Build a modeling dataframe to use for the pairwise ranking problem.
+
+- Each row in `pairwise_df` represents a pair of records returned for the same query.
+- The records have different labels. In this case, that means one was clicked and one wasn't.
+- The new feature values (and the new target value) are the difference of the feature values (and target value) of the original two records.
+
+```{r}
+# Join clicks with non-clicks by query
+pairwise_df <- train_df %>% 
+  filter(clicked) %>%
+  inner_join(train_df %>% filter(!clicked), by='query_id', suffix = c('.x', '.y')) %>%
+  transmute(Lucene = Lucene.x - Lucene.y,
+           pc_s = pc_s.x - pc_s.y,
+           pvlm = pvlm.x - pvlm.y,
+           pv_s = pv_s.x - pv_s.y,
+           lm_raw_score = lm_raw_score.x - lm_raw_score.y,
+           label = 1) 
+
+# Randomly multiply some rows by -1
+posneg <- sample(c(1, -1), nrow(pairwise_df), replace=T)
+pairwise_df <- data.frame(sapply(pairwise_df, function(col) col * posneg)) %>%
+  mutate(label = ifelse(label < 0, 0, 1))
+```
+
+
+### Scatterplots
+
+To get a sense for why this might be useful, let's take a look at how well the features can discriminate between clicks and non-clicks.
+
+#### Raw features
+
+```{r}
+pltdf <- train_df %>%
+  group_by(clicked) %>%
+  sample_n(2000) %>%
+  ungroup()
+p <- ggplot(pltdf, aes(x=pv_s, y=Lucene, color=factor(clicked))) +
+  geom_jitter(width=.1, height=.1, alpha=.3) +
+  scale_color_brewer(palette='Set1') +
+  theme_bw()
+print(p)
+```
+
+#### Pairs of features
+
+```{r}
+pltdf <- pairwise_df %>%
+  group_by(label) %>%
+  sample_n(2000) %>%
+  ungroup()
+p <- ggplot(pltdf, aes(x=pv_s, y=Lucene, color=factor(label))) +
+  geom_jitter(width=.1, height=.1, alpha=.4) +
+  scale_color_brewer(palette='Set1') +
+  theme_bw()
+print(p)
+```
+
+
+### Build the model
+
+```{r}
+pairwise <- glm(label ~ Lucene + pvlm + pc_s + lm_raw_score + 0, data=pairwise_df, family='binomial')
+test_df$pairwise_pred <- predict(pairwise, newdata=test_df, type='response')
+pairwise_perf <- roc(test_df$pairwise_pred, test_df$clicked, key='pairwise')
+```
+
+
+### Compare
+
+```{r}
+roc_plot(list(baseline_perf, logit_perf, pairwise_perf))
+```
+
+#### Baseline MAP
+
+```{r}
+test_df %>%
+  group_by(query_id) %>%
+  arrange(fr) %>%
+  summarise(ap = average_precision(clicked)) %>%
+  .[['ap']] %>%
+  mean()
+```
+
+#### Logistic MAP
+
+```{r}
+test_df %>%
+  group_by(query_id) %>%
+  arrange(-logit_pred) %>%
+  summarise(ap = average_precision(clicked)) %>%
+  .[['ap']] %>%
+  mean()
+```
+
+#### Pairwise MAP
+
+```{r}
+test_df %>%
+  group_by(query_id) %>%
+  arrange(-pairwise_pred) %>%
+  summarise(ap = average_precision(clicked)) %>%
+  .[['ap']] %>%
+  mean()
+```
+
+
+## LambdaMart (Gradient Boosted Trees)
+
+```{r gbm}
+gbm.map <- gbm(clicked ~ Lucene + pc_s + lm_raw_score + pv_s,          # formula
+               data = train_df,     # dataset
+               distribution = list(   # loss function:
+                 name = 'pairwise',   # pairwise
+                 metric = "map",     # ranking metric: normalized discounted cumulative gain
+                 group = 'query_id'),    # column indicating query groups
+               n.trees = 3000,        # number of trees
+               shrinkage = 0.01,     # learning rate
+               interaction.depth = 4, # number per splits per tree
+               bag.fraction = 0.5,  # subsampling fraction
+               train.fraction = 1,  # fraction of data for training
+               n.minobsinnode = 10, # minimum number of obs for split
+               keep.data = TRUE,      # store copy of input data in model
+               cv.folds = 5,          # number of cross validation folds
+               verbose = F)  
+
+best.iter.ndcg <- gbm.perf(gbm.map, method='cv')
+test_df$gbm_pred <- predict(gbm.map, newdata=test_df, type='response')
+gbm_perf <- roc(test_df$gbm_pred, test_df$clicked, key='gbm')
+```
+
+
+```{r}
+plot(gbm.map, i.var=2)
+plot(gbm.map, i.var=3)
+plot(gbm.map, i.var=c(2,4))
+plot(gbm.map, i.var=1)
+plot(gbm.map, i.var=4)
+```
+
+
+### Compare
+
+```{r}
+roc_plot(list(baseline_perf, logit_perf, pairwise_perf, gbm_perf))
+```
+
+#### Baseline MAP
+
+```{r}
+test_df %>%
+  group_by(query_id) %>%
+  arrange(fr) %>%
+  summarise(ap = average_precision(clicked)) %>%
+  .[['ap']] %>%
+  mean()
+```
+
+#### Logistic MAP
+
+```{r}
+test_df %>%
+  group_by(query_id) %>%
+  arrange(-logit_pred) %>%
+  summarise(ap = average_precision(clicked)) %>%
+  .[['ap']] %>%
+  mean()
+```
+
+#### Pairwise MAP
+
+```{r}
+test_df %>%
+  group_by(query_id) %>%
+  arrange(-pairwise_pred) %>%
+  summarise(ap = average_precision(clicked)) %>%
+  .[['ap']] %>%
+  mean()
+```
+
+
+#### GBM MAP
+
+```{r}
+test_df %>%
+  group_by(query_id) %>%
+  arrange(-gbm_pred) %>%
+  summarise(ap = average_precision(clicked)) %>%
+  .[['ap']] %>%
+  mean()
+```
+
+
+## Transform all of the predictions into pairwise space
+
+```{r}
+# Join clicks with non-clicks by query
+pairwise_test_df <- test_df %>% 
+  filter(clicked) %>%
+  inner_join(test_df %>% filter(!clicked), by='query_id', suffix = c('.x', '.y')) %>%
+  transmute(ctr = ctr.x - ctr.y,
+           logit_pred = logit_pred.x - logit_pred.y,
+           pairwise_pred = pairwise_pred.x - pairwise_pred.y,
+           gbm_pred = gbm_pred.x - gbm_pred.y,
+           label = 1) 
+
+# Randomly multiply some rows by -1
+posneg <- sample(c(1, -1), nrow(pairwise_test_df), replace=T)
+pairwise_test_df <- data.frame(sapply(pairwise_test_df, function(col) col * posneg)) %>%
+  mutate(label = ifelse(label < 0, 0, 1))
+```
+
+
+### Compare
+
+```{r}
+baseline_perf <- roc(pairwise_test_df$ctr, pairwise_test_df$label, key='baseline')
+logit_perf <- roc(pairwise_test_df$logit_pred, pairwise_test_df$label, key='logit')
+pairwise_perf <- roc(pairwise_test_df$pairwise_pred, pairwise_test_df$label, key='pairwise')
+gbm_perf <- roc(pairwise_test_df$gbm_pred, pairwise_test_df$label, key='gbm')
+
+roc_plot(list(baseline_perf, logit_perf, pairwise_perf, gbm_perf))
+```
+
+
