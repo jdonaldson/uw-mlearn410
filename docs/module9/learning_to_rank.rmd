@@ -39,7 +39,7 @@ EDA is the first step in any data mining project; it is the process of 'getting 
 ### First few rows
 
 ```{r, echo=F}
-head(df) %>% pander(split.table=Inf)
+head(df)
 ```
 
 Each row is one query/record pair (there are multiple rows for a given query).
@@ -79,8 +79,7 @@ df %>%
   filter(nrecords %in% c(5, 25)) %>%
   group_by(nrecords, nclicks) %>%
   summarise(count = n()) %>%
-  spread(nrecords, count) %>%
-  pander()
+  spread(nrecords, count)
 ```
 
 ## Features
