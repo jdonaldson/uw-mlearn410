@@ -1,0 +1,208 @@
+---
+title: "Homework 1"
+output: html_notebook
+---
+
+# Supervised Learning
+Necessary packages
+```{r}
+library(caret)
+library(e1071)
+```
+
+
+# Misc Metric Questions
+
+## Q1: Generalize the entropy function from the slides
+Support the calculation of information entropy to accept a vector of probabilities, rather than just inferring a binary probability.
+```{r}
+eta = function(mn){
+  if (length(mn) > 1) {
+    mn = mn/sum(mn)
+  } else {
+    stop("illegal argument")
+  }
+  -sum(mn * log2(mn))
+}
+# e.g. after rewriting something like this should succeed:
+eta(c(.1,.2,.3,.4))
+```
+
+## Q2: Write a function to produce an ROC curve (true positive rate and false positive rate)
+```{r}
+roc = function(pred, dat){
+  tpr = sapply(sort(unique(pred), decreasing=T), function(x) sum(pred >= x & dat)/sum(dat == 1))
+  fpr = sapply(sort(unique(pred), decreasing=T), function(x) sum(pred >= x & 1-dat)/sum(dat != 1))
+  data.frame(tpr=tpr, fpr=fpr)
+}
+# e.g.
+pred = c(.1, .8, .9, .8, .2)
+dat = c(0, 0, 1, 1, 0)
+res = roc(pred, dat)
+qplot(fpr,tpr, data=res, geom="line") + 
+  xlim(c(0,1)) + ylim(c(0,1)) +
+  geom_abline(intercept = 0, slope=1, linetype="dashed") 
+```
+
+## Q3: Use the roc curve function to calculate a AUC metric
+```{r}
+auc = function(tpr, fpr){
+    # trapezoid rule!
+   idx = 2:length(tpr)
+   return (as.double( (fpr[idx] - fpr[idx-1]) %*% (tpr[idx] + tpr[idx-1])) / 2) 
+}
+# e.g.
+dat = c(1,1,1,1,0,1,0,1,0,0)
+pred = c(1,0.999,0.999,0.973,0.568,0.421,0.382,0.377,0.146,0.11)
+res = roc(pred,dat)
+auc(c(0,.27,1), c(0,.2,1))
+
+```
+
+# Data Processing Questions
+##  Read in the titanic csv and analyze it (e.g. plot interesting fields you find with boxplots, scatterplots, etc.)
+### Think about whether the it makes sense to include a column based on what it is.
+
+The "Titanic" dataset is a passenger manifest that also includes a "survived" field, indicating whether the individual survived the trip.
+We're interested in whether we can predict whether a passenger survived, based solely on the information we knew about them *before* they boarded the ship.
+
+```{r}
+titanic = read.csv("https://jdonaldson.github.io/uw-mlearn410/homework/titanic3.csv")
+#head(titanic)
+names = colnames(titanic)
+for (n in 1:length(names)) {
+  name = names[n]
+  if (!is.numeric(titanic[[name]])){
+    stat = "count"
+  } else {
+    stat = "bin" 
+  }
+    
+  g = ggplot(titanic, aes_string(x=name, fill="factor(survived)")) + geom_histogram(stat = stat)
+  print(g)
+}
+graphics.off()
+
+
+```
+
+Use the plots to answer the following questions: 
+
+## Q4: Which fields seem to be important for predicting survival?  
+pclass, parch, embarked, age, sibsp, sex
+
+## Q5: Which fields are leakage? 
+boat, body
+
+## Q6: Which fields look like noise?
+ticket number, cabin (with one exception!), name
+
+
+## Q7: Extract the titles from the ``name`` field 
+The ``name`` field contains some useful demographic information.  Use `strsplit` and look at the counts of each unique title. 
+These should be values like "Mr.", "Mrs.", etc. If there are some that are very low, decide what to do with them - you can create a manual ontology and rename them, create an "Other" class, or drop those rows. Keep in mind - if you drop `null` rows during training, tell us what to do with them while testing/running in production.
+```{r}
+# the title is always the second element
+titanic$title = sapply(strsplit(titanic$name, ",|\\."), function(x) x[2])
+dev.new()
+ggplot(titanic, aes_string(x="title", fill="factor(survived)")) + geom_histogram(stat = "count")
+```
+
+
+## Q8: Deal with NA values
+Let's deal with imputing (filling-in) `NAs` and missing values in `age` and `embarked`:
+`age` is numeric, so we can replace it with the mean of all the non-null ages. `embarked` is categorical, so let's just replace it with the most frequent port of embarkation.
+```{r}
+titanic$age = mean(titanic$age, na.rm=T)
+top_embarked=names(sort(table(titanic$embarked), decr=T))[1]
+titanic$embarked[titanic$embarked == ""]<-top_embarked
+any(titanic$embarked == "")
+any(is.na(titanic$age))
+```
+
+## Q9: What assumptions are we implicitly making by using these methods of imputation?
+
+We're assuming that age has a normal distribution.  We've also identified that the distribution of embarkation points is heavily skewed towards "S", 
+making it a good neutral case.  We are also making the assumption that the *absence* of port information is not in itself a signal.
+
+
+## Q10: Convert all the categorical variables into appropriate factors.
+Example: What's the deal with `pclass`? Is it categorical?
+```{r}
+titanic = data.frame(lapply(titanic, function(x) if (is.character(x)) factor(x) else if (is.numeric(x)){ x[is.na(x)]<-median(x, na.rm=T); x} else x))
+titanic$survived = factor(titanic$survived)
+titanic$body = factor(titanic$body)
+
+```
+pclass is the status of the ticket type... e.g. first through third class.  It's appropriate to treat as an ordinal variable for the purposes of decision trees.
+For linear models it is ok in this case because we already spotted a seemingly linear relationship between class number and survivability.
+
+
+## Q11: Create a sampling function that splits the titanic dataset into 75% train, 25% test dataframe.
+
+```{r}
+datasplit = function(d){
+  smp_size <- floor(0.75 * nrow(d))
+  train_ind <- sample(seq_len(nrow(d)), size = smp_size)
+  
+  train <- d[train_ind, ]
+  test <- d[-train_ind, ]
+  list(train=train, test=test)
+}
+split = datasplit(titanic)
+split
+```
+
+# Modeling Questions
+## Q12: Is accuracy a good metric for evaluating this model? If so, what is the "chance" level for this dataset?
+
+It's not bad, the classes are fairly evenly distributed (800/500)
+ 
+
+## Q13: Use caret/rpart to train a decision tree on the test dataset.
+
+```{r}
+# e.g., use your train data from the split.  Fill in the proper fields in "?"
+traind = split$train
+traind = traind[,!names(traind) %in% c("boat","ticket","name","cabin")]
+ tm = train(survived ~ . , data=traind, method="rpart")
+ plot(tm)
+```
+
+## Q14: Use caret/rf to train a random forest on the test dataset. 
+
+```{r}
+ rfm = train(survived ~ . , data=traind, method="rf")
+ plot(rfm)
+```
+
+## Q15: Use caret/glm to train a logistic model on the test dataset
+
+```{r}
+
+lmm = train(survived ~ . , data=traind, method="glm")
+plot(lmm)
+```
+
+
+## Q16: Gather predictions from your models on the test dataset
+```{r}
+# e.g.
+# tm_eval  = predict(tm, split$test)
+#...
+```
+
+## Q17: Use your roc/auc functions to plot and compare your models' performance 
+```{r}
+#e.g
+# plot(roc(tm_eval, split$test$survived))
+# auc(roc(tm_eval, split$test$survived))
+```
+
+## Q17: Which model performed the best and why do you think it did better?
+
+# Closing Notes/Follow-up
+Consider submitting your responses to Kaggle and see how you did! 
+https://www.kaggle.com/c/titanic
+
+
